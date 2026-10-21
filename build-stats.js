@@ -1,10 +1,10 @@
 const SftpClient = require('ssh2-sftp-client');
 const fs = require('fs');
 const NAMES = {'1354331': 'Melodia-Patty', '2829101': 'Maykelus'};
-const NAME_FIELD = 5005;
+const NAME_FIELDS = [5003];
 const WEAPON_KILLS_BASE = 7000;
-const FIELDS = {kills: 5001, deaths: 5002, score: 5022, points: 5020, waves: 5016, wins: 5017, bosses: 5018, finals: 5019, chests: 5026, recruits: 5027};
-const WEAPONS = {w1h: 5006, w2h: 5007, pole: 5008, bow: 5009, xbow: 5010, throw: 5011, firearm: 5012, magic: 5013, other: 5014};
+const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023};
+const WEAPONS = {w1h: 5004, w2h: 5005, pole: 5006, bow: 5007, xbow: 5008, throw: 5009, firearm: 5010, magic: 5011, other: 5012};
 async function loadServer(prefix) {
   const host = process.env[prefix + '_HOST'];
   if (!host) return null;
@@ -23,24 +23,27 @@ async function loadServer(prefix) {
 (async () => {
   const dumps = [await loadServer('S1'), await loadServer('S2')].filter(Boolean);
   if (dumps.length === 0) process.exit(1);
-  const merged = {};
+  const numbers = {};
+  const nicknames = {};
   for (const dump of dumps) {
-    for (const [key, value] of Object.entries(dump)) {
-      if (typeof value === 'number') merged[key] = (merged[key] || 0) + value;
-      else if (!(key in merged)) merged[key] = value;
+    for (const [rawKey, value] of Object.entries(dump)) {
+      const [id, fieldText] = rawKey.trim().split(/[ _]/);
+      const field = Number(fieldText);
+      if (!id || Number.isNaN(field)) continue;
+      const isName = NAME_FIELDS.includes(field) || Number.isNaN(Number(value));
+      if (isName) {
+        if (!nicknames[id]) nicknames[id] = String(value);
+      } else {
+        const key = id + '_' + field;
+        numbers[key] = (numbers[key] || 0) + Number(value);
+      }
     }
   }
-  const players = {};
-  for (const [key, value] of Object.entries(merged)) {
-    const [id, field] = key.split('_');
-    if (!id || !field) continue;
-    if (!players[id]) players[id] = {id, name: id};
-    if (Number(field) === NAME_FIELD) players[id].name = String(value);
-  }
-  const rows = Object.values(players).map(player => {
-    const row = {id: player.id, name: NAMES[player.id] || player.name};
-    for (const [label, field] of Object.entries(FIELDS)) row[label] = merged[player.id + '_' + field] || 0;
-    for (const [label, category] of Object.entries(WEAPONS)) row[label] = merged[player.id + '_' + (WEAPON_KILLS_BASE + category)] || 0;
+  const ids = new Set([...Object.keys(numbers).map(key => key.split('_')[0]), ...Object.keys(nicknames)]);
+  const rows = [...ids].map(id => {
+    const row = {id, name: NAMES[id] || nicknames[id] || id};
+    for (const [label, field] of Object.entries(FIELDS)) row[label] = numbers[id + '_' + field] || 0;
+    for (const [label, category] of Object.entries(WEAPONS)) row[label] = numbers[id + '_' + (WEAPON_KILLS_BASE + category)] || 0;
     return row;
   }).filter(row => row.kills > 0 || row.deaths > 0);
   fs.writeFileSync('docs/stats.json', JSON.stringify({updated: Date.now(), players: rows}));
