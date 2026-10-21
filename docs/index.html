@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gondolin Stats</title>
+<style>
+body{background:#111;color:#ddd;font-family:sans-serif;margin:20px}
+h1{color:#fff;margin:0 0 4px}
+#info{color:#888;margin-bottom:12px}
+.wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th,td{padding:6px 10px;border-bottom:1px solid #2a2a2a;text-align:right;white-space:nowrap}
+th{cursor:pointer;color:#e0b050;position:sticky;top:0;background:#111}
+td:first-child,th:first-child,td:nth-child(2),th:nth-child(2){text-align:left}
+tr:hover td{background:#1c1c1c}
+</style>
+</head>
+<body>
+<h1>Full Invasion</h1>
+<div id="info">Gondolin server - FI2 Osiris - Lifetime player stats</div>
+<div class="wrap"><table><thead id="head"></thead><tbody id="body"></tbody></table></div>
+<script>
+const COLUMNS = [['#', null], ['name', 'Player'], ['kills', 'Kills'], ['deaths', 'Deaths'], ['score', 'Score'], ['points', 'Top points'], ['waves', 'Waves cleared'], ['wins', 'Games won'], ['bosses', 'Bosses'], ['finals', 'End bosses'], ['chests', 'Leg chests'], ['recruits', 'Recruit/Soldier kills'], ['w1h', '1H'], ['w2h', '2H'], ['pole', 'Polearm'], ['bow', 'Bows'], ['xbow', 'Crossbows'], ['throw', 'Throwing'], ['firearm', 'Firearms'], ['magic', 'Magic'], ['other', 'Other']];
+let rows = [];
+let sortKey = 'kills';
+let sortDirection = -1;
+function render() {
+  rows.sort((a, b) => sortKey === 'name' ? sortDirection * a.name.localeCompare(b.name) : sortDirection * (a[sortKey] - b[sortKey]));
+  document.getElementById('head').innerHTML = '<tr>' + COLUMNS.map(([key, label]) => '<th data-key="' + key + '">' + (label || '#') + '</th>').join('') + '</tr>';
+  document.getElementById('body').innerHTML = rows.map((row, index) => '<tr><td>' + (index + 1) + '</td>' + COLUMNS.slice(1).map(([key]) => '<td>' + (key === 'name' ? row.name.replace(/[<>&]/g, '') : row[key].toLocaleString('en').replace(/,/g, ' ')) + '</td>').join('') + '</tr>').join('');
+  document.querySelectorAll('th').forEach(th => th.onclick = () => {
+    const key = th.dataset.key;
+    if (key === '#') return;
+    sortDirection = sortKey === key ? -sortDirection : -1;
+    sortKey = key;
+    render();
+  });
+}
+fetch('stats.json?' + Date.now()).then(response => response.json()).then(data => {
+  rows = data.players;
+  document.getElementById('info').textContent += ' - updated ' + new Date(data.updated).toLocaleString();
+  render();
+});
+</script>
+</body>
+</html>
