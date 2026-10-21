@@ -3,8 +3,15 @@ const fs = require('fs');
 const NAMES = {'1354331': 'Melodia-Patty', '2829101': 'Maykelus'};
 const NAME_FIELDS = [5003];
 const WEAPON_KILLS_BASE = 7000;
+const FIELD_OFFSET = 5000;
+const FACTION_STEP = 10000;
+const FACTION_AS_BASE = 100000;
+const FACTION_VS_BASE = 2000000;
 const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023};
 const WEAPONS = {w1h: 5004, w2h: 5005, pole: 5006, bow: 5007, xbow: 5008, throw: 5009, firearm: 5010, magic: 5011, other: 5012};
+const FIELD_LABELS = {};
+for (const [label, field] of Object.entries(FIELDS)) FIELD_LABELS[field] = label;
+for (const [label, category] of Object.entries(WEAPONS)) FIELD_LABELS[WEAPON_KILLS_BASE + category] = label;
 async function loadServer(prefix) {
   const host = process.env[prefix + '_HOST'];
   if (!host) return null;
@@ -39,11 +46,26 @@ async function loadServer(prefix) {
       }
     }
   }
+  const factionStats = {};
+  for (const [key, value] of Object.entries(numbers)) {
+    const [id, fieldText] = key.split('_');
+    const field = Number(fieldText);
+    if (field < FACTION_AS_BASE) continue;
+    const mode = field >= FACTION_VS_BASE ? 'vs' : 'as';
+    const rest = field - (mode === 'vs' ? FACTION_VS_BASE : FACTION_AS_BASE);
+    const factionId = Math.floor(rest / FACTION_STEP);
+    const label = FIELD_LABELS[(rest % FACTION_STEP) + FIELD_OFFSET];
+    if (!label) continue;
+    if (!factionStats[id]) factionStats[id] = {as: {}, vs: {}};
+    if (!factionStats[id][mode][factionId]) factionStats[id][mode][factionId] = {};
+    factionStats[id][mode][factionId][label] = value;
+  }
   const ids = new Set([...Object.keys(numbers).map(key => key.split('_')[0]), ...Object.keys(nicknames)]);
   const rows = [...ids].map(id => {
     const row = {id, name: NAMES[id] || nicknames[id] || id};
     for (const [label, field] of Object.entries(FIELDS)) row[label] = numbers[id + '_' + field] || 0;
     for (const [label, category] of Object.entries(WEAPONS)) row[label] = numbers[id + '_' + (WEAPON_KILLS_BASE + category)] || 0;
+    row.fac = factionStats[id] || {as: {}, vs: {}};
     return row;
   }).filter(row => row.kills > 0 || row.deaths > 0);
   fs.writeFileSync('docs/stats.json', JSON.stringify({updated: Date.now(), players: rows}));
