@@ -124,7 +124,7 @@ select:hover:not(:disabled),.pager button:hover:not(:disabled),input:hover{borde
 .table-meta #meta::before{content:"";display:inline-block;width:4px;height:4px;margin:0 8px 2px 0;border-radius:50%;background:var(--accent);opacity:.8}
 /* Match the right-hand gutter to the normal background of the final stat header (Other / Low Tier), so the rounded top-right corner does not appear black. */
 .box{background:#121712;border:1px solid #292f27;border-radius:12px;overflow:auto;padding-right:8px;box-shadow:0 18px 45px rgba(0,0,0,.17);scrollbar-color:#444a3a #101410}
-.box.edge-active{background:rgba(216,185,111,.075)}
+.box.edge-active{background:rgba(216,185,111,.035)}
 table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
 th,td{padding:12px 15px;text-align:center;white-space:nowrap;border-bottom:1px solid rgba(75,83,68,.52)}
 tbody tr:last-child td{border-bottom:0}
@@ -204,6 +204,125 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 .pager button:disabled{opacity:.35;cursor:default}
 #info{min-width:190px;text-align:center;font-variant-numeric:tabular-nums}
 #tip{position:fixed;z-index:9;left:0;top:0;width:max-content;max-width:310px;padding:9px 11px;background:rgba(21,27,21,.98);border:1px solid rgba(216,185,111,.18);border-radius:8px;color:rgba(240,240,231,.66);font-size:12px;line-height:1.5;white-space:pre-line;text-align:left;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 8px 24px rgba(0,0,0,.42)}
+/* Page-size selector stays aligned with the filters and is pushed to the far right. */
+.page-size-control{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin-left:auto;white-space:nowrap}
+.page-size-control label{color:#aab19f;font-size:13px;font-weight:600}
+.page-size-control select{min-width:88px;background-color:#101510;border-color:#30382c}
+.page-size-control select:hover,.page-size-control select:focus{border-color:rgba(216,185,111,.58)}
+
+/* Keep every stat heading visually consistent, with a clear separator above the player rows. */
+.box thead th[data-key]{background:#191e18;color:#9fa894;border-bottom:1px solid rgba(155,163,145,.2)}
+.box thead th[data-key]:nth-child(n){background:#191e18}
+.box thead th[data-key]:hover{background:#20251d;color:#fff4d2}
+.box thead th[data-key].on{background:linear-gradient(180deg,rgba(216,185,111,.055),rgba(216,185,111,.022)) !important;color:var(--accent-bright);box-shadow:inset 1px 0 rgba(216,185,111,.29),inset -1px 0 rgba(216,185,111,.29),inset 0 1px rgba(216,185,111,.32),inset 0 -1px rgba(216,185,111,.22)}
+.box thead th[data-key].on:hover{box-shadow:inset 1px 0 rgba(240,213,142,.48),inset -1px 0 rgba(240,213,142,.48),inset 0 1px rgba(240,213,142,.48),inset 0 -1px rgba(240,213,142,.34)}
+.box tbody tr td.s,.box tbody tr:hover td.s{background:rgba(216,185,111,.025);box-shadow:inset 1px 0 rgba(216,185,111,.26),inset -1px 0 rgba(216,185,111,.26)}
+.box tfoot td{background:#151a14;border-top:1px solid rgba(155,163,145,.22);color:#c8cbc0}
+.box tfoot td:nth-child(1){background:linear-gradient(180deg,#151c13,#101610);color:#aeb99a}
+.box tfoot td:nth-child(2){background:linear-gradient(110deg,#29382a 0%,#1b271d 100%);color:#e2e5d8;box-shadow:1px 0 0 rgba(126,145,102,.2)}
+.box tfoot td.total-value{color:#d0d2c5}
+.box tfoot td.total-value.s{background:rgba(216,185,111,.025);box-shadow:inset 1px 0 rgba(216,185,111,.28),inset -1px 0 rgba(216,185,111,.28),inset 0 -1px rgba(216,185,111,.22)}
+.box tfoot td:nth-child(2){border-right:1px solid rgba(126,145,102,.2)}
+/* A gently deeper, more noticeable gradient separates names from numerical values. */
+.box thead th:nth-child(2){background:linear-gradient(110deg,#263528 0%,#1a241b 100%);color:#d7e0cc}
+.box tbody td:nth-child(2){background:linear-gradient(110deg,#2b3b2d 0%,#1d2a1f 52%,#172119 100%);color:#fff5d7}
+.box tbody tr:hover td:nth-child(2){background:linear-gradient(110deg,#344a35 0%,#263629 55%,#1d2a1f 100%)}
+.box tfoot td:nth-child(2){background:linear-gradient(110deg,#29392b 0%,#1d2a1f 55%,#172119 100%)}
+
+
+/* Latest table refinements: compact stat columns, restrained selection, and consistent totals. */
+.box thead th[data-key],
+.box tbody td:nth-child(n+3),
+.box tfoot td.total-value {
+  width: 90px;
+  min-width: 90px;
+}
+.box thead th[data-key].col-score,
+.box tbody td.col-score,
+.box tfoot td.total-value.col-score {
+  width: 130px;
+  min-width: 130px;
+}
+.box thead th[data-key].col-kills,
+.box tbody td.col-kills,
+.box tfoot td.total-value.col-kills,
+.box thead th[data-key].col-deaths,
+.box tbody td.col-deaths,
+.box tfoot td.total-value.col-deaths {
+  width: 112px;
+  min-width: 112px;
+}
+
+/* Keep the stat headings close to the table palette and separate them clearly from player rows. */
+.box thead th[data-key],
+.box thead th[data-key]:nth-child(n) {
+  background: #171c16;
+  border-bottom: 2px solid rgba(126,145,102,.31);
+}
+.box thead th[data-key]:hover {
+  background: #1d241b;
+  border-bottom-color: rgba(216,185,111,.28);
+}
+.box thead th[data-key].on,
+.box thead th[data-key].on:hover {
+  background: linear-gradient(180deg,rgba(216,185,111,.045),rgba(216,185,111,.018)) !important;
+  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22), inset 0 1px rgba(216,185,111,.25), inset 0 -1px rgba(216,185,111,.18);
+}
+
+/* The selected column remains visible, but its gold tint is intentionally very subtle. */
+.box tbody tr td.s,
+.box tbody tr:hover td.s {
+  background: rgba(216,185,111,.018);
+  box-shadow: inset 1px 0 rgba(216,185,111,.19), inset -1px 0 rgba(216,185,111,.19);
+}
+.box tbody tr:hover td.s {
+  background: rgba(216,185,111,.045);
+  box-shadow: inset 1px 0 rgba(216,185,111,.25), inset -1px 0 rgba(216,185,111,.25);
+}
+.box tfoot td {
+  background: #121712;
+  border-top: 2px solid rgba(126,145,102,.27);
+  border-bottom: 0;
+  color: var(--cell);
+  font-weight: 600;
+}
+.box tfoot td:nth-child(1) {
+  background: linear-gradient(180deg,#151c13,#101610);
+  border-top: 2px solid rgba(126,145,102,.27);
+  color: #aeb99a;
+}
+.box tfoot td:nth-child(2) {
+  background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
+  border-top: 2px solid rgba(126,145,102,.27);
+  color: #e2e5d8;
+}
+.box tfoot td.total-value {
+  background: #121712;
+  color: var(--cell);
+}
+.box tfoot td.total-value:nth-child(n+4):nth-child(even) {
+  background: rgba(255,255,255,.014);
+}
+.box tfoot td.total-value.s {
+  background: rgba(216,185,111,.018);
+  color: var(--accent-bright);
+  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22), inset 0 -1px rgba(216,185,111,.18);
+}
+
+/* Slightly richer, darker gradient for the fixed player-name column. */
+.box thead th:nth-child(2) {
+  background: linear-gradient(110deg,#263528 0%,#1b261c 55%,#151c16 100%);
+}
+.box tbody td:nth-child(2) {
+  background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
+}
+.box tbody tr:hover td:nth-child(2) {
+  background: linear-gradient(110deg,#344633 0%,#263428 55%,#1b251c 100%);
+}
+.box tfoot td:nth-child(2) {
+  background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
+}
+
 @media(max-width:1050px){
   header{align-items:flex-start;flex-direction:column;gap:21px}
   .links{justify-content:flex-start;max-width:100%}
@@ -228,6 +347,8 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
   .tabs button{padding:9px 12px;font-size:15px}
   .filters{align-items:stretch;gap:10px}
   .filters>label{flex:1 1 100%;justify-content:space-between}
+  .page-size-control{flex:1 1 100%;margin-left:0;justify-content:space-between}
+  .page-size-control select{width:72%;max-width:220px}
   .faction-control{flex:1 1 100%;flex-wrap:wrap;gap:7px 10px}
   .faction-control>label{flex:1 1 100%;justify-content:space-between}
   .filters select{flex:1;min-width:0;max-width:72%}
@@ -282,6 +403,16 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 <label>Faction<select id="faction"></select></label>
 <span class="custom" id="custom"></span>
 </div>
+<div class="page-size-control">
+<label for="page-size">Players per page</label>
+<select id="page-size" aria-label="Players per page">
+<option value="25">25</option>
+<option value="50">50</option>
+<option value="100" selected>100</option>
+<option value="200">200</option>
+<option value="all">All</option>
+</select>
+</div>
 </div>
 </section>
 <div class="box"><table><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div>
@@ -289,7 +420,7 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 </main>
 <div id="tip"></div>
 <script>
-const PER_PAGE = 100;
+let pageSize = 100;
 const $ = id => document.getElementById(id);
 const fmt = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
@@ -405,9 +536,10 @@ function render() {
   const ordered = ascending ? rows.slice().reverse() : rows;
   ordered.forEach((row, index) => row.rank = index + 1);
   const shown = ordered.filter(row => !search || row.name.toLowerCase().includes(search));
-  const pages = Math.max(1, Math.ceil(shown.length / PER_PAGE));
+  const effectivePageSize = pageSize === 'all' ? Math.max(shown.length, 1) : Number(pageSize);
+  const pages = Math.max(1, Math.ceil(shown.length / effectivePageSize));
   page = Math.min(page, pages - 1);
-  const visible = shown.slice(page * PER_PAGE, page * PER_PAGE + PER_PAGE);
+  const visible = shown.slice(page * effectivePageSize, page * effectivePageSize + effectivePageSize);
   renderTotals(shown, columns);
   $('head').innerHTML = '<tr><th>#</th><th>Player</th>' + columns.map(([key, label, description]) => '<th tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + label + '</span></th>').join('') + '</tr>';
   if (visible.length) {
@@ -477,6 +609,11 @@ factionSelect.onchange = () => {
 };
 $('search').oninput = event => {
   query = event.target.value;
+  page = 0;
+  render();
+};
+$('page-size').onchange = event => {
+  pageSize = event.target.value === 'all' ? 'all' : Number(event.target.value);
   page = 0;
   render();
 };
