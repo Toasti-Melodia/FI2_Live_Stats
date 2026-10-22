@@ -546,6 +546,30 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   .tabs .tab-indicator { transition: none !important; }
 }
 
+
+
+/* Reliable tab-pill glide and table cross-fade (final overrides for earlier duplicate rules). */
+.tabs { position:relative; isolation:isolate; }
+.tabs .tab-indicator {
+  left:0;
+  transform:none !important;
+  transition: left .38s cubic-bezier(.22,.8,.25,1), width .38s cubic-bezier(.22,.8,.25,1), opacity .16s ease !important;
+  will-change:left,width;
+}
+#stats-table {
+  transition: opacity .22s ease, transform .22s ease !important;
+  opacity:1;
+  transform:translateY(0);
+}
+.box.is-switching #stats-table {
+  opacity:0 !important;
+  transform:translateY(8px) !important;
+  pointer-events:none;
+}
+@media(max-width:760px) {
+  .tabs .tab-indicator { transition:left .38s cubic-bezier(.22,.8,.25,1), width .38s cubic-bezier(.22,.8,.25,1), opacity .16s ease !important; }
+}
+
 </style>
 </head>
 <body>
@@ -577,6 +601,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
       </div>
     </div>
     <div class="filters">
+      <div class="faction-control"><label>Period<select id="range"><option value="all">All time</option><option value="week">This week</option><option value="month">This month</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
       <label>View stats<select id="mode"><option value="all">All</option><option value="as">As Defenders</option><option value="vs">Against Invaders</option></select></label>
       <div class="faction-control"><label>Faction<select id="faction"></select></label><span class="custom" id="custom"></span></div>
       <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
@@ -631,6 +656,10 @@ let query = '';
 const modeSelect = $('mode');
 const factionSelect = $('faction');
 const tip = $('tip');
+const rangeSelect = $('range');
+let range = 'all';
+let current = {players:[]};
+const baselines = {};
 
 function factionList(){
   return modeSelect.value === 'as' ? DEFENDER_FACTIONS : INVADER_FACTIONS;
@@ -778,18 +807,28 @@ function updateTabSelection(activeTab, animate = true){
   const target = tabs.querySelector('button[data-tab="' + activeTab + '"]');
   if(!indicator || !target) return;
 
-  if(!animate) tabs.classList.remove('indicator-ready');
   const tabsRect = tabs.getBoundingClientRect();
   const targetRect = target.getBoundingClientRect();
   const x = targetRect.left - tabsRect.left - tabs.clientLeft;
-  indicator.style.width = targetRect.width + 'px';
-  indicator.style.transform = 'translateX(' + x + 'px)';
 
-  if(animate){
-    tabs.classList.add('indicator-ready');
-  }else{
-    requestAnimationFrame(() => tabs.classList.add('indicator-ready'));
+  if(!animate){
+    // Set the initial pill geometry without animating it from the top-left corner.
+    indicator.style.setProperty('transition', 'none', 'important');
+    indicator.style.left = x + 'px';
+    indicator.style.width = targetRect.width + 'px';
+    indicator.getBoundingClientRect();
+    requestAnimationFrame(() => {
+      indicator.style.removeProperty('transition');
+      tabs.classList.add('indicator-ready');
+    });
+    return;
   }
+
+  // Animating left and width is more reliable than translating a zero-width pill,
+  // particularly when the tabs switch to a grid on narrow screens.
+  tabs.classList.add('indicator-ready');
+  indicator.style.left = x + 'px';
+  indicator.style.width = targetRect.width + 'px';
 }
 function renderTabs(){
   const tabs = $('tabs');
@@ -833,7 +872,10 @@ $('tabs').addEventListener('click',event => {
   const tableBox = $('stats-table').closest('.box');
   tableBox.classList.add('is-switching');
   if(tabChangeTimer !== null) window.clearTimeout(tabChangeTimer);
-  const delay = window.matchMedia('(prefers-reduced-motion:reduce)').matches ? 0 : 155;
+
+  // Let the fade-out finish before replacing the table, then reveal the new view.
+  // Keep this timed even when system-level reduced-motion is enabled: this is an
+  // explicitly requested interaction effect, and the movement is small and brief.
   tabChangeTimer = window.setTimeout(() => {
     tab = pendingTab;
     pendingTab = null;
@@ -843,8 +885,13 @@ $('tabs').addEventListener('click',event => {
     page = 0;
     renderTabs();
     render();
-    tableBox.classList.remove('is-switching');
-  },delay);
+
+    // Force layout with the new content still hidden, then begin the fade-in.
+    $('stats-table').getBoundingClientRect();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => tableBox.classList.remove('is-switching'));
+    });
+  }, 220);
 });
 $('head').addEventListener('click',event => {
   const header = event.target.closest('th[data-key]');
@@ -872,14 +919,62 @@ document.addEventListener('focusin',event => {const header=event.target.closest 
 document.addEventListener('scroll',hideTip,true);
 document.documentElement.addEventListener('mouseleave',hideTip);
 const stamp = milliseconds => new Date(milliseconds).toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const dayStamp = milliseconds => new Date(milliseconds).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+function diffNumbers(now,before){
+  const result = {};
+  for(const key of Object.keys(now || {})){
+    const value = (Number(now[key]) || 0) - (Number(before && before[key]) || 0);
+    if(value > 0) result[key] = value;
+  }
+  return result;
+}
+function diffPlayer(player,before){
+  const row = {id:player.id,name:player.name,fac:{as:{},vs:{}}};
+  ALL_KEYS.forEach(key => row[key] = Math.max(0,(Number(player[key]) || 0) - (Number(before && before[key]) || 0)));
+  for(const mode of ['as','vs']){
+    const nowFactions = (player.fac && player.fac[mode]) || {};
+    const beforeFactions = (before && before.fac && before.fac[mode]) || {};
+    for(const id of Object.keys(nowFactions)){
+      const delta = diffNumbers(nowFactions[id],beforeFactions[id]);
+      if(Object.keys(delta).length) row.fac[mode][id] = delta;
+    }
+  }
+  return row;
+}
+function applyRange(){
+  const baseline = baselines[range];
+  if(range === 'all' || !baseline){
+    data = {players:current.players};
+    $('range-note').textContent = '';
+    return;
+  }
+  const before = new Map(baseline.players.map(player => [String(player.id),player]));
+  data = {players:current.players.map(player => diffPlayer(player,before.get(String(player.id)))).filter(player => ALL_KEYS.some(key => player[key] > 0))};
+  $('range-note').textContent = 'Since ' + dayStamp(Math.max(baseline.start || 0,current.since || 0));
+}
+rangeSelect.addEventListener('change',() => {range = rangeSelect.value;applyRange();page=0;render();});
+const loadBaseline = name => fetch(name + '.json?' + Date.now(),{cache:'no-store'}).then(response => response.ok ? response.json() : null).catch(() => null);
 fillFactions();
 renderTabs();
-fetch('stats.json?' + Date.now(),{cache:'no-store'}).then(response => {
-  if(!response.ok) throw new Error('Could not load stats.json');
-  return response.json();
-}).then(loaded => {
+Promise.all([
+  fetch('stats.json?' + Date.now(),{cache:'no-store'}).then(response => {
+    if(!response.ok) throw new Error('Could not load stats.json');
+    return response.json();
+  }),
+  loadBaseline('week'),loadBaseline('month'),loadBaseline('year')
+]).then(([loaded,week,month,year]) => {
   if(!loaded || !Array.isArray(loaded.players)) throw new Error('Invalid stats.json format');
-  data = {players:loaded.players};
+  current = loaded;
+  Object.entries({week,month,year}).forEach(([name,baseline]) => {
+    if(baseline && Array.isArray(baseline.players)) baselines[name] = baseline;
+  });
+  for(const option of rangeSelect.options){
+    if(option.value !== 'all' && !baselines[option.value]){
+      option.disabled = true;
+      option.textContent += ' (not available yet)';
+    }
+  }
+  applyRange();
   $('meta').textContent = loaded.updated ? 'Last update: ' + stamp(loaded.updated) : 'Last update: -';
   render();
 }).catch(() => {
