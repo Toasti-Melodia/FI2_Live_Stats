@@ -14,12 +14,17 @@ for (const [label, field] of Object.entries(FIELDS)) FIELD_LABELS[field] = label
 for (const [label, category] of Object.entries(WEAPONS)) FIELD_LABELS[WEAPON_KILLS_BASE + category] = label;
 async function loadServer(prefix) {
   const host = process.env[prefix + '_HOST'];
-  if (!host) return null;
+  if (!host) {
+    console.log(prefix + ' skipped: no host');
+    return null;
+  }
   const sftp = new SftpClient();
   try {
     await sftp.connect({host, port: Number(process.env[prefix + '_PORT'] || 22), username: process.env[prefix + '_USER'], password: process.env[prefix + '_PASS']});
     const buffer = await sftp.get(process.env[prefix + '_PATH']);
-    return JSON.parse(buffer.toString());
+    const data = JSON.parse(buffer.toString());
+    console.log(prefix + ' loaded: ' + buffer.length + ' bytes, ' + Object.keys(data).length + ' keys');
+    return data;
   } catch (error) {
     console.error(prefix + ' failed: ' + error.message);
     return null;
@@ -68,5 +73,14 @@ async function loadServer(prefix) {
     row.fac = factionStats[id] || {as: {}, vs: {}};
     return row;
   }).filter(row => row.kills > 0 || row.deaths > 0);
-  fs.writeFileSync('docs/stats.json', JSON.stringify({updated: Date.now(), players: rows}));
+  if (rows.length === 0) {
+    console.error('no players parsed, keeping previous stats.json');
+    process.exit(1);
+  }
+  let since = Date.now();
+  try {
+    const previous = JSON.parse(fs.readFileSync('docs/stats.json', 'utf8'));
+    if (previous.since) since = previous.since;
+  } catch (error) {}
+  fs.writeFileSync('docs/stats.json', JSON.stringify({updated: Date.now(), since, players: rows}));
 })();
