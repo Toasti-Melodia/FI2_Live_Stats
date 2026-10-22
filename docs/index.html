@@ -548,7 +548,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 
 
 
-/* Reliable tab-pill glide and table cross-fade (final overrides for earlier duplicate rules). */
+/* Final interaction polish: the gold pill slides between tabs; the table dissolves softly. */
 .tabs { position:relative; isolation:isolate; }
 .tabs .tab-indicator {
   left:0;
@@ -557,19 +557,40 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   will-change:left,width;
 }
 #stats-table {
-  transition: opacity .22s ease, transform .22s ease !important;
+  transition: opacity .26s ease, filter .26s ease !important;
   opacity:1;
-  transform:translateY(0);
+  filter:blur(0);
+  transform:none !important;
 }
 .box.is-switching #stats-table {
   opacity:0 !important;
-  transform:translateY(8px) !important;
+  filter:blur(1.5px) !important;
+  transform:none !important;
   pointer-events:none;
 }
+/* Keep the Period dropdown the same compact width as View stats. */
+#range,
+#mode {
+  width:160px;
+  min-width:160px;
+  max-width:160px;
+}
 @media(max-width:760px) {
-  .tabs .tab-indicator { transition:left .38s cubic-bezier(.22,.8,.25,1), width .38s cubic-bezier(.22,.8,.25,1), opacity .16s ease !important; }
+  #range,
+  #mode {
+    width:72%;
+    min-width:0;
+    max-width:72%;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .tabs .tab-indicator,
+  #stats-table { transition:none !important; }
 }
 
+.box{view-transition-name:stats-box}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(stats-box),::view-transition-new(stats-box){animation-duration:.3s;animation-timing-function:ease}
 </style>
 </head>
 <body>
@@ -601,7 +622,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
       </div>
     </div>
     <div class="filters">
-      <div class="faction-control"><label>Period<select id="range"><option value="all">All time</option><option value="week">This week</option><option value="month">This month</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
+      <div class="faction-control range-control"><label>Period<select id="range"><option value="all">All time</option><option value="week">This week</option><option value="month">This month</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
       <label>View stats<select id="mode"><option value="all">All</option><option value="as">As Defenders</option><option value="vs">Against Invaders</option></select></label>
       <div class="faction-control"><label>Faction<select id="faction"></select></label><span class="custom" id="custom"></span></div>
       <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
@@ -859,39 +880,27 @@ function showTip(header){
 }
 function hideTip(){tip.style.opacity='0';}
 
-let tabChangeTimer = null;
-let pendingTab = null;
+function fadeTo(update){
+  if(!document.startViewTransition || window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    update();
+    return;
+  }
+  document.startViewTransition(update);
+}
 $('tabs').addEventListener('click',event => {
   const button = event.target.closest('button[data-tab]');
   if(!button) return;
   const nextTab = button.dataset.tab;
-  if(!nextTab || (nextTab === tab && pendingTab === null)) return;
-
-  pendingTab = nextTab;
+  if(!nextTab || nextTab === tab) return;
   updateTabSelection(nextTab, true);
-  const tableBox = $('stats-table').closest('.box');
-  tableBox.classList.add('is-switching');
-  if(tabChangeTimer !== null) window.clearTimeout(tabChangeTimer);
-
-  // Let the fade-out finish before replacing the table, then reveal the new view.
-  // Keep this timed even when system-level reduced-motion is enabled: this is an
-  // explicitly requested interaction effect, and the movement is small and brief.
-  tabChangeTimer = window.setTimeout(() => {
-    tab = pendingTab;
-    pendingTab = null;
-    tabChangeTimer = null;
+  fadeTo(() => {
+    tab = nextTab;
     sortKey = TABS[tab].start;
     ascending = false;
     page = 0;
     renderTabs();
     render();
-
-    // Force layout with the new content still hidden, then begin the fade-in.
-    $('stats-table').getBoundingClientRect();
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => tableBox.classList.remove('is-switching'));
-    });
-  }, 220);
+  });
 });
 $('head').addEventListener('click',event => {
   const header = event.target.closest('th[data-key]');
@@ -907,13 +916,13 @@ $('head').addEventListener('keydown',event => {
     if(again) again.focus();
   }
 });
-modeSelect.addEventListener('change',() => {fillFactions();page=0;render();});
-factionSelect.addEventListener('change',() => {page=0;render();});
+modeSelect.addEventListener('change',() => fadeTo(() => {fillFactions();page=0;render();}));
+factionSelect.addEventListener('change',() => fadeTo(() => {page=0;render();}));
 $('search').addEventListener('input',event => {query=event.target.value;page=0;render();});
 $('page-size').addEventListener('change',event => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();});
 $('prev').addEventListener('click',() => {page--;render();});
 $('next').addEventListener('click',() => {page++;render();});
-window.addEventListener('resize',() => {syncColumnWidths(TABS[tab].columns);updateTabSelection(pendingTab || tab,true);});
+window.addEventListener('resize',() => {syncColumnWidths(TABS[tab].columns);updateTabSelection(tab,true);});
 document.addEventListener('mouseover',event => {const header=event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
 document.addEventListener('focusin',event => {const header=event.target.closest && event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
 document.addEventListener('scroll',hideTip,true);
@@ -941,18 +950,66 @@ function diffPlayer(player,before){
   }
   return row;
 }
+function timestampMs(value){
+  if(value == null || value === '') return 0;
+  if(typeof value === 'number' || /^\d+(?:\.\d+)?$/.test(String(value))){
+    const numeric = Number(value);
+    if(!Number.isFinite(numeric) || numeric <= 0) return 0;
+    return numeric < 1e12 ? numeric * 1000 : numeric;
+  }
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+function periodStart(name, now = new Date()){
+  const start = new Date(now);
+  start.setHours(0,0,0,0);
+  if(name === 'week'){
+    const daysSinceMonday = (start.getDay() + 6) % 7;
+    start.setDate(start.getDate() - daysSinceMonday);
+  }else if(name === 'month'){
+    start.setDate(1);
+  }else if(name === 'year'){
+    start.setMonth(0,1);
+  }
+  return start.getTime();
+}
 function applyRange(){
   const baseline = baselines[range];
-  if(range === 'all' || !baseline){
+  const trackingStart = timestampMs(current.since);
+
+  if(range === 'all'){
     data = {players:current.players};
     $('range-note').textContent = '';
     return;
   }
-  const before = new Map(baseline.players.map(player => [String(player.id),player]));
-  data = {players:current.players.map(player => diffPlayer(player,before.get(String(player.id)))).filter(player => ALL_KEYS.some(key => player[key] > 0))};
-  $('range-note').textContent = 'Since ' + dayStamp(Math.max(baseline.start || 0,current.since || 0));
+
+  if(baseline && Array.isArray(baseline.players)){
+    const before = new Map(baseline.players.map(player => [String(player.id),player]));
+    data = {
+      players:current.players
+        .map(player => diffPlayer(player,before.get(String(player.id))))
+        .filter(player => ALL_KEYS.some(key => player[key] > 0))
+    };
+    const baselineStart = timestampMs(baseline.start);
+    const since = Math.max(baselineStart,trackingStart);
+    $('range-note').textContent = since ? 'Since ' + dayStamp(since) : 'Period to date';
+    return;
+  }
+
+  /*
+   * Without a saved start-of-period snapshot, lifetime counters cannot be split
+   * into a true weekly/monthly/yearly delta. If tracking itself began during the
+   * selected period, all available stats are valid period-to-date stats. Otherwise
+   * keep the option usable, show recorded data, and make the fallback explicit.
+   */
+  data = {players:current.players};
+  if(trackingStart && trackingStart >= periodStart(range)){
+    $('range-note').textContent = 'Tracking since ' + dayStamp(trackingStart);
+  }else{
+    $('range-note').textContent = 'Showing all recorded stats · period snapshot unavailable';
+  }
 }
-rangeSelect.addEventListener('change',() => {range = rangeSelect.value;applyRange();page=0;render();});
+rangeSelect.addEventListener('change',() => fadeTo(() => {range = rangeSelect.value;applyRange();page=0;render();}));
 const loadBaseline = name => fetch(name + '.json?' + Date.now(),{cache:'no-store'}).then(response => response.ok ? response.json() : null).catch(() => null);
 fillFactions();
 renderTabs();
@@ -968,12 +1025,6 @@ Promise.all([
   Object.entries({week,month,year}).forEach(([name,baseline]) => {
     if(baseline && Array.isArray(baseline.players)) baselines[name] = baseline;
   });
-  for(const option of rangeSelect.options){
-    if(option.value !== 'all' && !baselines[option.value]){
-      option.disabled = true;
-      option.textContent += ' (not available yet)';
-    }
-  }
   applyRange();
   $('meta').textContent = loaded.updated ? 'Last update: ' + stamp(loaded.updated) : 'Last update: -';
   render();
