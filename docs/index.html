@@ -14,10 +14,7 @@
   --bg:#070907;
   --panel:#101310;
   --panel-raised:#151914;
-  --head:#181d17;
-  --head-tint:#1c211b;
-  --player:#201f17;
-  --line:#252a23;
+  --head:#282c20;
   --text:#f0f0e7;
   --cell:#d0d2c5;
   --dim:#9ba391;
@@ -26,14 +23,12 @@
   --accent-soft:rgba(216,185,111,.13);
   --accent-line:rgba(216,185,111,.38);
   --red:#ef303d;
-  --tint:rgba(255,255,255,.018);
   --display:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
 }
 *{box-sizing:border-box}
 html{color-scheme:dark;scrollbar-color:#3b4135 #090b09;scroll-behavior:smooth}
 body{
-  position:relative;isolation:isolate;
-  margin:0;min-height:100vh;color:var(--text);
+  position:relative;isolation:isolate;margin:0;min-height:100vh;color:var(--text);
   font:15px/1.55 "Source Sans 3",system-ui,sans-serif;
   background:
     radial-gradient(ellipse at 9% 0%,rgba(100,130,80,.19) 0%,rgba(100,130,80,.07) 23%,transparent 43%),
@@ -41,59 +36,32 @@ body{
     linear-gradient(155deg,#070907 0%,#0c110d 44%,#090c09 74%,#060806 100%);
   background-attachment:fixed;
 }
-body::before{
-  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:url("background.png") center center / cover no-repeat;
-  opacity:.075;mix-blend-mode:screen;
-}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("background.png") center center/cover no-repeat;opacity:.075;mix-blend-mode:screen}
 header,main{width:min(100% - 48px,1440px);margin:0 auto}
-header{
-  display:flex;align-items:center;justify-content:space-between;gap:28px;
-  padding:38px 0 27px;border-bottom:1px solid #20251f;
-}
+header{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:38px 0 27px;border-bottom:1px solid #20251f}
 .brand{position:relative;min-width:270px;padding-left:20px}
-.brand::before{content:"";position:absolute;inset:2px auto 3px 0;width:3px;border-radius:0;background:#d8b96f;box-shadow:0 0 10px rgba(216,185,111,.23)}
+.brand::before{content:"";position:absolute;inset:2px auto 3px 0;width:3px;border-radius:0;background:var(--accent);box-shadow:0 0 10px rgba(216,185,111,.23)}
 .eyebrow{margin:0 0 7px;color:var(--accent);font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
 h1{margin:0;font:700 clamp(34px,4.6vw,56px)/.98 var(--display);letter-spacing:.015em;color:#fffdf5}
 h1 span{color:var(--red)}
 .sub{margin:11px 0 0;color:var(--cell);font-size:16px;letter-spacing:.01em}
-.brand-meta{display:flex;flex-wrap:wrap;align-items:center;gap:7px 13px;margin-top:8px;color:#cbb16f;font-size:12px;font-weight:600;letter-spacing:.025em}
-.brand-meta .credit{color:#d8bd77;font-weight:700;white-space:nowrap}
-.brand-meta #meta{color:#b5a36f;white-space:nowrap}
-.brand-meta #meta::before{content:"";display:inline-block;width:4px;height:4px;margin:0 8px 2px 0;border-radius:50%;background:var(--accent);opacity:.85}
 .links{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;max-width:860px}
-.website-teaser{
-  position:relative;display:flex;flex-direction:column;justify-content:center;gap:3px;align-self:stretch;
-  min-width:176px;min-height:48px;padding:8px 13px;margin-right:14px;
-  border:1px solid rgba(216,185,111,.28);border-radius:10px;
-  background:linear-gradient(125deg,rgba(23,30,23,.96),rgba(20,18,12,.96));
-  box-shadow:inset 0 1px rgba(255,255,255,.025),0 4px 15px rgba(0,0,0,.12);
-}
+.website-teaser{position:relative;display:flex;flex-direction:column;justify-content:center;gap:3px;align-self:stretch;min-width:176px;min-height:48px;padding:8px 13px;margin-right:14px;border:1px solid rgba(216,185,111,.28);border-radius:10px;background:linear-gradient(125deg,rgba(23,30,23,.96),rgba(20,18,12,.96));box-shadow:inset 0 1px rgba(255,255,255,.025),0 4px 15px rgba(0,0,0,.12)}
 .website-teaser::after{content:"";position:absolute;top:6px;right:-10px;bottom:6px;width:1px;background:rgba(216,185,111,.3)}
 .website-label{color:#fff1c4;font:700 20px/1.05 var(--display);letter-spacing:.015em;white-space:nowrap}
 .website-status{color:#b6a36b;font-size:10px;font-weight:600;letter-spacing:.07em;white-space:nowrap}
-.links a{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;
-  padding:8px 12px;color:#d9ddcf;text-decoration:none;font-weight:600;font-size:12px;letter-spacing:.015em;
-  background:linear-gradient(180deg,rgba(20,24,19,.98),rgba(12,15,12,.98));
-  border:1px solid #2a3028;border-radius:9px;white-space:nowrap;
-  transition:transform .16s,border-color .16s,background .16s,color .16s;
-}
+.links a{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;color:#d9ddcf;text-decoration:none;font-weight:600;font-size:12px;letter-spacing:.015em;background:linear-gradient(180deg,rgba(20,24,19,.98),rgba(12,15,12,.98));border:1px solid #2a3028;border-radius:9px;white-space:nowrap;transition:transform .16s,border-color .16s,background .16s,color .16s}
 .links a:hover{transform:translateY(-1px);border-color:var(--accent-line);background:#20261f;color:#fff8e4}
 .links svg{width:16px;height:16px;flex:none;color:var(--ic,var(--text))}
-.links .dl{background:linear-gradient(180deg,rgba(20,24,19,.98),rgba(12,15,12,.98));border-color:#2a3028;color:#d9ddcf}
-.links .dl:hover{background:linear-gradient(180deg,rgba(20,24,19,.98),rgba(12,15,12,.98));border-color:var(--accent-line);color:#fff8e4;box-shadow:none}
+.links .dl{border-color:#2a3028;color:#d9ddcf}
+.links .dl:hover{border-color:var(--accent-line);color:#fff8e4;box-shadow:none}
 .links .dl svg{color:var(--accent)}
 main{padding:25px 0 64px}
-.toolbar{
-  padding:16px;background:linear-gradient(112deg,rgba(18,25,18,.97) 0%,rgba(12,15,12,.965) 54%,rgba(24,21,13,.96) 100%);
-  border:1px solid rgba(62,74,59,.78);border-radius:13px;
-  box-shadow:0 14px 36px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.018);margin-bottom:17px;
-}
+.toolbar{padding:16px;background:linear-gradient(112deg,rgba(18,25,18,.97) 0%,rgba(12,15,12,.965) 54%,rgba(24,21,13,.96) 100%);border:1px solid rgba(62,74,59,.78);border-radius:13px;box-shadow:0 14px 36px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.018);margin-bottom:17px}
 .toolbar-top{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:15px;border-bottom:1px solid rgba(155,163,145,.09)}
 .bar-controls{display:flex;flex:1;flex-direction:column;gap:0;min-width:0}
-.tabs{display:flex;flex:0 1 auto;width:max-content;max-width:100%;gap:5px;padding:4px;background:#0a0c0a;border:1px solid #242920;border-radius:10px}
-.tabs button{font:600 16px var(--display);letter-spacing:.025em;color:var(--dim);background:transparent;border:1px solid transparent;border-radius:7px;padding:8px 24px;cursor:pointer;transition:color .16s,background .16s,border-color .16s}
+.tabs{display:flex;flex:0 1 auto;width:max-content;max-width:100%;gap:5px;padding:4px;background:#0a0c0a;border:1px solid #242920;border-radius:999px}
+.tabs button{font:600 16px var(--display);letter-spacing:.025em;color:var(--dim);background:transparent;border:1px solid transparent;border-radius:999px;padding:8px 24px;cursor:pointer;transition:color .16s,background .16s,border-color .16s}
 .tabs button:hover{color:var(--accent-bright);border-color:rgba(216,185,111,.52);background:rgba(216,185,111,.055)}
 .tabs button.on{color:#fff5d8;background:linear-gradient(180deg,rgba(216,185,111,.15),rgba(216,185,111,.065));border-color:rgba(216,185,111,.4);box-shadow:inset 0 1px rgba(255,255,255,.025)}
 .tabs button.on:hover{border-color:rgba(240,213,142,.68);background:linear-gradient(180deg,rgba(216,185,111,.18),rgba(216,185,111,.085))}
@@ -101,7 +69,7 @@ main{padding:25px 0 64px}
 .search-label{color:var(--dim);font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
 .search-field{position:relative}
 .search-field svg{position:absolute;left:13px;top:50%;width:16px;height:16px;transform:translateY(-50%);color:#7e8877;pointer-events:none}
-input,select,.pager button{font:inherit;color:var(--text);background-color:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 12px}
+input,select,.pager button{font:inherit;color:var(--text);background-color:var(--panel);border:1px solid #252a23;border-radius:8px;padding:9px 12px}
 input{min-width:0}
 input::placeholder{color:#758070}
 .search-field input{width:100%;min-height:37px;padding:8px 12px 8px 36px;background:rgba(8,11,8,.7);border:1px solid #354033;border-radius:8px;box-shadow:none;transition:border-color .16s,background .16s}
@@ -118,431 +86,151 @@ select:hover:not(:disabled),.pager button:hover:not(:disabled),input:hover{borde
 .faction-control{display:flex;align-items:center;gap:10px;min-width:0}
 .custom{flex:none;max-width:390px;color:rgba(190,184,143,.78);font-size:11px;line-height:1.35;text-align:left;padding-left:10px;border-left:1px solid rgba(216,185,111,.22)}
 .custom:empty{display:none}
-.table-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 2px 9px;color:#879080;font-size:11px;line-height:1.4;letter-spacing:.025em}
-.table-meta .credit{color:#c2c7b7;font-weight:700;white-space:nowrap}
-.table-meta #meta{color:#7f8978;white-space:nowrap}
-.table-meta #meta::before{content:"";display:inline-block;width:4px;height:4px;margin:0 8px 2px 0;border-radius:50%;background:var(--accent);opacity:.8}
-/* Match the right-hand gutter to the normal background of the final stat header (Other / Low Tier), so the rounded top-right corner does not appear black. */
-.box{background:#121712;border:1px solid #292f27;border-radius:12px;overflow:auto;padding-right:8px;box-shadow:0 18px 45px rgba(0,0,0,.17);scrollbar-color:#444a3a #101410}
-.box.edge-active{background:#121712}
-table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
-th,td{padding:12px 15px;text-align:center;white-space:nowrap;border-bottom:1px solid rgba(75,83,68,.52)}
-tbody tr:last-child td{border-bottom:0}
-td{color:var(--cell);font-size:14px}
-th{position:sticky;top:0;z-index:3;background:#181d17;color:#9fa894;font-weight:700;font-size:11px;letter-spacing:.065em;text-transform:uppercase;cursor:pointer;user-select:none}
-th span{border-bottom:1px dotted rgba(155,163,145,.42)}
-th:hover{color:#f0f0e7}
-th[data-key]:not(.on):hover{color:#fff4d2;background:#20241b;box-shadow:inset 0 0 0 1px rgba(216,185,111,.38)}
-th.on{
-  color:var(--accent-bright);
-  background:linear-gradient(180deg,rgba(216,185,111,.16),rgba(216,185,111,.085)) !important;
-  border-color:transparent;
-  box-shadow:inset 1px 0 rgba(216,185,111,.76),inset -1px 0 rgba(216,185,111,.76),inset 0 1px rgba(216,185,111,.76),inset 0 -1px rgba(216,185,111,.56);
-  z-index:4;
-}
-th.on span{border-bottom:none}
-th.on:hover{box-shadow:inset 1px 0 rgba(240,213,142,.9),inset -1px 0 rgba(240,213,142,.9),inset 0 1px rgba(240,213,142,.82),inset 0 -1px rgba(240,213,142,.62)}
-th.on::after{content:" \25BC";font-size:9px;opacity:.9;color:var(--accent-bright)}
-th.on.asc::after{content:" \25B2"}
-td:nth-child(n+4):nth-child(even){background:rgba(255,255,255,.014)}
-th:nth-child(n+4):nth-child(even){background:#121712}
-th:nth-child(1),td:nth-child(1){position:sticky;left:0;z-index:2;width:42px;min-width:42px;color:#84907c;background:#101310}
-th:nth-child(2),td:nth-child(2){position:sticky;left:42px;z-index:2;width:205px;min-width:205px;max-width:205px;text-align:left;overflow:hidden;text-overflow:ellipsis;box-shadow:1px 0 0 rgba(216,185,111,.13)}
-th:nth-child(-n+2){background:#181d17;cursor:default}
-th:nth-child(-n+2):hover{color:#9fa894}
-td:nth-child(1){font-family:var(--display);font-size:15px}
-td:nth-child(2){background:linear-gradient(110deg,#1f291f 0%,#172019 100%);color:#f1f0e5;font-weight:600;border-right:1px solid rgba(216,185,111,.14)}
-td.s{color:var(--accent-bright);font-weight:700}
- .box tbody tr td.s{
-  background:rgba(216,185,111,.075);
-  border-left:0;
-  border-right:0;
-  box-shadow:inset 1px 0 rgba(216,185,111,.68),inset -1px 0 rgba(216,185,111,.68);
-}
-/* Keep the selected column edges inside cells, including the final column. */
-.box table{margin-right:0}
-.box thead th.on{border-left:0;border-right:0;box-shadow:inset 1px 0 rgba(216,185,111,.8),inset -1px 0 rgba(216,185,111,.8),inset 0 1px rgba(216,185,111,.8),inset 0 -1px rgba(216,185,111,.58)}
-td.z{color:#626a5e;font-weight:400}
-.box tbody tr td.s.z{color:rgba(240,213,142,.43)}
-tbody tr{transition:background .12s}
-
-/* POPRAWKA 1: Płynne podświetlanie całego wiersza na hover z zachowaniem odcieni i pasków kolumn (bez błędów i czarnych kwadratów) */
-.box tbody tr:hover td {
-  box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.05);
-  color: #fff;
-}
-.box tbody tr:hover td.s {
-  box-shadow: inset 1px 0 rgba(216,185,111,.68), inset -1px 0 rgba(216,185,111,.68), inset 0 0 0 999px rgba(255, 255, 255, 0.05);
-}
-.box tbody tr:hover td:nth-child(2) {
-  color: #fff9e8;
-}
-
-.r1 td:nth-child(1){color:#f0d58e;font-weight:700}
-.r2 td:nth-child(1){color:#d9ded1;font-weight:700}
-.r3 td:nth-child(1){color:#cba17c;font-weight:700}
-td.empty{padding:36px 16px;color:var(--dim);background:none;box-shadow:none;position:static;font-weight:400}
-tfoot td{position:relative;z-index:1;padding-top:13px;padding-bottom:13px;background:#1a1d15;border-top:1px solid rgba(216,185,111,.46);border-bottom:0;color:#d8bd77;font-weight:700;font-size:12px}
-tfoot td:nth-child(1){position:sticky;left:0;z-index:2;min-width:42px;width:42px;background:#1a1d15;color:#d8bd77;font-size:15px}
-tfoot td:nth-child(2){position:sticky;left:42px;z-index:2;text-align:left;width:205px;min-width:205px;max-width:205px;overflow:hidden;text-overflow:ellipsis;background:#1a241b;color:#f0d58e;box-shadow:1px 0 0 rgba(216,185,111,.22)}
-tfoot td.total-value{color:#f0d58e;font-variant-numeric:tabular-nums}
-tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-right:0;border-bottom:0;box-shadow:inset 1px 0 rgba(216,185,111,.78),inset -1px 0 rgba(216,185,111,.78),inset 0 -1px rgba(216,185,111,.78)}
-/* Keep the name and rank easy to scan; all stat columns share a consistent base width. */
-.box thead th[data-key],.box tbody td:nth-child(n+3),.box tfoot td.total-value{width:96px;min-width:96px}
-/* Score, total kills and deaths get a little more room; other stats share a tighter baseline. */
-.box .col-score,.box .col-kills,.box .col-deaths{width:112px;min-width:112px}
-
-/* POPRAWKA 2: Zaokrąglone rogi nagłówków dopasowane do kontenera tabeli */
-.box thead th:first-child {
-  border-top-left-radius: 11px;
-}
-.box thead th:last-child {
-  border-top-right-radius: 11px;
-}
-
-/* Distinct, restrained surfaces for the two sticky identity columns. */
-.box thead th:nth-child(1){background:linear-gradient(180deg,#20271b,#171d15);color:#b4c09f}
-.box tbody td:nth-child(1){background:linear-gradient(180deg,#151c13,#101610);color:#aeb99a;border-right:1px solid rgba(126,145,102,.19)}
-.box thead th:nth-child(2){background:linear-gradient(110deg,#202c21,#192119);color:#d7e0cc;border-right:1px solid rgba(126,145,102,.24)}
-.box tbody td:nth-child(2){background:linear-gradient(110deg,#29382a 0%,#1b271d 100%);color:#fff5d7;border-right:1px solid rgba(216,185,111,.2)}
-.box tfoot td:nth-child(1){background:linear-gradient(180deg,#20251a,#181d14);color:#d8bd77}
-.box tfoot td:nth-child(2){background:linear-gradient(110deg,#253326 0%,#1a241b 100%);color:#f0d58e}
-
-.box tbody tr.r1 td:nth-child(1){color:#f0d58e;font-weight:700}
-.box tbody tr.r2 td:nth-child(1){color:#d9ded1;font-weight:700}
-.box tbody tr.r3 td:nth-child(1){color:#cba17c;font-weight:700}
-/* Preserve the active-column rectangle with a safe inset from the rounded table edge. */
-.box thead th.on{box-shadow:inset 1px 0 rgba(216,185,111,.8),inset -1px 0 rgba(216,185,111,.8),inset 0 1px rgba(216,185,111,.8),inset 0 -1px rgba(216,185,111,.58)}
-.box tbody tr td.s{box-shadow:inset 1px 0 rgba(216,185,111,.74),inset -1px 0 rgba(216,185,111,.74)}
-.box tfoot td.total-value.s{box-shadow:inset 1px 0 rgba(216,185,111,.8),inset -1px 0 rgba(216,185,111,.8),inset 0 -1px rgba(216,185,111,.8)}
-.pager{display:flex;gap:14px;justify-content:center;align-items:center;margin-top:17px;color:var(--dim);font-size:13px}
-.pager button{min-width:94px;cursor:pointer;background:#121712}
-.pager button:disabled{opacity:.35;cursor:default}
-#info{min-width:190px;text-align:center;font-variant-numeric:tabular-nums}
-#tip{position:fixed;z-index:9;left:0;top:0;width:max-content;max-width:310px;padding:9px 11px;background:rgba(21,27,21,.98);border:1px solid rgba(216,185,111,.18);border-radius:8px;color:rgba(240,240,231,.66);font-size:12px;line-height:1.5;white-space:pre-line;text-align:left;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 8px 24px rgba(0,0,0,.42)}
-/* Page-size selector stays aligned with the filters and is pushed to the far right. */
 .page-size-control{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin-left:auto;white-space:nowrap}
 .page-size-control label{color:#aab19f;font-size:13px;font-weight:600}
 .page-size-control select{min-width:88px;background-color:#101510;border-color:#30382c}
 .page-size-control select:hover,.page-size-control select:focus{border-color:rgba(216,185,111,.58)}
-
-/* Keep every stat heading visually consistent, with a clear separator above the player rows. */
-.box thead th[data-key]{background:#191e18;color:#9fa894;border-bottom:1px solid rgba(155,163,145,.2)}
-.box thead th[data-key]:nth-child(n){background:#191e18}
-.box thead th[data-key]:hover{background:#20251d;color:#fff4d2}
-.box thead th[data-key].on{background:linear-gradient(180deg,rgba(216,185,111,.055),rgba(216,185,111,.022)) !important;color:var(--accent-bright);box-shadow:inset 1px 0 rgba(216,185,111,.29),inset -1px 0 rgba(216,185,111,.29),inset 0 1px rgba(216,185,111,.32),inset 0 -1px rgba(216,185,111,.22)}
-.box thead th[data-key].on:hover{box-shadow:inset 1px 0 rgba(240,213,142,.48),inset -1px 0 rgba(240,213,142,.48),inset 0 1px rgba(240,213,142,.48),inset 0 -1px rgba(240,213,142,.34)}
-.box tbody tr td.s{background:rgba(216,185,111,.025);box-shadow:inset 1px 0 rgba(216,185,111,.26),inset -1px 0 rgba(216,185,111,.26)}
-.box tfoot td{background:#151a14;border-top:1px solid rgba(155,163,145,.22);color:#c8cbc0}
-.box tfoot td:nth-child(1){background:linear-gradient(180deg,#151c13,#101610);color:#aeb99a}
-.box tfoot td:nth-child(2){background:linear-gradient(110deg,#29382a 0%,#1b271d 100%);color:#e2e5d8;box-shadow:1px 0 0 rgba(126,145,102,.2)}
-.box tfoot td.total-value{color:#d0d2c5}
-.box tfoot td.total-value.s{background:rgba(216,185,111,.025);box-shadow:inset 1px 0 rgba(216,185,111,.28),inset -1px 0 rgba(216,185,111,.28),inset 0 -1px rgba(216,185,111,.22)}
-.box tfoot td:nth-child(2){border-right:1px solid rgba(126,145,102,.2)}
-/* A gently deeper, more noticeable gradient separates names from numerical values. */
-.box thead th:nth-child(2){background:linear-gradient(110deg,#263528 0%,#1a241b 100%);color:#d7e0cc}
-.box tbody td:nth-child(2){background:linear-gradient(110deg,#2b3b2d 0%,#1d2a1f 52%,#172119 100%);color:#fff5d7}
-.box tfoot td:nth-child(2){background:linear-gradient(110deg,#29392b 0%,#1d2a1f 55%,#172119 100%)}
-
-
-/* Latest table refinements: compact stat columns, restrained selection, and consistent totals. */
-.box thead th[data-key],
-.box tbody td:nth-child(n+3),
-.box tfoot td.total-value {
-  width: 90px;
-  min-width: 90px;
-}
-.box thead th[data-key].col-score,
-.box tbody td.col-score,
-.box tfoot td.total-value.col-score {
-  width: 130px;
-  min-width: 130px;
-}
-.box thead th[data-key].col-kills,
-.box tbody td.col-kills,
-.box tfoot td.total-value.col-kills,
-.box thead th[data-key].col-deaths,
-.box tbody td.col-deaths,
-.box tfoot td.total-value.col-deaths {
-  width: 112px;
-  min-width: 112px;
-}
-
-/* Keep the stat headings close to the table palette and separate them clearly from player rows. */
-.box thead th[data-key],
-.box thead th[data-key]:nth-child(n) {
-  background: #171c16;
-  border-bottom: 2px solid rgba(126,145,102,.31);
-}
-.box thead th[data-key]:hover {
-  background: #1d241b;
-  border-bottom-color: rgba(216,185,111,.28);
-}
-.box thead th[data-key].on,
-.box thead th[data-key].on:hover {
-  background: linear-gradient(180deg,rgba(216,185,111,.045),rgba(216,185,111,.018)) !important;
-  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22), inset 0 1px rgba(216,185,111,.25), inset 0 -1px rgba(216,185,111,.18);
-}
-
-/* The selected column remains visible, but its gold tint is intentionally very subtle. */
-.box tbody tr td.s {
-  background: rgba(216,185,111,.018);
-  box-shadow: inset 1px 0 rgba(216,185,111,.19), inset -1px 0 rgba(216,185,111,.19);
-}
-.box tfoot td {
-  background: #121712;
-  border-top: 2px solid rgba(126,145,102,.27);
-  border-bottom: 0;
-  color: var(--cell);
-  font-weight: 600;
-}
-.box tfoot td:nth-child(1) {
-  background: linear-gradient(180deg,#151c13,#101610);
-  border-top: 2px solid rgba(126,145,102,.27);
-  color: #aeb99a;
-}
-.box tfoot td:nth-child(2) {
-  background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
-  border-top: 2px solid rgba(126,145,102,.27);
-  color: #e2e5d8;
-}
-.box tfoot td.total-value {
-  background: #121712;
-  color: var(--cell);
-}
-.box tfoot td.total-value:nth-child(n+4):nth-child(even) {
-  background: rgba(255,255,255,.014);
-}
-.box tfoot td.total-value.s {
-  background: rgba(216,185,111,.018);
-  color: var(--accent-bright);
-  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22), inset 0 -1px rgba(216,185,111,.18);
-}
-
-/* Slightly richer, darker gradient for the fixed player-name column. */
-.box thead th:nth-child(2) {
-  background: linear-gradient(110deg,#263528 0%,#1b261c 55%,#151c16 100%);
-}
-.box tbody td:nth-child(2) {
-  background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
-}
-.box tfoot td:nth-child(2) {
-  background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
-}
-
-
-/* Final table polish: a distinct header/footer, consistent row hover, and a non-invasive sorted-column outline. */
-.box { background:#121712; }
-.box.edge-active { background:#121712; }
-.box thead th[data-key],
-.box thead th[data-key]:nth-child(n) {
-  background:linear-gradient(180deg,#282c20 0%,#22271c 100%);
-  color:#b7bea9;
-  border-bottom:2px solid rgba(216,185,111,.24);
-}
-.box thead th[data-key]:hover,
-.box thead th.player-sort:hover {
-  background:linear-gradient(180deg,#303426 0%,#282d20 100%);
-  color:#fff4d2;
-  box-shadow:inset 0 0 0 1px rgba(216,185,111,.34);
-}
-.box thead th[data-key].on,
-.box thead th[data-key].on:hover {
-  background:linear-gradient(180deg,#282c20 0%,#22271c 100%) !important;
-  color:var(--accent-bright);
-  box-shadow:inset 1px 0 rgba(216,185,111,.28),inset -1px 0 rgba(216,185,111,.28),inset 0 1px rgba(216,185,111,.30),inset 0 -1px rgba(216,185,111,.21);
-}
-.box thead th.player-sort { cursor:pointer; }
-.box thead th.player-sort.on span { border-bottom:none; }
-.box thead th.player-sort.on::after { content:" \25BC";font-size:9px;opacity:.9;color:var(--accent-bright); }
-.box thead th.player-sort.on.asc::after { content:" \25B2"; }
-
-/* Keep the existing alternating column shades when sorting. Only add very faint gold edges. */
-.box tbody tr td.s {
-  background-color:transparent;
-  box-shadow:inset 1px 0 rgba(216,185,111,.22),inset -1px 0 rgba(216,185,111,.22);
-}
-.box tbody tr td.s:nth-child(n+4):nth-child(even) {
-  background-color:rgba(255,255,255,.014);
-}
-
-/* A clearly readable total row, visually separate from the player records. */
-.box tfoot td,
-.box tfoot td.total-value,
-.box tfoot td.total-value:nth-child(n+4):nth-child(even) {
-  background:#282c20 !important;
-  color:#e0dec9;
-  border-top:2px solid rgba(216,185,111,.36);
-  border-bottom:0;
-  font-weight:700;
-}
-.box tfoot td:nth-child(1) {
-  background:linear-gradient(180deg,#292f21,#22271c) !important;
-  color:#d5d9bf;
-}
-.box tfoot td:nth-child(2) {
-  background:linear-gradient(110deg,#333b27 0%,#2a3222 55%,#242a1e 100%) !important;
-  color:#f1e5b9;
-}
-.box tfoot td.total-value.s {
-  background:#282c20 !important;
-  color:#f0d58e;
-  box-shadow:inset 1px 0 rgba(216,185,111,.3),inset -1px 0 rgba(216,185,111,.3),inset 0 -1px rgba(216,185,111,.22);
-}
-
-@media(max-width:1050px){
-  header{align-items:flex-start;flex-direction:column;gap:21px}
-  .links{justify-content:flex-start;max-width:100%}
- .website-teaser{min-height:48px}
-  .toolbar-top{align-items:stretch;flex-direction:column}
-  .search-wrap{flex-basis:auto;width:100%;max-width:none;min-width:0}
-}
-@media(max-width:760px){
-  header,main{width:calc(100% - 28px)}
-  header{padding:26px 0 22px}
-  .brand{min-width:0;padding-left:15px}
-  h1{font-size:clamp(34px,9vw,47px)}
-  .sub{font-size:14px;max-width:460px}
-  .links{gap:6px}
-  .links a{min-height:35px;padding:7px 9px;font-size:11px}
-  .links svg{width:14px;height:14px}
- .website-teaser{min-width:160px;margin:0 14px 4px 0;padding:7px 12px}
-  .website-label{font-size:18px}
-  main{padding-top:18px}
-  .toolbar{padding:12px;border-radius:11px}
-  .tabs{width:100%;display:grid;grid-template-columns:1fr 1fr}
-  .tabs button{padding:9px 12px;font-size:15px}
-  .filters{align-items:stretch;gap:10px}
-  .filters>label{flex:1 1 100%;justify-content:space-between}
-  .page-size-control{flex:1 1 100%;margin-left:0;justify-content:space-between}
-  .page-size-control select{width:72%;max-width:220px}
-  .faction-control{flex:1 1 100%;flex-wrap:wrap;gap:7px 10px}
-  .faction-control>label{flex:1 1 100%;justify-content:space-between}
-  .filters select{flex:1;min-width:0;max-width:72%}
-  .custom{flex:1 1 100%;max-width:100%;padding:6px 0 0;border-left:0;border-top:1px solid rgba(216,185,111,.16)}
-  .table-meta{font-size:10px}
-  th,td{padding:10px 12px}
-  th:nth-child(2),td:nth-child(2),tfoot td:nth-child(2){width:172px;min-width:172px;max-width:172px;left:40px}
-  th:nth-child(1),td:nth-child(1),tfoot td:nth-child(1){left:0;width:40px;min-width:40px}
-  .pager{gap:8px;flex-wrap:wrap}
-  .pager button{min-width:78px;padding:8px}
-  #info{order:-1;flex-basis:100%;min-width:0}
-}
-@media(max-width:420px){
-  .links a{gap:5px}
-  .table-meta{align-items:flex-start;flex-direction:column;gap:4px}
-  .table-meta #meta::before{margin-left:0}
-}
+.table-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 2px 9px;color:#879080;font-size:11px;line-height:1.4;letter-spacing:.025em}
+.table-meta .credit{color:#c2c7b7;font-weight:700;white-space:nowrap}
+.table-meta #meta{color:#7f8978;white-space:nowrap}
+.table-meta #meta::before{content:"";display:inline-block;width:4px;height:4px;margin:0 8px 2px 0;border-radius:50%;background:var(--accent);opacity:.8}
+/* One clean frame around the scrolling table. No artificial right-hand gutter. */
+.box{background:#282c20;border:1px solid #292f27;border-radius:12px;overflow:auto;padding:0;box-shadow:0 18px 45px rgba(0,0,0,.17);scrollbar-color:#444a3a #101410;overscroll-behavior-x:contain}
+table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums;margin:0}
+th,td{padding:12px 15px;text-align:center;white-space:nowrap;border-bottom:1px solid rgba(75,83,68,.52)}
+tbody tr:last-child td{border-bottom:0}
+td{color:var(--cell);font-size:14px}
+th{position:sticky;top:0;z-index:4;background:linear-gradient(180deg,#282c20 0%,#22271c 100%);color:#b7bea9;font-weight:700;font-size:11px;letter-spacing:.065em;text-transform:uppercase;user-select:none;border-bottom:2px solid rgba(216,185,111,.24)}
+th span{border-bottom:1px dotted rgba(155,163,145,.42)}
+th:hover{color:#f0f0e7}
+th[data-key]{cursor:pointer}
+th[data-key]:hover{background:linear-gradient(180deg,#303426 0%,#282d20 100%);color:#fff4d2;box-shadow:inset 0 0 0 1px rgba(216,185,111,.34)}
+th[data-key].on{color:var(--accent-bright);background:linear-gradient(180deg,#282c20 0%,#22271c 100%)!important;box-shadow:inset 1px 0 rgba(216,185,111,.3),inset -1px 0 rgba(216,185,111,.3),inset 0 1px rgba(216,185,111,.32),inset 0 -1px rgba(216,185,111,.22)}
+th[data-key].on span{border-bottom:0}
+th[data-key].on::after{content:" \25BC";font-size:9px;opacity:.9;color:var(--accent-bright)}
+th[data-key].on.asc::after{content:" \25B2"}
+/* Rank and player stay fixed while the stats scroll horizontally. */
+th:nth-child(1),td:nth-child(1){position:sticky;left:0;z-index:2;width:42px;min-width:42px}
+th:nth-child(2),td:nth-child(2){position:sticky;left:42px;z-index:2;width:205px;min-width:205px;max-width:205px;text-align:left;overflow:hidden;text-overflow:ellipsis;box-shadow:1px 0 0 rgba(216,185,111,.13)}
+th:nth-child(-n+2){cursor:default}
+th:nth-child(-n+2):hover{color:inherit;box-shadow:1px 0 0 rgba(216,185,111,.13)}
+th:nth-child(1){z-index:6;border-top-left-radius:11px;background:linear-gradient(180deg,#282c20 0%,#22271c 100%);color:#d7d9c9}
+th:nth-child(2){z-index:6;background:linear-gradient(110deg,#282c20 0%,#1b261c 55%,#151c16 100%);color:#d7e0cc}
+th:last-child{border-top-right-radius:11px}
+td:nth-child(1){font:600 15px var(--display);background:linear-gradient(180deg,#151c13,#101610);color:#aeb99a;border-right:1px solid rgba(126,145,102,.19)}
+td:nth-child(2){background:linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);color:#fff5d7;font-weight:600;border-right:1px solid rgba(216,185,111,.2)}
+/* Readable, distinct alternating stat columns. */
+tbody td:nth-child(n+3):nth-child(odd){background-color:rgba(255,255,255,.012)}
+tbody td:nth-child(n+3):nth-child(even){background-color:rgba(0,0,0,.05)}
+td.s{color:var(--accent-bright);font-weight:700}
+.box tbody tr td.s{background-image:linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));box-shadow:inset 1px 0 rgba(216,185,111,.22),inset -1px 0 rgba(216,185,111,.22)}
+td.z{color:#626a5e;font-weight:400}
+.box tbody tr td.s.z{color:rgba(240,213,142,.43)}
+.box tbody tr{transition:color .12s}
+/* IMPORTANT: the hover treatment changes only paint, never position. This preserves sticky cells. */
+.box tbody tr:hover td{color:#fff}
+.box tbody tr:hover td:nth-child(1){background-image:linear-gradient(rgba(255,255,255,.045),rgba(255,255,255,.045)),linear-gradient(180deg,#151c13,#101610)}
+.box tbody tr:hover td:nth-child(2){background-image:linear-gradient(rgba(255,255,255,.045),rgba(255,255,255,.045)),linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);color:#fff9e8}
+.box tbody tr:hover td:nth-child(n+3){background-image:linear-gradient(rgba(255,255,255,.045),rgba(255,255,255,.045))}
+.box tbody tr:hover td.s:nth-child(n+3){background-image:linear-gradient(rgba(255,255,255,.045),rgba(255,255,255,.045)),linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));box-shadow:inset 1px 0 rgba(216,185,111,.26),inset -1px 0 rgba(216,185,111,.26)}
+.r1 td:nth-child(1){color:#f0d58e;font-weight:700}
+.r2 td:nth-child(1){color:#d9ded1;font-weight:700}
+.r3 td:nth-child(1){color:#cba17c;font-weight:700}
+td.empty{padding:36px 16px;color:var(--dim);background:transparent!important;box-shadow:none;position:static;font-weight:400;text-align:center}
+tfoot td{position:relative;z-index:1;padding-top:13px;padding-bottom:13px;background:#282c20!important;border-top:2px solid rgba(216,185,111,.36);border-bottom:0;color:#e0dec9;font-weight:700;font-size:12px}
+tfoot td:nth-child(1){position:sticky;left:0;z-index:3;min-width:42px;width:42px;background:linear-gradient(180deg,#292f21,#22271c)!important;color:#d5d9bf;font-size:15px}
+tfoot td:nth-child(2){position:sticky;left:42px;z-index:3;text-align:left;width:205px;min-width:205px;max-width:205px;overflow:hidden;text-overflow:ellipsis;background:linear-gradient(110deg,#333b27 0%,#2a3222 55%,#242a1e 100%)!important;color:#f1e5b9;box-shadow:1px 0 0 rgba(126,145,102,.2)}
+tfoot td.total-value{color:#e0dec9;font-variant-numeric:tabular-nums}
+tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:inset 1px 0 rgba(216,185,111,.3),inset -1px 0 rgba(216,185,111,.3),inset 0 -1px rgba(216,185,111,.22)}
+.box thead th[data-key],.box tbody td:nth-child(n+3),.box tfoot td.total-value{width:90px;min-width:90px}
+.box thead th[data-key].col-score,.box tbody td.col-score,.box tfoot td.total-value.col-score{width:130px;min-width:130px}
+.box thead th[data-key].col-kills,.box tbody td.col-kills,.box tfoot td.total-value.col-kills,.box thead th[data-key].col-deaths,.box tbody td.col-deaths,.box tfoot td.total-value.col-deaths{width:112px;min-width:112px}
+.pager{display:flex;gap:14px;justify-content:center;align-items:center;margin-top:17px;color:var(--dim);font-size:13px}
+.pager button{min-width:94px;cursor:pointer;background:#121712}
+.pager button:disabled{opacity:.35;cursor:default}
+#info{min-width:190px;text-align:center;font-variant-numeric:tabular-nums}
+#tip{position:fixed;z-index:9;left:0;top:0;width:max-content;max-width:310px;padding:9px 11px;background:rgba(21,27,21,.98);border:1px solid rgba(216,185,111,.18);border-radius:8px;color:rgba(240,240,231,.8);font-size:12px;line-height:1.5;white-space:pre-line;text-align:left;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 8px 24px rgba(0,0,0,.42)}
+@media(max-width:1050px){header{align-items:flex-start;flex-direction:column;gap:21px}.links{justify-content:flex-start;max-width:100%}.website-teaser{min-height:48px}.toolbar-top{align-items:stretch;flex-direction:column}.search-wrap{flex-basis:auto;width:100%;max-width:none;min-width:0}}
+@media(max-width:760px){header,main{width:calc(100% - 28px)}header{padding:26px 0 22px}.brand{min-width:0;padding-left:15px}h1{font-size:clamp(34px,9vw,47px)}.sub{font-size:14px;max-width:460px}.links{gap:6px}.links a{min-height:35px;padding:7px 9px;font-size:11px}.links svg{width:14px;height:14px}.website-teaser{min-width:160px;margin:0 14px 4px 0;padding:7px 12px}.website-label{font-size:18px}main{padding-top:18px}.toolbar{padding:12px;border-radius:11px}.tabs{width:100%;display:grid;grid-template-columns:1fr 1fr}.tabs button{padding:9px 12px;font-size:15px}.filters{align-items:stretch;gap:10px}.filters>label{flex:1 1 100%;justify-content:space-between}.page-size-control{flex:1 1 100%;margin-left:0;justify-content:space-between}.page-size-control select{width:72%;max-width:220px}.faction-control{flex:1 1 100%;flex-wrap:wrap;gap:7px 10px}.faction-control>label{flex:1 1 100%;justify-content:space-between}.filters select{flex:1;min-width:0;max-width:72%}.custom{flex:1 1 100%;max-width:100%;padding:6px 0 0;border-left:0;border-top:1px solid rgba(216,185,111,.16)}.table-meta{font-size:10px}th,td{padding:10px 12px}th:nth-child(2),td:nth-child(2),tfoot td:nth-child(2){width:172px;min-width:172px;max-width:172px;left:40px}th:nth-child(1),td:nth-child(1),tfoot td:nth-child(1){left:0;width:40px;min-width:40px}.pager{gap:8px;flex-wrap:wrap}.pager button{min-width:78px;padding:8px}#info{order:-1;flex-basis:100%;min-width:0}}
+@media(max-width:420px){.links a{gap:5px}.table-meta{align-items:flex-start;flex-direction:column;gap:4px}.table-meta #meta::before{margin-left:0}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
-
-/* Delikatniejsze naprzemienne kolumny statystyk (zmniejszony kontrast) */
-.box tbody tr:not(:hover) td:nth-child(n+3):nth-child(odd):not(.s) {
-  background-color: rgba(255,255,255,.012);
-}
-.box tbody tr:not(:hover) td:nth-child(n+3):nth-child(even):not(.s) {
-  background-color: rgba(0,0,0,.05);
-}
-/* Zachowanie subtelnych pasków przy sortowaniu kolumn */
-.box tbody tr:not(:hover) td.s:nth-child(n+3):nth-child(odd) {
-  background-color: rgba(255,255,255,.012);
-  background-image: linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));
-  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22);
-}
-.box tbody tr:not(:hover) td.s:nth-child(n+3):nth-child(even) {
-  background-color: rgba(0,0,0,.05);
-  background-image: linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));
-  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22);
-}
-
 </style>
 </head>
 <body>
 <header>
-<div class="brand">
-<h1>Full Invasion <span>2</span></h1>
-<p class="sub">Lifetime stats (starting from 22.10.2026) - Gondolin Osiris servers</p>
-<div class="brand-meta"><span class="credit">By Melodia-Patty</span><span id="meta">Last update: -</span></div>
-</div>
-<nav class="links" aria-label="Links">
-<div class="website-teaser" aria-label="Gondolin Website - Work in Progress">
-  <span class="website-label">Gondolin Website</span>
-  <span class="website-status">Work in Progress!</span>
-</div>
-<a href="https://discord.gg/TDrVMNd9Xj" target="_blank" rel="noopener" style="--ic:#8e97ff"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>Discord</a>
-<a href="https://www.youtube.com/@Melodia_Patty" target="_blank" rel="noopener" style="--ic:#ff5a5f"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M21.6 7.2a2.5 2.5 0 00-1.8-1.8C18.3 5 12 5 12 5s-6.3 0-7.8.4A2.5 2.5 0 002.4 7.2C2 8.7 2 12 2 12s0 3.3.4 4.8a2.5 2.5 0 001.8 1.8C5.7 19 12 19 12 19s6.3 0 7.8-.4a2.5 2.5 0 001.8-1.8c.4-1.5.4-4.8.4-4.8s0-3.3-.4-4.8zM10 15.2V8.8l5.3 3.2z"/></svg>Dev YT</a>
-<a href="https://www.youtube.com/@GondolinWarband" target="_blank" rel="noopener" style="--ic:#ff5a5f"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M21.6 7.2a2.5 2.5 0 00-1.8-1.8C18.3 5 12 5 12 5s-6.3 0-7.8.4A2.5 2.5 0 002.4 7.2C2 8.7 2 12 2 12s0 3.3.4 4.8a2.5 2.5 0 001.8 1.8C5.7 19 12 19 12 19s6.3 0 7.8-.4a2.5 2.5 0 001.8-1.8c.4-1.5.4-4.8.4-4.8s0-3.3-.4-4.8zM10 15.2V8.8l5.3 3.2z"/></svg>Event YT</a>
-<a href="https://discord.gg/nAbQtFaXAz" target="_blank" rel="noopener" style="--ic:#4ade80"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Live Monitor</a>
-<a class="dl" href="https://www.moddb.com/mods/full-invasion-2/downloads" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Mod Download</a>
-</nav>
+  <div class="brand">
+    <h1>Full Invasion <span>2</span></h1>
+    <p class="sub">Lifetime stats (starting from 22.10.2026) - Gondolin Osiris servers</p>
+  </div>
+  <nav class="links" aria-label="Links">
+    <div class="website-teaser" aria-label="Gondolin Website - Work in Progress">
+      <span class="website-label">Gondolin Website</span>
+      <span class="website-status">Work in Progress!</span>
+    </div>
+    <a href="https://discord.gg/TDrVMNd9Xj" target="_blank" rel="noopener" style="--ic:#8e97ff"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5493-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>Discord</a>
+    <a href="https://www.youtube.com/@Melodia_Patty" target="_blank" rel="noopener" style="--ic:#ff5a5f"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M21.6 7.2a2.5 2.5 0 00-1.8-1.8C18.3 5 12 5 12 5s-6.3 0-7.8.4A2.5 2.5 0 002.4 7.2C2 8.7 2 12 2 12s0 3.3.4 4.8a2.5 2.5 0 001.8 1.8C5.7 19 12 19 12 19s6.3 0 7.8-.4a2.5 2.5 0 001.8-1.8c.4-1.5.4-4.8.4-4.8s0-3.3-.4-4.8zM10 15.2V8.8l5.3 3.2z"/></svg>Dev YT</a>
+    <a href="https://www.youtube.com/@GondolinWarband" target="_blank" rel="noopener" style="--ic:#ff5a5f"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M21.6 7.2a2.5 2.5 0 00-1.8-1.8C18.3 5 12 5 12 5s-6.3 0-7.8.4A2.5 2.5 0 002.4 7.2C2 8.7 2 12 2 12s0 3.3.4 4.8a2.5 2.5 0 001.8 1.8C5.7 19 12 19 12 19s6.3 0 7.8-.4a2.5 2.5 0 001.8-1.8c.4-1.5.4-4.8.4-4.8s0-3.3-.4-4.8zM10 15.2V8.8l5.3 3.2z"/></svg>Event YT</a>
+    <a href="https://discord.gg/nAbQtFaXAz" target="_blank" rel="noopener" style="--ic:#4ade80"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Live Monitor</a>
+    <a class="dl" href="https://www.moddb.com/mods/full-invasion-2/downloads" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Mod Download</a>
+  </nav>
 </header>
 <main>
-<section class="toolbar" aria-label="Leaderboard controls">
-<div class="toolbar-top">
-<div class="bar-controls"><div class="tabs" id="tabs" role="tablist" aria-label="Statistics category"></div></div>
-<div class="search-wrap">
-<label class="search-label" for="search">Find a player</label>
-<div class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="search" type="search" placeholder="Search player names..." aria-label="Find a player"></div>
-</div>
-</div>
-<div class="filters">
-<label>View stats<select id="mode"><option value="all">All</option><option value="as">As Defenders</option><option value="vs">Against Invaders</option></select></label>
-<div class="faction-control">
-<label>Faction<select id="faction"></select></label>
-<span class="custom" id="custom"></span>
-</div>
-<div class="page-size-control">
-<label for="page-size">Players per page</label>
-<select id="page-size" aria-label="Players per page">
-<option value="10">10</option>
-<option value="20">20</option>
-<option value="50" selected>50</option>
-<option value="100">100</option>
-<option value="200">200</option>
-<option value="all">Unlimited</option>
-</select>
-</div>
-</div>
-</section>
-<div class="box"><table><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div>
-<div class="pager" id="pager" style="display:none"><button id="prev">Previous</button><span id="info"></span><button id="next">Next</button></div>
+  <section class="toolbar" aria-label="Leaderboard controls">
+    <div class="toolbar-top">
+      <div class="bar-controls"><div class="tabs" id="tabs" role="tablist" aria-label="Statistics category"></div></div>
+      <div class="search-wrap">
+        <label class="search-label" for="search">Find a player</label>
+        <div class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="search" type="search" placeholder="Search player names..." aria-label="Find a player"></div>
+      </div>
+    </div>
+    <div class="filters">
+      <label>View stats<select id="mode"><option value="all">All</option><option value="as">As Defenders</option><option value="vs">Against Invaders</option></select></label>
+      <div class="faction-control"><label>Faction<select id="faction"></select></label><span class="custom" id="custom"></span></div>
+      <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
+    </div>
+  </section>
+  <div class="table-meta"><span class="credit">By Melodia-Patty</span><span id="meta">Last update: -</span></div>
+  <div class="box"><table><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div>
+  <div class="pager" id="pager" style="display:none"><button id="prev" type="button">Previous</button><span id="info"></span><button id="next" type="button">Next</button></div>
 </main>
-<div id="tip"></div>
+<div id="tip" role="tooltip"></div>
 <script>
+'use strict';
 let pageSize = 50;
 const $ = id => document.getElementById(id);
-const fmt = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
-const esc = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const fmt = n => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plural = (n, one, many) => n === 1 ? one : many;
-const DEFENDER_FACTIONS = {22: 'Ancient', 23: 'Arcane', 24: 'Calradia', 25: 'Crusaders', 26: 'Sigmar', 27: 'LOTR', 28: 'Saracens', 99: 'Custom Defenders'};
-const INVADER_FACTIONS = {29: 'Ancient', 30: 'Blackmarch', 31: 'Calradia', 32: 'Chaos', 33: 'Crusaders', 34: 'Free Peoples', 35: 'Full Invasion', 36: 'Isengard', 37: 'Mordor', 38: 'Saracens', 99: 'Custom Invasions'};
+const DEFENDER_FACTIONS = {22:'Ancient',23:'Arcane',24:'Calradia',25:'Crusaders',26:'Sigmar',27:'LOTR',28:'Saracens',99:'Custom Defenders'};
+const INVADER_FACTIONS = {29:'Ancient',30:'Blackmarch',31:'Calradia',32:'Chaos',33:'Crusaders',34:'Free Peoples',35:'Full Invasion',36:'Isengard',37:'Mordor',38:'Saracens',99:'Custom Invasions'};
 const TABS = {
-  overview: {label: 'Overview', start: 'score', columns: [
-    ['score', 'Score', 'Points for every bot killed. Worth more with harder polls, game modes and during events. Extra points are also awarded for slaying bosses'],
-    ['kills', 'Kills', 'Enemy bots killed'],
-    ['deaths', 'Deaths', 'Times the player died.\n\nDoes not include traitor games, PvP, friendly fire, after-party deaths, or certain special events'],
-    ['points', 'Top Points', 'After each boss, the top 5 players by kills are displayed in chat and receive points.\n\nAt least 5 players must be online. If more than 20 ppl are online points are doubled. If more than 40 ppl are present points are tripled'],
-    ['waves', 'Waves', 'Total Waves cleared'],
-    ['wins', 'Wins', 'Games won - cleared dev waves'],
-    ['bosses', 'Bosses', 'Bosses slain by player. Credit goes to the one who dealt the most damage'],
-    ['finals', 'End bosses', 'End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
-    ['chests', 'Leg Chests', 'Legendary chests opened'],
-    ['recruits', 'Low Tier', 'Kills made while playing a recruit- or soldier-tier troop, including custom units']
+  overview:{label:'Overview',start:'score',columns:[
+    ['score','Score','Points for every bot killed. Worth more with harder polls, game modes and during events. Extra points are also awarded for slaying bosses'],
+    ['kills','Kills','Enemy bots killed'],
+    ['deaths','Deaths','Number of player death\n\nDoes not include traitor games, PvP, friendly fire, after-party deaths, or certain special events'],
+    ['points','Top Points','After each boss, the top 5 players by kills are displayed in chat and receive points.\n\nAt least 5 players must be online. If more than 20 ppl are online points are doubled. If more than 40 ppl are present points are tripled'],
+    ['waves','Waves','Total Waves cleared'],
+    ['wins','Wins','Games won - cleared dev waves'],
+    ['bosses','Bosses','Bosses slain by player. Credit goes to the one who dealt the most damage'],
+    ['finals','End bosses','End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
+    ['chests','Leg Chests','Legendary chests opened'],
+    ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
   ]},
-  weapons: {label: 'Weapons', start: 'kills', columns: [
-    ['kills', 'Kills', 'All enemy bots killed, whatever the weapon'],
-    ['w1h', 'One-handed', 'Kills with one-handed weapons'],
-    ['w2h', 'Two-handed', 'Kills with two-handed weapons'],
-    ['pole', 'Polearms', 'Kills with polearms'],
-    ['bow', 'Bows', 'Kills with bows'],
-    ['xbow', 'Crossbows', 'Kills with crossbows'],
-    ['throw', 'Throwing', 'Kills with throwing weapons'],
-    ['firearm', 'Firearms', 'Kills with pistols and muskets'],
-    ['magic', 'Magic', 'Kills made with wands or other arcane stuff'],
-    ['other', 'Other', 'Kills from all other sources, such as explosions, punches, or kicks']
+  weapons:{label:'Weapons',start:'kills',columns:[
+    ['kills','Kills','All enemy bots killed, whatever the weapon'],
+    ['w1h','One-handed','Kills with one-handed weapons'],
+    ['w2h','Two-handed','Kills with two-handed weapons'],
+    ['pole','Polearms','Kills with polearms'],
+    ['bow','Bows','Kills with bows'],
+    ['xbow','Crossbows','Kills with crossbows'],
+    ['throw','Throwing','Kills with throwing weapons'],
+    ['firearm','Firearms','Kills with pistols and muskets'],
+    ['magic','Magic','Kills made with wands or other arcane stuff'],
+    ['other','Other','Kills from all other sources, such as explosions, punches, or kicks']
   ]}
 };
-const ALL_KEYS = [...new Set(Object.values(TABS).flatMap(tab => tab.columns.map(column => column[0])))];
-let data = {players: []};
+const ALL_KEYS = [...new Set(Object.values(TABS).flatMap(definition => definition.columns.map(column => column[0])))];
+let data = {players:[]};
 let tab = 'overview';
 let sortKey = 'score';
 let ascending = false;
@@ -551,184 +239,181 @@ let query = '';
 const modeSelect = $('mode');
 const factionSelect = $('faction');
 const tip = $('tip');
-function factionList() {
+
+function factionList(){
   return modeSelect.value === 'as' ? DEFENDER_FACTIONS : INVADER_FACTIONS;
 }
-function fillFactions() {
+function fillFactions(){
   const mode = modeSelect.value;
   factionSelect.disabled = mode === 'all';
   let html = '<option value="all">All factions</option>';
-  if (mode !== 'all') {
-    for (const [id, name] of Object.entries(factionList())) html += '<option value="' + id + '">' + name + '</option>';
+  if(mode !== 'all'){
+    for(const [id,name] of Object.entries(factionList())) html += '<option value="' + id + '">' + esc(name) + '</option>';
   }
   factionSelect.innerHTML = html;
 }
-function selectedFactionIds() {
+function selectedFactionIds(){
   const list = factionList();
-  if (factionSelect.value === 'all') return Object.keys(list).map(Number);
+  if(factionSelect.value === 'all') return Object.keys(list).map(Number);
   return [Number(factionSelect.value)];
 }
-function customText() {
-  if (modeSelect.value === 'as' && factionSelect.value === '99') return 'Custom scenario like Jedi, Survivors or Gamblers';
-  if (modeSelect.value === 'vs' && factionSelect.value === '99') return 'Custom invasion like Zombies or Barbarians';
+function customText(){
+  if(modeSelect.value === 'as' && factionSelect.value === '99') return 'Custom scenario like Jedi, Survivors or Gamblers';
+  if(modeSelect.value === 'vs' && factionSelect.value === '99') return 'Custom invasion like Zombies or Barbarians';
   return '';
 }
-function buildRows() {
+function buildRows(){
   const mode = modeSelect.value;
-  if (mode === 'all') {
+  if(mode === 'all'){
     return data.players.map(player => {
-      const row = {name: player.name};
-      ALL_KEYS.forEach(key => row[key] = player[key] || 0);
+      const row = {name:String(player.name ?? '')};
+      ALL_KEYS.forEach(key => row[key] = Number(player[key]) || 0);
       return row;
     });
   }
   const factionIds = selectedFactionIds();
   const rows = [];
-  for (const player of data.players) {
+  for(const player of data.players){
     const byFaction = (player.fac && player.fac[mode]) || {};
-    const row = {name: player.name};
-    for (const key of ALL_KEYS) row[key] = factionIds.reduce((total, id) => total + ((byFaction[id] && byFaction[id][key]) || 0), 0);
-    if (ALL_KEYS.some(key => row[key] > 0)) rows.push(row);
+    const row = {name:String(player.name ?? '')};
+    for(const key of ALL_KEYS){
+      row[key] = factionIds.reduce((total,id) => total + (Number(byFaction[id] && byFaction[id][key]) || 0),0);
+    }
+    if(ALL_KEYS.some(key => row[key] > 0)) rows.push(row);
   }
   return rows;
 }
-function compare(a, b) {
-  if (sortKey === 'name') return b.name.localeCompare(a.name, undefined, {sensitivity: 'base'});
-  let difference = b[sortKey] - a[sortKey];
-  if (!difference) difference = b.score - a.score;
-  if (!difference) difference = b.kills - a.kills;
-  if (!difference) difference = a.deaths - b.deaths;
-  return difference || a.name.localeCompare(b.name, undefined, {sensitivity: 'base'});
-}
-function renderTotals(rows, columns) {
-  if (!rows.length) {
-    $('foot').innerHTML = '';
-    return;
+function compare(a,b){
+  let difference;
+  if(sortKey === 'name'){
+    difference = a.name.localeCompare(b.name,undefined,{sensitivity:'base'});
+  }else{
+    difference = (Number(a[sortKey]) || 0) - (Number(b[sortKey]) || 0);
   }
-  const sums = key => rows.reduce((total, row) => total + (Number(row[key]) || 0), 0);
-  $('foot').innerHTML = '<tr><td></td><td>In total · ' + fmt(rows.length) + ' ' + plural(rows.length, 'player', 'players') + '</td>' +
+  if(difference) return ascending ? difference : -difference;
+
+  // Keep ties stable and useful regardless of the selected sort direction.
+  if(sortKey !== 'score'){
+    difference = (Number(b.score) || 0) - (Number(a.score) || 0);
+    if(difference) return difference;
+  }
+  if(sortKey !== 'kills'){
+    difference = (Number(b.kills) || 0) - (Number(a.kills) || 0);
+    if(difference) return difference;
+  }
+  if(sortKey !== 'deaths'){
+    difference = (Number(a.deaths) || 0) - (Number(b.deaths) || 0);
+    if(difference) return difference;
+  }
+  return a.name.localeCompare(b.name,undefined,{sensitivity:'base'});
+}
+function renderTotals(rows,columns){
+  if(!rows.length){$('foot').innerHTML='';return;}
+  const sums = key => rows.reduce((total,row) => total + (Number(row[key]) || 0),0);
+  $('foot').innerHTML = '<tr><td></td><td>In total · ' + fmt(rows.length) + ' ' + plural(rows.length,'player','players') + '</td>' +
     columns.map(([key]) => '<td class="total-value col-' + key + (key === sortKey ? ' s' : '') + '">' + fmt(sums(key)) + '</td>').join('') + '</tr>';
 }
-function render() {
+function render(){
   const definition = TABS[tab];
   const columns = definition.columns;
-  if (sortKey !== 'name' && !columns.some(column => column[0] === sortKey)) {
+  if(sortKey !== 'name' && !columns.some(column => column[0] === sortKey)){
     sortKey = definition.start;
     ascending = false;
   }
   const rows = buildRows();
   rows.sort(compare);
   $('custom').textContent = customText();
-  const search = query.trim().toLowerCase();
-  const ordered = ascending ? rows.slice().reverse() : rows;
-  ordered.forEach((row, index) => row.rank = index + 1);
-  const shown = ordered.filter(row => !search || row.name.toLowerCase().includes(search));
-  const effectivePageSize = pageSize === 'all' ? Math.max(shown.length, 1) : Number(pageSize);
-  const pages = Math.max(1, Math.ceil(shown.length / effectivePageSize));
-  page = Math.min(page, pages - 1);
-  const visible = shown.slice(page * effectivePageSize, page * effectivePageSize + effectivePageSize);
-  renderTotals(shown, columns);
-  $('head').innerHTML = '<tr><th>#</th><th tabindex="0" data-key="name" class="player-sort ' + (sortKey === 'name' ? (ascending ? 'on asc' : 'on') : '') + '"><span>Player</span></th>' + columns.map(([key, label, description]) => '<th tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + label + '</span></th>').join('') + '</tr>';
-  if (visible.length) {
-    $('body').innerHTML = visible.map(row => '<tr class="' + (row.rank <= 3 ? 'r' + row.rank : '') + '"><td>' + row.rank + '</td><td title="' + esc(row.name) + '">' + esc(row.name) + '</td>' + columns.map(([key]) => '<td class="col-' + key + ' ' + (key === sortKey ? 's ' : '') + (row[key] === 0 ? 'z' : '') + '">' + fmt(row[key]) + '</td>').join('') + '</tr>').join('');
-  } else if (rows.length) {
-    $('body').innerHTML = '<tr><td class="empty" colspan="' + (columns.length + 2) + '">No players found</td></tr>';
-  } else {
-    $('body').innerHTML = '';
+  const search = query.trim().toLocaleLowerCase();
+  rows.forEach((row,index) => row.rank = index + 1);
+  const shown = rows.filter(row => !search || row.name.toLocaleLowerCase().includes(search));
+  const effectivePageSize = pageSize === 'all' ? Math.max(shown.length,1) : Number(pageSize);
+  const pages = Math.max(1,Math.ceil(shown.length / effectivePageSize));
+  page = Math.min(page,pages - 1);
+  const visible = shown.slice(page * effectivePageSize,page * effectivePageSize + effectivePageSize);
+
+  renderTotals(shown,columns);
+  $('head').innerHTML = '<tr><th scope="col">#</th><th scope="col" tabindex="0" data-key="name" class="player-sort ' + (sortKey === 'name' ? (ascending ? 'on asc' : 'on') : '') + '"><span>Player</span></th>' +
+    columns.map(([key,label,description]) => '<th scope="col" tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + esc(label) + '</span></th>').join('') + '</tr>';
+
+  if(visible.length){
+    $('body').innerHTML = visible.map(row => '<tr class="' + (row.rank <= 3 ? 'r' + row.rank : '') + '"><td>' + row.rank + '</td><td title="' + esc(row.name) + '">' + esc(row.name) + '</td>' +
+      columns.map(([key]) => '<td class="col-' + key + ' ' + (key === sortKey ? 's ' : '') + ((Number(row[key]) || 0) === 0 ? 'z' : '') + '">' + fmt(row[key]) + '</td>').join('') + '</tr>').join('');
+  }else{
+    const message = rows.length ? 'No players found' : 'No stats available for this selection';
+    $('body').innerHTML = '<tr><td class="empty" colspan="' + (columns.length + 2) + '">' + message + '</td></tr>';
   }
+
   $('pager').style.display = pages > 1 ? '' : 'none';
-  $('info').textContent = 'Page ' + (page + 1) + ' of ' + pages + ' (' + shown.length + ' ' + plural(shown.length, 'player', 'players') + ')';
+  $('info').textContent = 'Page ' + (page + 1) + ' of ' + pages + ' (' + shown.length + ' ' + plural(shown.length,'player','players') + ')';
   $('prev').disabled = page === 0;
   $('next').disabled = page >= pages - 1;
 }
-function renderTabs() {
-  $('tabs').innerHTML = Object.entries(TABS).map(([key, definition]) => '<button type="button" role="tab" aria-selected="' + (key === tab ? 'true' : 'false') + '" data-tab="' + key + '" class="' + (key === tab ? 'on' : '') + '">' + definition.label + '</button>').join('');
+function renderTabs(){
+  $('tabs').innerHTML = Object.entries(TABS).map(([key,definition]) => '<button type="button" role="tab" aria-selected="' + (key === tab ? 'true' : 'false') + '" data-tab="' + key + '" class="' + (key === tab ? 'on' : '') + '">' + esc(definition.label) + '</button>').join('');
 }
-function sortBy(key) {
-  ascending = key === sortKey ? !ascending : key === 'name';
-  sortKey = key;
+function sortBy(key){
+  if(key === sortKey) ascending = !ascending;
+  else{
+    sortKey = key;
+    ascending = key === 'name';
+  }
   page = 0;
   render();
 }
-function showTip(header) {
+function showTip(header){
+  if(!header || !header.dataset.tip) return hideTip();
   tip.textContent = header.dataset.tip;
   const box = header.getBoundingClientRect();
-  const left = Math.min(Math.max(8, box.left + box.width / 2 - tip.offsetWidth / 2), innerWidth - tip.offsetWidth - 8);
+  const left = Math.min(Math.max(8,box.left + box.width / 2 - tip.offsetWidth / 2),innerWidth - tip.offsetWidth - 8);
   tip.style.left = left + 'px';
   tip.style.top = (box.bottom + 8) + 'px';
-  tip.style.opacity = 1;
+  tip.style.opacity = '1';
 }
-function hideTip() {
-  tip.style.opacity = 0;
-}
-$('tabs').onclick = event => {
-  const key = event.target.dataset.tab;
-  if (!key) return;
-  tab = key;
+function hideTip(){tip.style.opacity='0';}
+
+$('tabs').addEventListener('click',event => {
+  const button = event.target.closest('button[data-tab]');
+  if(!button) return;
+  tab = button.dataset.tab;
   sortKey = TABS[tab].start;
   ascending = false;
   page = 0;
   renderTabs();
   render();
-};
-$('head').onclick = event => {
+});
+$('head').addEventListener('click',event => {
   const header = event.target.closest('th[data-key]');
-  if (header) sortBy(header.dataset.key);
-};
-$('head').onkeydown = event => {
+  if(header) sortBy(header.dataset.key);
+});
+$('head').addEventListener('keydown',event => {
   const header = event.target.closest('th[data-key]');
-  if (header && (event.key === 'Enter' || event.key === ' ')) {
+  if(header && (event.key === 'Enter' || event.key === ' ')){
     event.preventDefault();
     const key = header.dataset.key;
     sortBy(key);
     const again = $('head').querySelector('th[data-key="' + key + '"]');
-    if (again) again.focus();
+    if(again) again.focus();
   }
-};
-modeSelect.onchange = () => {
-  fillFactions();
-  page = 0;
-  render();
-};
-factionSelect.onchange = () => {
-  page = 0;
-  render();
-};
-$('search').oninput = event => {
-  query = event.target.value;
-  page = 0;
-  render();
-};
-$('page-size').onchange = event => {
-  pageSize = event.target.value === 'all' ? 'all' : Number(event.target.value);
-  page = 0;
-  render();
-};
-$('prev').onclick = () => {
-  page--;
-  render();
-};
-$('next').onclick = () => {
-  page++;
-  render();
-};
-document.addEventListener('mouseover', event => {
-  const header = event.target.closest('th[data-tip]');
-  if (header) showTip(header);
-  else hideTip();
 });
-document.addEventListener('focusin', event => {
-  const header = event.target.closest && event.target.closest('th[data-tip]');
-  if (header) showTip(header);
-  else hideTip();
-});
-document.addEventListener('scroll', hideTip, true);
-document.documentElement.addEventListener('mouseleave', hideTip);
-const stamp = milliseconds => new Date(milliseconds).toLocaleString('en-GB', {day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'});
+modeSelect.addEventListener('change',() => {fillFactions();page=0;render();});
+factionSelect.addEventListener('change',() => {page=0;render();});
+$('search').addEventListener('input',event => {query=event.target.value;page=0;render();});
+$('page-size').addEventListener('change',event => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();});
+$('prev').addEventListener('click',() => {page--;render();});
+$('next').addEventListener('click',() => {page++;render();});
+document.addEventListener('mouseover',event => {const header=event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
+document.addEventListener('focusin',event => {const header=event.target.closest && event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
+document.addEventListener('scroll',hideTip,true);
+document.documentElement.addEventListener('mouseleave',hideTip);
+const stamp = milliseconds => new Date(milliseconds).toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
 fillFactions();
 renderTabs();
-fetch('stats.json?' + Date.now()).then(response => response.json()).then(loaded => {
-  data = {players: loaded.players || []};
+fetch('stats.json?' + Date.now(),{cache:'no-store'}).then(response => {
+  if(!response.ok) throw new Error('Could not load stats.json');
+  return response.json();
+}).then(loaded => {
+  if(!loaded || !Array.isArray(loaded.players)) throw new Error('Invalid stats.json format');
+  data = {players:loaded.players};
   $('meta').textContent = loaded.updated ? 'Last update: ' + stamp(loaded.updated) : 'Last update: -';
   render();
 }).catch(() => {
