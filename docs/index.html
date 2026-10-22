@@ -122,14 +122,34 @@ select:hover:not(:disabled),.pager button:hover:not(:disabled),input:hover{borde
 .table-meta .credit{color:#c2c7b7;font-weight:700;white-space:nowrap}
 .table-meta #meta{color:#7f8978;white-space:nowrap}
 .table-meta #meta::before{content:"";display:inline-block;width:4px;height:4px;margin:0 8px 2px 0;border-radius:50%;background:var(--accent);opacity:.8}
-/* Match the right-hand gutter to the normal background of the final stat header (Other / Low Tier), so the rounded top-right corner does not appear black. */
-.box{background:#121712;border:1px solid #292f27;border-radius:12px;overflow:auto;padding-right:8px;box-shadow:0 18px 45px rgba(0,0,0,.17);scrollbar-color:#444a3a #101410}
-.box.edge-active{background:#121712}
-table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
+
+/* Poprawka zewnętrznego kontenera tabeli dla spójnych zaokrąglonych rogów */
+.box{
+  background:#22271c;
+  border:1px solid #292f27;
+  border-radius:12px;
+  overflow:auto;
+  box-shadow:0 18px 45px rgba(0,0,0,.17);
+  scrollbar-color:#444a3a #101410;
+}
+table{width:100%;min-width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
 th,td{padding:12px 15px;text-align:center;white-space:nowrap;border-bottom:1px solid rgba(75,83,68,.52)}
 tbody tr:last-child td{border-bottom:0}
 td{color:var(--cell);font-size:14px}
-th{position:sticky;top:0;z-index:3;background:#181d17;color:#9fa894;font-weight:700;font-size:11px;letter-spacing:.065em;text-transform:uppercase;cursor:pointer;user-select:none}
+
+th{
+  position:sticky;
+  top:0;
+  z-index:3;
+  background:#181d17;
+  color:#9fa894;
+  font-weight:700;
+  font-size:11px;
+  letter-spacing:.065em;
+  text-transform:uppercase;
+  cursor:pointer;
+  user-select:none;
+}
 th span{border-bottom:1px dotted rgba(155,163,145,.42)}
 th:hover{color:#f0f0e7}
 th[data-key]:not(.on):hover{color:#fff4d2;background:#20241b;box-shadow:inset 0 0 0 1px rgba(216,185,111,.38)}
@@ -144,27 +164,31 @@ th.on span{border-bottom:none}
 th.on:hover{box-shadow:inset 1px 0 rgba(240,213,142,.9),inset -1px 0 rgba(240,213,142,.9),inset 0 1px rgba(240,213,142,.82),inset 0 -1px rgba(240,213,142,.62)}
 th.on::after{content:" \25BC";font-size:9px;opacity:.9;color:var(--accent-bright)}
 th.on.asc::after{content:" \25B2"}
-td:nth-child(n+4):nth-child(even){background:rgba(255,255,255,.014)}
-th:nth-child(n+4):nth-child(even){background:#121712}
-th:nth-child(1),td:nth-child(1){position:sticky;left:0;z-index:2;width:42px;min-width:42px;color:#84907c;background:#101310}
+
+/* Pozycjonowanie i style dla przypiętych kolumn (Rank / Player) */
+th:nth-child(1),td:nth-child(1){position:sticky;left:0;z-index:2;width:42px;min-width:42px;color:#84907c}
 th:nth-child(2),td:nth-child(2){position:sticky;left:42px;z-index:2;width:205px;min-width:205px;max-width:205px;text-align:left;overflow:hidden;text-overflow:ellipsis;box-shadow:1px 0 0 rgba(216,185,111,.13)}
-th:nth-child(-n+2){background:#181d17;cursor:default}
+th:nth-child(-n+2){background:#24281d;cursor:default}
 th:nth-child(-n+2):hover{color:#9fa894}
-td:nth-child(1){font-family:var(--display);font-size:15px}
+td:nth-child(1){font-family:var(--display);font-size:15px;background:#151c13}
 td:nth-child(2){background:linear-gradient(110deg,#1f291f 0%,#172019 100%);color:#f1f0e5;font-weight:600;border-right:1px solid rgba(216,185,111,.14)}
 td.s{color:var(--accent-bright);font-weight:700}
- .box tbody tr td.s{
-  background:rgba(216,185,111,.075);
-  border-left:0;
-  border-right:0;
-  box-shadow:inset 1px 0 rgba(216,185,111,.68),inset -1px 0 rgba(216,185,111,.68);
-}
-/* Keep the selected column edges inside cells, including the final column. */
-.box table{margin-right:0}
-.box thead th.on{border-left:0;border-right:0;box-shadow:inset 1px 0 rgba(216,185,111,.8),inset -1px 0 rgba(216,185,111,.8),inset 0 1px rgba(216,185,111,.8),inset 0 -1px rgba(216,185,111,.58)}
 td.z{color:#626a5e;font-weight:400}
-.box tbody tr td.s.z{color:rgba(240,213,142,.43)}
-tbody tr{transition:background .12s; position:relative}
+
+tbody tr{transition:background .12s}
+
+/* Naprawa zaznaczania wiersza przy najechaniu (hover) bez użycia uszkadzających pseudo-elementów */
+.box tbody tr:hover td {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06));
+  color: #ffffff;
+}
+.box tbody tr:hover td:nth-child(1) {
+  background-color: #202a1c !important;
+}
+.box tbody tr:hover td:nth-child(2) {
+  background: linear-gradient(110deg,#344633 0%,#263428 55%,#1b251c 100%) !important;
+  color: #fff9e8;
+}
 
 .r1 td:nth-child(1){color:#f0d58e;font-weight:700}
 .r2 td:nth-child(1){color:#d9ded1;font-weight:700}
@@ -175,194 +199,73 @@ tfoot td:nth-child(1){position:sticky;left:0;z-index:2;min-width:42px;width:42px
 tfoot td:nth-child(2){position:sticky;left:42px;z-index:2;text-align:left;width:205px;min-width:205px;max-width:205px;overflow:hidden;text-overflow:ellipsis;background:#1a241b;color:#f0d58e;box-shadow:1px 0 0 rgba(216,185,111,.22)}
 tfoot td.total-value{color:#f0d58e;font-variant-numeric:tabular-nums}
 tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-right:0;border-bottom:0;box-shadow:inset 1px 0 rgba(216,185,111,.78),inset -1px 0 rgba(216,185,111,.78),inset 0 -1px rgba(216,185,111,.78)}
-/* Keep the name and rank easy to scan; all stat columns share a consistent base width. */
+
+/* Szerokości kolumn */
 .box thead th[data-key],.box tbody td:nth-child(n+3),.box tfoot td.total-value{width:96px;min-width:96px}
-/* Score, total kills and deaths get a little more room; other stats share a tighter baseline. */
 .box .col-score,.box .col-kills,.box .col-deaths{width:112px;min-width:112px}
 
-/* Distinct, restrained surfaces for the two sticky identity columns. */
+/* Zaokrąglenia i płynne pasowanie lewego oraz prawego górnego rogu nagłówka tabeli */
+.box thead th:first-child {
+  border-top-left-radius: 11px;
+}
+.box thead th:last-child {
+  border-top-right-radius: 11px;
+}
+
 .box thead th:nth-child(1){background:linear-gradient(180deg,#20271b,#171d15);color:#b4c09f}
 .box tbody td:nth-child(1){background:linear-gradient(180deg,#151c13,#101610);color:#aeb99a;border-right:1px solid rgba(126,145,102,.19)}
 .box thead th:nth-child(2){background:linear-gradient(110deg,#202c21,#192119);color:#d7e0cc;border-right:1px solid rgba(126,145,102,.24)}
 .box tbody td:nth-child(2){background:linear-gradient(110deg,#29382a 0%,#1b271d 100%);color:#fff5d7;border-right:1px solid rgba(216,185,111,.2)}
-.box tfoot td:nth-child(1){background:linear-gradient(180deg,#20251a,#181d14);color:#d8bd77}
-.box tfoot td:nth-child(2){background:linear-gradient(110deg,#253326 0%,#1a241b 100%);color:#f0d58e}
 
-.box tbody tr.r1 td:nth-child(1){color:#f0d58e;font-weight:700}
-.box tbody tr.r2 td:nth-child(1){color:#d9ded1;font-weight:700}
-.box tbody tr.r3 td:nth-child(1){color:#cba17c;font-weight:700}
-/* Preserve the active-column rectangle with a safe inset from the rounded table edge. */
-.box thead th.on{box-shadow:inset 1px 0 rgba(216,185,111,.8),inset -1px 0 rgba(216,185,111,.8),inset 0 1px rgba(216,185,111,.8),inset 0 -1px rgba(216,185,111,.58)}
-.box tbody tr td.s{box-shadow:inset 1px 0 rgba(216,185,111,.74),inset -1px 0 rgba(216,185,111,.74)}
-.box tfoot td.total-value.s{box-shadow:inset 1px 0 rgba(216,185,111,.8),inset -1px 0 rgba(216,185,111,.8),inset 0 -1px rgba(216,185,111,.8)}
 .pager{display:flex;gap:14px;justify-content:center;align-items:center;margin-top:17px;color:var(--dim);font-size:13px}
 .pager button{min-width:94px;cursor:pointer;background:#121712}
 .pager button:disabled{opacity:.35;cursor:default}
 #info{min-width:190px;text-align:center;font-variant-numeric:tabular-nums}
 #tip{position:fixed;z-index:9;left:0;top:0;width:max-content;max-width:310px;padding:9px 11px;background:rgba(21,27,21,.98);border:1px solid rgba(216,185,111,.18);border-radius:8px;color:rgba(240,240,231,.66);font-size:12px;line-height:1.5;white-space:pre-line;text-align:left;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 8px 24px rgba(0,0,0,.42)}
-/* Page-size selector stays aligned with the filters and is pushed to the far right. */
+
 .page-size-control{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin-left:auto;white-space:nowrap}
 .page-size-control label{color:#aab19f;font-size:13px;font-weight:600}
 .page-size-control select{min-width:88px;background-color:#101510;border-color:#30382c}
-.page-size-control select:hover,.page-size-control select:focus{border-color:rgba(216,185,111,.58)}
 
-/* Keep every stat heading visually consistent, with a clear separator above the player rows. */
-.box thead th[data-key]{background:#191e18;color:#9fa894;border-bottom:1px solid rgba(155,163,145,.2)}
-.box thead th[data-key]:nth-child(n){background:#191e18}
-.box thead th[data-key]:hover{background:#20251d;color:#fff4d2}
-.box thead th[data-key].on{background:linear-gradient(180deg,rgba(216,185,111,.055),rgba(216,185,111,.022)) !important;color:var(--accent-bright);box-shadow:inset 1px 0 rgba(216,185,111,.29),inset -1px 0 rgba(216,185,111,.29),inset 0 1px rgba(216,185,111,.32),inset 0 -1px rgba(216,185,111,.22)}
-.box thead th[data-key].on:hover{box-shadow:inset 1px 0 rgba(240,213,142,.48),inset -1px 0 rgba(240,213,142,.48),inset 0 1px rgba(240,213,142,.48),inset 0 -1px rgba(240,213,142,.34)}
-.box tbody tr td.s{background:rgba(216,185,111,.025);box-shadow:inset 1px 0 rgba(216,185,111,.26),inset -1px 0 rgba(216,185,111,.26)}
-.box tfoot td{background:#151a14;border-top:1px solid rgba(155,163,145,.22);color:#c8cbc0}
-.box tfoot td:nth-child(1){background:linear-gradient(180deg,#151c13,#101610);color:#aeb99a}
-.box tfoot td:nth-child(2){background:linear-gradient(110deg,#29382a 0%,#1b271d 100%);color:#e2e5d8;box-shadow:1px 0 0 rgba(126,145,102,.2)}
-.box tfoot td.total-value{color:#d0d2c5}
-.box tfoot td.total-value.s{background:rgba(216,185,111,.025);box-shadow:inset 1px 0 rgba(216,185,111,.28),inset -1px 0 rgba(216,185,111,.28),inset 0 -1px rgba(216,185,111,.22)}
-.box tfoot td:nth-child(2){border-right:1px solid rgba(126,145,102,.2)}
-/* A gently deeper, more noticeable gradient separates names from numerical values. */
-.box thead th:nth-child(2){background:linear-gradient(110deg,#263528 0%,#1a241b 100%);color:#d7e0cc}
-.box tbody td:nth-child(2){background:linear-gradient(110deg,#2b3b2d 0%,#1d2a1f 52%,#172119 100%);color:#fff5d7}
-.box tfoot td:nth-child(2){background:linear-gradient(110deg,#29392b 0%,#1d2a1f 55%,#172119 100%)}
-
-
-/* Latest table refinements: compact stat columns, restrained selection, and consistent totals. */
-.box thead th[data-key],
-.box tbody td:nth-child(n+3),
-.box tfoot td.total-value {
-  width: 90px;
-  min-width: 90px;
-}
-.box thead th[data-key].col-score,
-.box tbody td.col-score,
-.box tfoot td.total-value.col-score {
-  width: 130px;
-  min-width: 130px;
-}
-.box thead th[data-key].col-kills,
-.box tbody td.col-kills,
-.box tfoot td.total-value.col-kills,
-.box thead th[data-key].col-deaths,
-.box tbody td.col-deaths,
-.box tfoot td.total-value.col-deaths {
-  width: 112px;
-  min-width: 112px;
-}
-
-/* Keep the stat headings close to the table palette and separate them clearly from player rows. */
+/* Nagłówki statystyk w tabeli */
 .box thead th[data-key],
 .box thead th[data-key]:nth-child(n) {
-  background: #171c16;
-  border-bottom: 2px solid rgba(126,145,102,.31);
-}
-.box thead th[data-key]:hover {
-  background: #1d241b;
-  border-bottom-color: rgba(216,185,111,.28);
-}
-.box thead th[data-key].on,
-.box thead th[data-key].on:hover {
-  background: linear-gradient(180deg,rgba(216,185,111,.045),rgba(216,185,111,.018)) !important;
-  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22), inset 0 1px rgba(216,185,111,.25), inset 0 -1px rgba(216,185,111,.18);
-}
-
-/* The selected column remains visible, but its gold tint is intentionally very subtle. */
-.box tbody tr td.s {
-  background: rgba(216,185,111,.018);
-  box-shadow: inset 1px 0 rgba(216,185,111,.19), inset -1px 0 rgba(216,185,111,.19);
-}
-.box tfoot td {
-  background: #121712;
-  border-top: 2px solid rgba(126,145,102,.27);
-  border-bottom: 0;
-  color: var(--cell);
-  font-weight: 600;
-}
-.box tfoot td:nth-child(1) {
-  background: linear-gradient(180deg,#151c13,#101610);
-  border-top: 2px solid rgba(126,145,102,.27);
-  color: #aeb99a;
-}
-.box tfoot td:nth-child(2) {
-  background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
-  border-top: 2px solid rgba(126,145,102,.27);
-  color: #e2e5d8;
-}
-.box tfoot td.total-value {
-  background: #121712;
-  color: var(--cell);
-}
-.box tfoot td.total-value:nth-child(n+4):nth-child(even) {
-  background: rgba(255,255,255,.014);
-}
-.box tfoot td.total-value.s {
-  background: rgba(216,185,111,.018);
-  color: var(--accent-bright);
-  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22), inset 0 -1px rgba(216,185,111,.18);
-}
-
-/* Slightly richer, darker gradient for the fixed player-name column. */
-.box thead th:nth-child(2) {
-  background: linear-gradient(110deg,#263528 0%,#1b261c 55%,#151c16 100%);
-}
-.box tbody td:nth-child(2) {
-  background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
-}
-.box tfoot td:nth-child(2) {
-  background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
-}
-
-
-/* Final table polish: a distinct header/footer, consistent row hover, and a non-invasive sorted-column outline. */
-.box { background:#121712; }
-.box.edge-active { background:#121712; }
-.box thead th[data-key],
-.box thead th[data-key]:nth-child(n) {
-  background:linear-gradient(180deg,#282c20 0%,#22271c 100%);
-  color:#b7bea9;
-  border-bottom:2px solid rgba(216,185,111,.24);
+  background: linear-gradient(180deg,#282c20 0%,#22271c 100%);
+  color: #b7bea9;
+  border-bottom: 2px solid rgba(216,185,111,.24);
 }
 .box thead th[data-key]:hover,
 .box thead th.player-sort:hover {
-  background:linear-gradient(180deg,#303426 0%,#282d20 100%);
-  color:#fff4d2;
-  box-shadow:inset 0 0 0 1px rgba(216,185,111,.34);
+  background: linear-gradient(180deg,#303426 0%,#282d20 100%);
+  color: #fff4d2;
+  box-shadow: inset 0 0 0 1px rgba(216,185,111,.34);
 }
 .box thead th[data-key].on,
 .box thead th[data-key].on:hover {
-  background:linear-gradient(180deg,#282c20 0%,#22271c 100%) !important;
-  color:var(--accent-bright);
-  box-shadow:inset 1px 0 rgba(216,185,111,.28),inset -1px 0 rgba(216,185,111,.28),inset 0 1px rgba(216,185,111,.30),inset 0 -1px rgba(216,185,111,.21);
-}
-.box thead th.player-sort { cursor:pointer; }
-.box thead th.player-sort.on span { border-bottom:none; }
-.box thead th.player-sort.on::after { content:" \25BC";font-size:9px;opacity:.9;color:var(--accent-bright); }
-.box thead th.player-sort.on.asc::after { content:" \25B2"; }
-
-/* Keep the existing alternating column shades when sorting. Only add very faint gold edges. */
-.box tbody tr td.s {
-  background-color:transparent;
-  box-shadow:inset 1px 0 rgba(216,185,111,.22),inset -1px 0 rgba(216,185,111,.22);
-}
-.box tbody tr td.s:nth-child(n+4):nth-child(even) {
-  background-color:rgba(255,255,255,.014);
+  background: linear-gradient(180deg,#282c20 0%,#22271c 100%) !important;
+  color: var(--accent-bright);
+  box-shadow: inset 1px 0 rgba(216,185,111,.28),inset -1px 0 rgba(216,185,111,.28),inset 0 1px rgba(216,185,111,.30),inset 0 -1px rgba(216,185,111,.21);
 }
 
-/* Subtelne rozjaśnianie wiersza na hover - zachowuje unikalne odcienie i różnice kolorów każdej z kolumn */
-.box tbody tr:hover td {
-  position: relative;
-  color: #ffffff;
+/* Naprzemienne odcienie kolumn */
+.box tbody tr:not(:hover) td:nth-child(n+3):nth-child(odd):not(.s) {
+  background-color: rgba(255,255,255,.012);
 }
-.box tbody tr:hover td::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: rgba(255, 255, 255, 0.05);
-  pointer-events: none;
+.box tbody tr:not(:hover) td:nth-child(n+3):nth-child(even):not(.s) {
+  background-color: rgba(0,0,0,.05);
 }
-.box tbody tr:hover td:nth-child(2) {
-  color: #fff9e8;
+.box tbody tr:not(:hover) td.s:nth-child(n+3):nth-child(odd) {
+  background-color: rgba(255,255,255,.012);
+  background-image: linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));
+  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22);
+}
+.box tbody tr:not(:hover) td.s:nth-child(n+3):nth-child(even) {
+  background-color: rgba(0,0,0,.05);
+  background-image: linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));
+  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22);
 }
 
-/* A clearly readable total row, visually separate from the player records. */
+/* Wiersz z podsumowaniem w stopce */
 .box tfoot td,
 .box tfoot td.total-value,
 .box tfoot td.total-value:nth-child(n+4):nth-child(even) {
@@ -375,21 +278,20 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 .box tfoot td:nth-child(1) {
   background:linear-gradient(180deg,#292f21,#22271c) !important;
   color:#d5d9bf;
+  border-bottom-left-radius: 11px;
 }
 .box tfoot td:nth-child(2) {
   background:linear-gradient(110deg,#333b27 0%,#2a3222 55%,#242a1e 100%) !important;
   color:#f1e5b9;
 }
-.box tfoot td.total-value.s {
-  background:#282c20 !important;
-  color:#f0d58e;
-  box-shadow:inset 1px 0 rgba(216,185,111,.3),inset -1px 0 rgba(216,185,111,.3),inset 0 -1px rgba(216,185,111,.22);
+.box tfoot td:last-child {
+  border-bottom-right-radius: 11px;
 }
 
 @media(max-width:1050px){
   header{align-items:flex-start;flex-direction:column;gap:21px}
   .links{justify-content:flex-start;max-width:100%}
- .website-teaser{min-height:48px}
+  .website-teaser{min-height:48px}
   .toolbar-top{align-items:stretch;flex-direction:column}
   .search-wrap{flex-basis:auto;width:100%;max-width:none;min-width:0}
 }
@@ -402,7 +304,7 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
   .links{gap:6px}
   .links a{min-height:35px;padding:7px 9px;font-size:11px}
   .links svg{width:14px;height:14px}
- .website-teaser{min-width:160px;margin:0 14px 4px 0;padding:7px 12px}
+  .website-teaser{min-width:160px;margin:0 14px 4px 0;padding:7px 12px}
   .website-label{font-size:18px}
   main{padding-top:18px}
   .toolbar{padding:12px;border-radius:11px}
@@ -430,26 +332,6 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
   .table-meta #meta::before{margin-left:0}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
-
-/* Delikatniejsze naprzemienne kolumny statystyk (zmniejszony kontrast) */
-.box tbody tr:not(:hover) td:nth-child(n+3):nth-child(odd):not(.s) {
-  background-color: rgba(255,255,255,.012);
-}
-.box tbody tr:not(:hover) td:nth-child(n+3):nth-child(even):not(.s) {
-  background-color: rgba(0,0,0,.05);
-}
-/* Zachowanie subtelnych pasków przy sortowaniu kolumn */
-.box tbody tr:not(:hover) td.s:nth-child(n+3):nth-child(odd) {
-  background-color: rgba(255,255,255,.012);
-  background-image: linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));
-  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22);
-}
-.box tbody tr:not(:hover) td.s:nth-child(n+3):nth-child(even) {
-  background-color: rgba(0,0,0,.05);
-  background-image: linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));
-  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22);
-}
-
 </style>
 </head>
 <body>
@@ -516,7 +398,7 @@ const TABS = {
     ['score', 'Score', 'Points for every bot killed. Worth more with harder polls, game modes and during events. Extra points are also awarded for slaying bosses'],
     ['kills', 'Kills', 'Enemy bots killed'],
     ['deaths', 'Deaths', 'Times the player died.\n\nDoes not include traitor games, PvP, friendly fire, after-party deaths, or certain special events'],
-    ['points', 'Top Points', 'After each boss, the top 5 players by kills are displayed in chat and receive points.\n\nAt least 5 players must be online for this stat to increase. If more than 20 players are online points are doubled. If more than 40 players are online points are tripled.'],
+    ['points', 'Top Points', 'After each boss, the top 5 players by kills are displayed in chat and receive points.\n\nAt least 5 players must be online. If more than 20 ppl are online points are doubled. If more than 40 ppl are present points are tripled'],
     ['waves', 'Waves', 'Total Waves cleared'],
     ['wins', 'Wins', 'Games won - cleared dev waves'],
     ['bosses', 'Bosses', 'Bosses slain by player. Credit goes to the one who dealt the most damage'],
