@@ -25,7 +25,7 @@
   --accent-bright:#f0d58e;
   --accent-soft:rgba(216,185,111,.13);
   --accent-line:rgba(216,185,111,.38);
-  --red:#e5484d;
+  --red:#ef303d;
   --tint:rgba(255,255,255,.018);
   --display:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
 }
@@ -449,6 +449,26 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
   background-color: rgba(255,255,255,.012);
 }
 
+
+/* Clearer alternating stat columns: bright columns stay restrained, darker columns read distinctly darker. */
+.box tbody tr:not(:hover) td:nth-child(n+3):nth-child(odd):not(.s) {
+  background-color: rgba(255,255,255,.015);
+}
+.box tbody tr:not(:hover) td:nth-child(n+3):nth-child(even):not(.s) {
+  background-color: rgba(0,0,0,.14);
+}
+/* Sorting preserves the light/dark stripe underneath a very faint gold tint and outline. */
+.box tbody tr:not(:hover) td.s:nth-child(n+3):nth-child(odd) {
+  background-color: rgba(255,255,255,.015);
+  background-image: linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));
+  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22);
+}
+.box tbody tr:not(:hover) td.s:nth-child(n+3):nth-child(even) {
+  background-color: rgba(0,0,0,.14);
+  background-image: linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));
+  box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22);
+}
+
 </style>
 </head>
 <body>
@@ -514,12 +534,12 @@ const TABS = {
   overview: {label: 'Overview', start: 'score', columns: [
     ['score', 'Score', 'Points for every bot killed. Worth more with harder polls, game modes and events. Extra points are also awarded for slaying bosses'],
     ['kills', 'Kills', 'Enemy bots killed'],
-    ['deaths', 'Deaths', 'Times the player died.\n\nDoes not include traitor deaths, PvP, friendly fire, after-party deaths, or certain special events'],
-    ['points', 'Top Points', 'After each boss, the top 5 players by kills are displayed in chat and receive points: first place receives 5 points, second place receives 4 points, etc.\n\nAt least 5 players must be online for this stat to increase. If more than 20 players are online, points are doubled. If more than 40 players are online, points are tripled.'],
-    ['waves', 'Waves', 'Total waves cleared'],
-    ['wins', 'Wins', 'Games won by clearing the final dev wave'],
-    ['bosses', 'Bosses', 'Bosses slain by the player. Credit goes to the player who dealt the most damage.'],
-    ['finals', 'End bosses', 'End-game bosses (level 70 or higher) slain by the player. Credit goes to the player who dealt the most damage.'],
+    ['deaths', 'Deaths', 'Times the player died.\n\nDoes not include traitor games, PvP, friendly fire, after-party deaths, or certain special events'],
+    ['points', 'Top Points', 'After each boss, the top 5 players by kills are displayed in chat and receive points.\n\nAt least 5 players must be online for this stat to increase. If more than 20 players are online points are doubled. If more than 40 players are online points are tripled.'],
+    ['waves', 'Waves', 'Total Waves cleared'],
+    ['wins', 'Wins', 'Games won - cleared dev waves'],
+    ['bosses', 'Bosses', 'Bosses slain by player. Credit goes to the one who dealt the most damage'],
+    ['finals', 'End bosses', 'End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
     ['chests', 'Leg Chests', 'Legendary chests opened'],
     ['recruits', 'Low Tier', 'Kills made while playing a recruit- or soldier-tier troop, including custom units']
   ]},
@@ -533,7 +553,7 @@ const TABS = {
     ['throw', 'Throwing', 'Kills with throwing weapons'],
     ['firearm', 'Firearms', 'Kills with pistols and muskets'],
     ['magic', 'Magic', 'Kills made with wands or other arcane stuff'],
-    ['other', 'Other', 'Kills made from all other sources, such as explosions, punches, or kicks']
+    ['other', 'Other', 'Kills from all other sources, such as explosions, punches, or kicks']
   ]}
 };
 const ALL_KEYS = [...new Set(Object.values(TABS).flatMap(tab => tab.columns.map(column => column[0])))];
