@@ -365,6 +365,187 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   }
 }
 
+
+
+/* Final refinement: keep the cinematic charcoal look, with a little of the original olive-gold warmth. */
+:root {
+  --table-frame: #15170f;
+  --table-row-odd: #1d2018;
+  --table-row-even: #181a14;
+  --table-summary: #252619;
+}
+.tabs {
+  background: #0b0d08;
+  border-color: #343627;
+}
+.tabs button.on,
+.tabs button.on:hover {
+  background: linear-gradient(180deg, #323323 0%, #212318 100%);
+  border-color: rgba(216,185,111,.46);
+}
+.box,
+.box.edge-active {
+  background: var(--table-frame);
+  border-color: #38392a;
+  scrollbar-color: #4a4b39 #15170f;
+}
+.box thead th,
+.box thead th[data-key],
+.box thead th[data-key]:nth-child(n) {
+  background: linear-gradient(180deg, #292b1f 0%, #1e2017 100%);
+  color: #c0c0a9;
+  border-bottom-color: rgba(216,185,111,.29);
+}
+.box thead th[data-key]:hover,
+.box thead th.player-sort:hover {
+  background: linear-gradient(180deg, #343526 0%, #25271b 100%);
+  color: #fff3d0;
+  box-shadow: inset 0 0 0 1px rgba(216,185,111,.36);
+}
+.box thead th[data-key].on,
+.box thead th[data-key].on:hover {
+  background: linear-gradient(180deg, #302f21 0%, #222318 100%) !important;
+  color: #f0d58e;
+  box-shadow: inset 1px 0 rgba(216,185,111,.34), inset -1px 0 rgba(216,185,111,.34), inset 0 1px rgba(216,185,111,.33), inset 0 -1px rgba(216,185,111,.22);
+}
+.box thead th:nth-child(1) {
+  background: linear-gradient(180deg, #292b1f 0%, #1e2017 100%);
+  color: #d0ceb2;
+}
+.box thead th:nth-child(2) {
+  background: linear-gradient(110deg, #303224 0%, #22251a 58%, #1b1e16 100%);
+  color: #e3dfc9;
+}
+.box tbody td:nth-child(1) {
+  background: linear-gradient(180deg, #202218 0%, #171912 100%);
+  color: #c1c1a6;
+  border-right-color: rgba(151,147,100,.2);
+}
+.box tbody td:nth-child(2) {
+  background: linear-gradient(110deg, #2b3021 0%, #202419 56%, #191c14 100%);
+  color: #f0e8d1;
+  border-right-color: rgba(216,185,111,.2);
+}
+.box tbody td:nth-child(n+3):nth-child(odd) { background-color: var(--table-row-odd); }
+.box tbody td:nth-child(n+3):nth-child(even) { background-color: var(--table-row-even); }
+.box tbody tr td.s {
+  background-image: linear-gradient(rgba(216,185,111,.04), rgba(216,185,111,.04));
+  box-shadow: inset 1px 0 rgba(216,185,111,.27), inset -1px 0 rgba(216,185,111,.27);
+}
+.box tbody tr td.s:nth-child(n+3):nth-child(even) { background-color: var(--table-row-even); }
+.box tbody tr td.s:nth-child(n+3):nth-child(odd) { background-color: var(--table-row-odd); }
+.box tbody tr:hover td:nth-child(1) {
+  background-image: linear-gradient(rgba(255,255,255,.05), rgba(255,255,255,.05)), linear-gradient(180deg, #202218 0%, #171912 100%);
+}
+.box tbody tr:hover td:nth-child(2) {
+  background-image: linear-gradient(rgba(255,255,255,.045), rgba(255,255,255,.045)), linear-gradient(110deg, #2b3021 0%, #202419 56%, #191c14 100%);
+  color: #fff8e5;
+}
+.box tbody tr:hover td:nth-child(n+3) {
+  background-image: linear-gradient(rgba(255,255,255,.045), rgba(255,255,255,.045));
+}
+.box tbody tr:hover td.s:nth-child(n+3) {
+  background-image: linear-gradient(rgba(255,255,255,.045), rgba(255,255,255,.045)), linear-gradient(rgba(216,185,111,.04), rgba(216,185,111,.04));
+}
+.box tfoot td,
+.box tfoot td.total-value,
+.box tfoot td.total-value:nth-child(n+4):nth-child(even) {
+  background: var(--table-summary) !important;
+  color: #dfdbc5;
+  border-top-color: rgba(216,185,111,.38);
+}
+.box tfoot td:nth-child(1) {
+  background: linear-gradient(180deg, #2a2b1e 0%, #1c1d15 100%) !important;
+  color: #d3c99b;
+}
+.box tfoot td:nth-child(2) {
+  background: linear-gradient(110deg, #303020 0%, #222318 58%, #191b14 100%) !important;
+  color: #f0dca9;
+}
+.box tfoot td.total-value.s {
+  background: #2b2a1d !important;
+  color: #f0d58e;
+}
+#tip {
+  background: rgba(25,26,20,.98);
+  border-color: rgba(216,185,111,.26);
+}
+
+/* The Player header is sortable too; show the hand cursor and a matching hover state. */
+#stats-table thead th.player-sort { cursor: pointer !important; }
+#stats-table thead th.player-sort:hover {
+  background: linear-gradient(110deg, #353727 0%, #26291d 58%, #1d2017 100%);
+  color: #fff3d0;
+  box-shadow: inset 0 0 0 1px rgba(216,185,111,.36);
+}
+
+/* Fixed layout plus a generated colgroup prevents long names or tab-specific columns
+   from changing the # and Player widths between Overview and Weapons. */
+#stats-table {
+  table-layout: fixed;
+  width: max-content;
+  min-width: 0;
+  transition: opacity .15s ease, transform .15s ease;
+  opacity: 1;
+  transform: translateY(0);
+}
+#stats-table col { width: 90px; }
+#stats-table col.rank-column { width: 42px; }
+#stats-table col.player-column { width: 205px; }
+.box.is-switching #stats-table {
+  opacity: 0;
+  transform: translateY(3px);
+  pointer-events: none;
+}
+@media(max-width:760px) {
+  #stats-table col.rank-column { width: 40px; }
+  #stats-table col.player-column { width: 172px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  #stats-table { transition: none !important; }
+}
+
+
+/* Animated gold pill: the active frame glides between Overview and Weapons. */
+.tabs {
+  position: relative;
+  isolation: isolate;
+}
+.tabs .tab-indicator {
+  position: absolute;
+  z-index: 0;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  width: 0;
+  border: 1px solid rgba(216,185,111,.62);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(216,185,111,.18), rgba(216,185,111,.075));
+  box-shadow: inset 0 1px rgba(255,255,255,.045), 0 2px 9px rgba(0,0,0,.16);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(0);
+  transition: transform .32s cubic-bezier(.22,.8,.25,1), width .32s cubic-bezier(.22,.8,.25,1), opacity .12s ease;
+  will-change: transform, width;
+}
+.tabs.indicator-ready .tab-indicator { opacity: 1; }
+.tabs button,
+.tabs button:hover,
+.tabs button.on,
+.tabs button.on:hover {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+.tabs button { transition: color .18s ease; }
+.tabs button:not(.on):hover { color: var(--accent-bright); }
+.tabs button.on { color: #fff5d8; }
+@media(prefers-reduced-motion:reduce) {
+  .tabs .tab-indicator { transition: none !important; }
+}
+
 </style>
 </head>
 <body>
@@ -401,7 +582,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
       <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
     </div>
   </section>
-  <div class="box"><table id="stats-table" class="view-overview"><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div>
+  <div class="box"><table id="stats-table" class="view-overview"><colgroup id="column-layout"></colgroup><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div>
   <div class="pager" id="pager" style="display:none"><button id="prev" type="button">Previous</button><span id="info"></span><button id="next" type="button">Next</button></div>
 </main>
 <div id="tip" role="tooltip"></div>
@@ -524,10 +705,34 @@ function renderTotals(rows,columns){
   $('foot').innerHTML = '<tr><td></td><td>In total · ' + fmt(rows.length) + ' ' + plural(rows.length,'player','players') + '</td>' +
     columns.map(([key]) => '<td class="total-value col-' + key + (key === sortKey ? ' s' : '') + '">' + fmt(sums(key)) + '</td>').join('') + '</tr>';
 }
+function syncColumnWidths(columns){
+  const table = $('stats-table');
+  const box = table.closest('.box');
+  const mobile = window.matchMedia('(max-width:760px)').matches;
+  const rankWidth = mobile ? 40 : 42;
+  const playerWidth = mobile ? 172 : 205;
+  const statBaseWidths = columns.map(([key]) => {
+    if(tab === 'overview' && key === 'score') return 130;
+    if(tab === 'overview' && key === 'kills') return 112;
+    return 90;
+  });
+  const baseTotal = rankWidth + playerWidth + statBaseWidths.reduce((sum,width) => sum + width,0);
+  // Fill wide screens by adding the same amount to every stat column only.
+  // This keeps # and Player identical between tabs and preserves equal Weapons columns.
+  const extraPerStat = Math.max(0,box.clientWidth - baseTotal) / statBaseWidths.length;
+  const statWidths = statBaseWidths.map(width => width + extraPerStat);
+  const allWidths = [rankWidth,playerWidth,...statWidths];
+  $('column-layout').innerHTML = '<col class="rank-column" style="width:' + rankWidth + 'px">' +
+    '<col class="player-column" style="width:' + playerWidth + 'px">' +
+    columns.map(([key],index) => '<col class="col-' + key + '" style="width:' + statWidths[index].toFixed(3) + 'px">').join('');
+  table.style.width = allWidths.reduce((sum,width) => sum + width,0).toFixed(3) + 'px';
+}
+
 function render(){
   $('stats-table').className = tab === 'weapons' ? 'view-weapons' : 'view-overview';
   const definition = TABS[tab];
   const columns = definition.columns;
+  syncColumnWidths(columns);
   if(sortKey !== 'name' && !columns.some(column => column[0] === sortKey)){
     sortKey = definition.start;
     ascending = false;
@@ -560,8 +765,40 @@ function render(){
   $('prev').disabled = page === 0;
   $('next').disabled = page >= pages - 1;
 }
+function updateTabSelection(activeTab, animate = true){
+  const tabs = $('tabs');
+  const indicator = tabs.querySelector('.tab-indicator');
+  const buttons = tabs.querySelectorAll('button[data-tab]');
+  buttons.forEach(button => {
+    const active = button.dataset.tab === activeTab;
+    button.classList.toggle('on', active);
+    button.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+
+  const target = tabs.querySelector('button[data-tab="' + activeTab + '"]');
+  if(!indicator || !target) return;
+
+  if(!animate) tabs.classList.remove('indicator-ready');
+  const tabsRect = tabs.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+  const x = targetRect.left - tabsRect.left - tabs.clientLeft;
+  indicator.style.width = targetRect.width + 'px';
+  indicator.style.transform = 'translateX(' + x + 'px)';
+
+  if(animate){
+    tabs.classList.add('indicator-ready');
+  }else{
+    requestAnimationFrame(() => tabs.classList.add('indicator-ready'));
+  }
+}
 function renderTabs(){
-  $('tabs').innerHTML = Object.entries(TABS).map(([key,definition]) => '<button type="button" role="tab" aria-selected="' + (key === tab ? 'true' : 'false') + '" data-tab="' + key + '" class="' + (key === tab ? 'on' : '') + '">' + esc(definition.label) + '</button>').join('');
+  const tabs = $('tabs');
+  const firstRender = !tabs.querySelector('button[data-tab]');
+  if(firstRender){
+    tabs.innerHTML = '<span class="tab-indicator" aria-hidden="true"></span>' +
+      Object.entries(TABS).map(([key,definition]) => '<button type="button" role="tab" aria-selected="' + (key === tab ? 'true' : 'false') + '" data-tab="' + key + '">' + esc(definition.label) + '</button>').join('');
+  }
+  updateTabSelection(tab, !firstRender);
 }
 function sortBy(key){
   if(key === sortKey) ascending = !ascending;
@@ -583,15 +820,31 @@ function showTip(header){
 }
 function hideTip(){tip.style.opacity='0';}
 
+let tabChangeTimer = null;
+let pendingTab = null;
 $('tabs').addEventListener('click',event => {
   const button = event.target.closest('button[data-tab]');
   if(!button) return;
-  tab = button.dataset.tab;
-  sortKey = TABS[tab].start;
-  ascending = false;
-  page = 0;
-  renderTabs();
-  render();
+  const nextTab = button.dataset.tab;
+  if(!nextTab || (nextTab === tab && pendingTab === null)) return;
+
+  pendingTab = nextTab;
+  updateTabSelection(nextTab, true);
+  const tableBox = $('stats-table').closest('.box');
+  tableBox.classList.add('is-switching');
+  if(tabChangeTimer !== null) window.clearTimeout(tabChangeTimer);
+  const delay = window.matchMedia('(prefers-reduced-motion:reduce)').matches ? 0 : 155;
+  tabChangeTimer = window.setTimeout(() => {
+    tab = pendingTab;
+    pendingTab = null;
+    tabChangeTimer = null;
+    sortKey = TABS[tab].start;
+    ascending = false;
+    page = 0;
+    renderTabs();
+    render();
+    tableBox.classList.remove('is-switching');
+  },delay);
 });
 $('head').addEventListener('click',event => {
   const header = event.target.closest('th[data-key]');
@@ -613,6 +866,7 @@ $('search').addEventListener('input',event => {query=event.target.value;page=0;r
 $('page-size').addEventListener('change',event => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();});
 $('prev').addEventListener('click',() => {page--;render();});
 $('next').addEventListener('click',() => {page++;render();});
+window.addEventListener('resize',() => {syncColumnWidths(TABS[tab].columns);updateTabSelection(pendingTab || tab,true);});
 document.addEventListener('mouseover',event => {const header=event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
 document.addEventListener('focusin',event => {const header=event.target.closest && event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
 document.addEventListener('scroll',hideTip,true);
