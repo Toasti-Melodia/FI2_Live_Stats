@@ -124,7 +124,7 @@ select:hover:not(:disabled),.pager button:hover:not(:disabled),input:hover{borde
 .table-meta #meta::before{content:"";display:inline-block;width:4px;height:4px;margin:0 8px 2px 0;border-radius:50%;background:var(--accent);opacity:.8}
 /* Match the right-hand gutter to the normal background of the final stat header (Other / Low Tier), so the rounded top-right corner does not appear black. */
 .box{background:#121712;border:1px solid #292f27;border-radius:12px;overflow:auto;padding-right:8px;box-shadow:0 18px 45px rgba(0,0,0,.17);scrollbar-color:#444a3a #101410}
-.box.edge-active{background:rgba(216,185,111,.035)}
+.box.edge-active{background:#121712}
 table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
 th,td{padding:12px 15px;text-align:center;white-space:nowrap;border-bottom:1px solid rgba(75,83,68,.52)}
 tbody tr:last-child td{border-bottom:0}
@@ -323,6 +323,79 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
   background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
 }
 
+
+/* Final table polish: a distinct header/footer, consistent row hover, and a non-invasive sorted-column outline. */
+.box { background:#121712; }
+.box.edge-active { background:#121712; }
+.box thead th[data-key],
+.box thead th[data-key]:nth-child(n) {
+  background:linear-gradient(180deg,#282c20 0%,#22271c 100%);
+  color:#b7bea9;
+  border-bottom:2px solid rgba(216,185,111,.24);
+}
+.box thead th[data-key]:hover,
+.box thead th.player-sort:hover {
+  background:linear-gradient(180deg,#303426 0%,#282d20 100%);
+  color:#fff4d2;
+  box-shadow:inset 0 0 0 1px rgba(216,185,111,.34);
+}
+.box thead th[data-key].on,
+.box thead th[data-key].on:hover {
+  background:linear-gradient(180deg,#282c20 0%,#22271c 100%) !important;
+  color:var(--accent-bright);
+  box-shadow:inset 1px 0 rgba(216,185,111,.28),inset -1px 0 rgba(216,185,111,.28),inset 0 1px rgba(216,185,111,.30),inset 0 -1px rgba(216,185,111,.21);
+}
+.box thead th.player-sort { cursor:pointer; }
+.box thead th.player-sort.on span { border-bottom:none; }
+.box thead th.player-sort.on::after { content:" \25BC";font-size:9px;opacity:.9;color:var(--accent-bright); }
+.box thead th.player-sort.on.asc::after { content:" \25B2"; }
+
+/* Keep the existing alternating column shades when sorting. Only add very faint gold edges. */
+.box tbody tr td.s {
+  background-color:transparent;
+  box-shadow:inset 1px 0 rgba(216,185,111,.22),inset -1px 0 rgba(216,185,111,.22);
+}
+.box tbody tr td.s:nth-child(n+4):nth-child(even) {
+  background-color:rgba(255,255,255,.014);
+}
+.box tbody tr:hover td {
+  background-color:rgba(216,185,111,.045) !important;
+}
+.box tbody tr:hover td:nth-child(1) {
+  background:linear-gradient(180deg,#202a1c,#182219) !important;
+}
+.box tbody tr:hover td:nth-child(2) {
+  background:linear-gradient(110deg,#344633 0%,#263428 55%,#1b251c 100%) !important;
+}
+.box tbody tr:hover td.s {
+  background-color:rgba(216,185,111,.045) !important;
+  box-shadow:inset 1px 0 rgba(216,185,111,.28),inset -1px 0 rgba(216,185,111,.28);
+}
+
+/* A clearly readable total row, visually separate from the player records. */
+.box tfoot td,
+.box tfoot td.total-value,
+.box tfoot td.total-value:nth-child(n+4):nth-child(even) {
+  background:#282c20 !important;
+  color:#e0dec9;
+  border-top:2px solid rgba(216,185,111,.36);
+  border-bottom:0;
+  font-weight:700;
+}
+.box tfoot td:nth-child(1) {
+  background:linear-gradient(180deg,#292f21,#22271c) !important;
+  color:#d5d9bf;
+}
+.box tfoot td:nth-child(2) {
+  background:linear-gradient(110deg,#333b27 0%,#2a3222 55%,#242a1e 100%) !important;
+  color:#f1e5b9;
+}
+.box tfoot td.total-value.s {
+  background:#282c20 !important;
+  color:#f0d58e;
+  box-shadow:inset 1px 0 rgba(216,185,111,.3),inset -1px 0 rgba(216,185,111,.3),inset 0 -1px rgba(216,185,111,.22);
+}
+
 @media(max-width:1050px){
   header{align-items:flex-start;flex-direction:column;gap:21px}
   .links{justify-content:flex-start;max-width:100%}
@@ -367,6 +440,15 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
   .table-meta #meta::before{margin-left:0}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+
+/* Barely-there translucent backing behind numeric player stats only. */
+.box tbody tr:not(:hover) td:nth-child(n+3):not(.s) {
+  background-color: rgba(255,255,255,.007);
+}
+.box tbody tr:not(:hover) td:nth-child(n+4):nth-child(even):not(.s) {
+  background-color: rgba(255,255,255,.012);
+}
+
 </style>
 </head>
 <body>
@@ -406,11 +488,12 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 <div class="page-size-control">
 <label for="page-size">Players per page</label>
 <select id="page-size" aria-label="Players per page">
-<option value="25">25</option>
-<option value="50">50</option>
-<option value="100" selected>100</option>
+<option value="10">10</option>
+<option value="20">20</option>
+<option value="50" selected>50</option>
+<option value="100">100</option>
 <option value="200">200</option>
-<option value="all">All</option>
+<option value="all">Unlimited</option>
 </select>
 </div>
 </div>
@@ -420,7 +503,7 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 </main>
 <div id="tip"></div>
 <script>
-let pageSize = 100;
+let pageSize = 50;
 const $ = id => document.getElementById(id);
 const fmt = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
@@ -505,11 +588,12 @@ function buildRows() {
   return rows;
 }
 function compare(a, b) {
+  if (sortKey === 'name') return b.name.localeCompare(a.name, undefined, {sensitivity: 'base'});
   let difference = b[sortKey] - a[sortKey];
   if (!difference) difference = b.score - a.score;
   if (!difference) difference = b.kills - a.kills;
   if (!difference) difference = a.deaths - b.deaths;
-  return difference || a.name.localeCompare(b.name);
+  return difference || a.name.localeCompare(b.name, undefined, {sensitivity: 'base'});
 }
 function renderTotals(rows, columns) {
   if (!rows.length) {
@@ -517,18 +601,16 @@ function renderTotals(rows, columns) {
     return;
   }
   const sums = key => rows.reduce((total, row) => total + (Number(row[key]) || 0), 0);
-  $('foot').innerHTML = '<tr><td>Σ</td><td>In total · ' + fmt(rows.length) + ' ' + plural(rows.length, 'player', 'players') + '</td>' +
+  $('foot').innerHTML = '<tr><td></td><td>In total · ' + fmt(rows.length) + ' ' + plural(rows.length, 'player', 'players') + '</td>' +
     columns.map(([key]) => '<td class="total-value col-' + key + (key === sortKey ? ' s' : '') + '">' + fmt(sums(key)) + '</td>').join('') + '</tr>';
 }
 function render() {
   const definition = TABS[tab];
   const columns = definition.columns;
-  if (!columns.some(column => column[0] === sortKey)) {
+  if (sortKey !== 'name' && !columns.some(column => column[0] === sortKey)) {
     sortKey = definition.start;
     ascending = false;
   }
-  const tableBox = document.querySelector('.box');
-  tableBox.classList.toggle('edge-active', columns.length > 0 && columns[columns.length - 1][0] === sortKey);
   const rows = buildRows();
   rows.sort(compare);
   $('custom').textContent = customText();
@@ -541,7 +623,7 @@ function render() {
   page = Math.min(page, pages - 1);
   const visible = shown.slice(page * effectivePageSize, page * effectivePageSize + effectivePageSize);
   renderTotals(shown, columns);
-  $('head').innerHTML = '<tr><th>#</th><th>Player</th>' + columns.map(([key, label, description]) => '<th tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + label + '</span></th>').join('') + '</tr>';
+  $('head').innerHTML = '<tr><th>#</th><th tabindex="0" data-key="name" class="player-sort ' + (sortKey === 'name' ? (ascending ? 'on asc' : 'on') : '') + '"><span>Player</span></th>' + columns.map(([key, label, description]) => '<th tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + label + '</span></th>').join('') + '</tr>';
   if (visible.length) {
     $('body').innerHTML = visible.map(row => '<tr class="' + (row.rank <= 3 ? 'r' + row.rank : '') + '"><td>' + row.rank + '</td><td title="' + esc(row.name) + '">' + esc(row.name) + '</td>' + columns.map(([key]) => '<td class="col-' + key + ' ' + (key === sortKey ? 's ' : '') + (row[key] === 0 ? 'z' : '') + '">' + fmt(row[key]) + '</td>').join('') + '</tr>').join('');
   } else if (rows.length) {
@@ -558,7 +640,7 @@ function renderTabs() {
   $('tabs').innerHTML = Object.entries(TABS).map(([key, definition]) => '<button type="button" role="tab" aria-selected="' + (key === tab ? 'true' : 'false') + '" data-tab="' + key + '" class="' + (key === tab ? 'on' : '') + '">' + definition.label + '</button>').join('');
 }
 function sortBy(key) {
-  ascending = key === sortKey ? !ascending : false;
+  ascending = key === sortKey ? !ascending : key === 'name';
   sortKey = key;
   page = 0;
   render();
