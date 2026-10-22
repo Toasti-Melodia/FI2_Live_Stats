@@ -164,11 +164,8 @@ td.s{color:var(--accent-bright);font-weight:700}
 .box thead th.on{border-left:0;border-right:0;box-shadow:inset 1px 0 rgba(216,185,111,.8),inset -1px 0 rgba(216,185,111,.8),inset 0 1px rgba(216,185,111,.8),inset 0 -1px rgba(216,185,111,.58)}
 td.z{color:#626a5e;font-weight:400}
 .box tbody tr td.s.z{color:rgba(240,213,142,.43)}
-tbody tr{transition:background .12s}
-tbody tr:hover td{background:rgba(216,185,111,.065)}
-tbody tr:hover td:nth-child(1){background:#1c241c}
-tbody tr:hover td:nth-child(2){background:linear-gradient(110deg,#2a382b 0%,#202b22 100%);color:#fff9e8}
-.box tbody tr:hover td.s{background:rgba(216,185,111,.12);border-left:0;border-right:0;box-shadow:inset 1px 0 rgba(216,185,111,.82),inset -1px 0 rgba(216,185,111,.82)}
+tbody tr{transition:background .12s; position:relative}
+
 .r1 td:nth-child(1){color:#f0d58e;font-weight:700}
 .r2 td:nth-child(1){color:#d9ded1;font-weight:700}
 .r3 td:nth-child(1){color:#cba17c;font-weight:700}
@@ -190,8 +187,7 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 .box tbody td:nth-child(2){background:linear-gradient(110deg,#29382a 0%,#1b271d 100%);color:#fff5d7;border-right:1px solid rgba(216,185,111,.2)}
 .box tfoot td:nth-child(1){background:linear-gradient(180deg,#20251a,#181d14);color:#d8bd77}
 .box tfoot td:nth-child(2){background:linear-gradient(110deg,#253326 0%,#1a241b 100%);color:#f0d58e}
-.box tbody tr:hover td:nth-child(1){background:#202a1c}
-.box tbody tr:hover td:nth-child(2){background:linear-gradient(110deg,#334833 0%,#253226 100%)}
+
 .box tbody tr.r1 td:nth-child(1){color:#f0d58e;font-weight:700}
 .box tbody tr.r2 td:nth-child(1){color:#d9ded1;font-weight:700}
 .box tbody tr.r3 td:nth-child(1){color:#cba17c;font-weight:700}
@@ -216,7 +212,7 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 .box thead th[data-key]:hover{background:#20251d;color:#fff4d2}
 .box thead th[data-key].on{background:linear-gradient(180deg,rgba(216,185,111,.055),rgba(216,185,111,.022)) !important;color:var(--accent-bright);box-shadow:inset 1px 0 rgba(216,185,111,.29),inset -1px 0 rgba(216,185,111,.29),inset 0 1px rgba(216,185,111,.32),inset 0 -1px rgba(216,185,111,.22)}
 .box thead th[data-key].on:hover{box-shadow:inset 1px 0 rgba(240,213,142,.48),inset -1px 0 rgba(240,213,142,.48),inset 0 1px rgba(240,213,142,.48),inset 0 -1px rgba(240,213,142,.34)}
-.box tbody tr td.s,.box tbody tr:hover td.s{background:rgba(216,185,111,.025);box-shadow:inset 1px 0 rgba(216,185,111,.26),inset -1px 0 rgba(216,185,111,.26)}
+.box tbody tr td.s{background:rgba(216,185,111,.025);box-shadow:inset 1px 0 rgba(216,185,111,.26),inset -1px 0 rgba(216,185,111,.26)}
 .box tfoot td{background:#151a14;border-top:1px solid rgba(155,163,145,.22);color:#c8cbc0}
 .box tfoot td:nth-child(1){background:linear-gradient(180deg,#151c13,#101610);color:#aeb99a}
 .box tfoot td:nth-child(2){background:linear-gradient(110deg,#29382a 0%,#1b271d 100%);color:#e2e5d8;box-shadow:1px 0 0 rgba(126,145,102,.2)}
@@ -226,7 +222,6 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 /* A gently deeper, more noticeable gradient separates names from numerical values. */
 .box thead th:nth-child(2){background:linear-gradient(110deg,#263528 0%,#1a241b 100%);color:#d7e0cc}
 .box tbody td:nth-child(2){background:linear-gradient(110deg,#2b3b2d 0%,#1d2a1f 52%,#172119 100%);color:#fff5d7}
-.box tbody tr:hover td:nth-child(2){background:linear-gradient(110deg,#344a35 0%,#263629 55%,#1d2a1f 100%)}
 .box tfoot td:nth-child(2){background:linear-gradient(110deg,#29392b 0%,#1d2a1f 55%,#172119 100%)}
 
 
@@ -270,14 +265,9 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 }
 
 /* The selected column remains visible, but its gold tint is intentionally very subtle. */
-.box tbody tr td.s,
-.box tbody tr:hover td.s {
+.box tbody tr td.s {
   background: rgba(216,185,111,.018);
   box-shadow: inset 1px 0 rgba(216,185,111,.19), inset -1px 0 rgba(216,185,111,.19);
-}
-.box tbody tr:hover td.s {
-  background: rgba(216,185,111,.045);
-  box-shadow: inset 1px 0 rgba(216,185,111,.25), inset -1px 0 rgba(216,185,111,.25);
 }
 .box tfoot td {
   background: #121712;
@@ -315,9 +305,6 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 }
 .box tbody td:nth-child(2) {
   background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
-}
-.box tbody tr:hover td:nth-child(2) {
-  background: linear-gradient(110deg,#344633 0%,#263428 55%,#1b251c 100%);
 }
 .box tfoot td:nth-child(2) {
   background: linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);
@@ -358,18 +345,21 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 .box tbody tr td.s:nth-child(n+4):nth-child(even) {
   background-color:rgba(255,255,255,.014);
 }
+
+/* Subtelne rozjaśnianie wiersza na hover - zachowuje unikalne odcienie i różnice kolorów każdej z kolumn */
 .box tbody tr:hover td {
-  background-color:rgba(216,185,111,.045) !important;
+  position: relative;
+  color: #ffffff;
 }
-.box tbody tr:hover td:nth-child(1) {
-  background:linear-gradient(180deg,#202a1c,#182219) !important;
+.box tbody tr:hover td::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
 }
 .box tbody tr:hover td:nth-child(2) {
-  background:linear-gradient(110deg,#344633 0%,#263428 55%,#1b251c 100%) !important;
-}
-.box tbody tr:hover td.s {
-  background-color:rgba(216,185,111,.045) !important;
-  box-shadow:inset 1px 0 rgba(216,185,111,.28),inset -1px 0 rgba(216,185,111,.28);
+  color: #fff9e8;
 }
 
 /* A clearly readable total row, visually separate from the player records. */
@@ -441,30 +431,21 @@ tfoot td.total-value.s{background:rgba(216,185,111,.13);border-left:0;border-rig
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
 
-/* Barely-there translucent backing behind numeric player stats only. */
-.box tbody tr:not(:hover) td:nth-child(n+3):not(.s) {
-  background-color: rgba(255,255,255,.007);
-}
-.box tbody tr:not(:hover) td:nth-child(n+4):nth-child(even):not(.s) {
+/* Delikatniejsze naprzemienne kolumny statystyk (zmniejszony kontrast) */
+.box tbody tr:not(:hover) td:nth-child(n+3):nth-child(odd):not(.s) {
   background-color: rgba(255,255,255,.012);
 }
-
-
-/* Clearer alternating stat columns: bright columns stay restrained, darker columns read distinctly darker. */
-.box tbody tr:not(:hover) td:nth-child(n+3):nth-child(odd):not(.s) {
-  background-color: rgba(255,255,255,.015);
-}
 .box tbody tr:not(:hover) td:nth-child(n+3):nth-child(even):not(.s) {
-  background-color: rgba(0,0,0,.14);
+  background-color: rgba(0,0,0,.05);
 }
-/* Sorting preserves the light/dark stripe underneath a very faint gold tint and outline. */
+/* Zachowanie subtelnych pasków przy sortowaniu kolumn */
 .box tbody tr:not(:hover) td.s:nth-child(n+3):nth-child(odd) {
-  background-color: rgba(255,255,255,.015);
+  background-color: rgba(255,255,255,.012);
   background-image: linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));
   box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22);
 }
 .box tbody tr:not(:hover) td.s:nth-child(n+3):nth-child(even) {
-  background-color: rgba(0,0,0,.14);
+  background-color: rgba(0,0,0,.05);
   background-image: linear-gradient(rgba(216,185,111,.025),rgba(216,185,111,.025));
   box-shadow: inset 1px 0 rgba(216,185,111,.22), inset -1px 0 rgba(216,185,111,.22);
 }
