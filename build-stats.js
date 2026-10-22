@@ -82,5 +82,21 @@ async function loadServer(prefix) {
     const previous = JSON.parse(fs.readFileSync('docs/stats.json', 'utf8'));
     if (previous.since) since = previous.since;
   } catch (error) {}
-  fs.writeFileSync('docs/stats.json', JSON.stringify({updated: Date.now(), since, players: rows}));
+  const updated = Date.now();
+  fs.writeFileSync('docs/stats.json', JSON.stringify({updated, since, players: rows}));
+  const today = new Date(updated);
+  const dayStart = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+  const starts = {
+    week: dayStart - ((today.getUTCDay() + 6) % 7) * 86400000,
+    month: Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1),
+    year: Date.UTC(today.getUTCFullYear(), 0, 1)
+  };
+  for (const [name, start] of Object.entries(starts)) {
+    const file = 'docs/' + name + '.json';
+    let existing = null;
+    try { existing = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (error) {}
+    if (existing && existing.start === start) continue;
+    const players = !existing && since >= start ? [] : rows;
+    fs.writeFileSync(file, JSON.stringify({start, updated, players}));
+  }
 })();
