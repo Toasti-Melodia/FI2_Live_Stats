@@ -90,10 +90,10 @@ select:hover:not(:disabled),.pager button:hover:not(:disabled),input:hover{borde
 .page-size-control label{color:#aab19f;font-size:13px;font-weight:600}
 .page-size-control select{min-width:88px;background-color:#101510;border-color:#30382c}
 .page-size-control select:hover,.page-size-control select:focus{border-color:rgba(216,185,111,.58)}
-.table-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 2px 9px;color:#879080;font-size:11px;line-height:1.4;letter-spacing:.025em}
-.table-meta .credit{color:#c2c7b7;font-weight:700;white-space:nowrap}
-.table-meta #meta{color:#7f8978;white-space:nowrap}
-.table-meta #meta::before{content:"";display:inline-block;width:4px;height:4px;margin:0 8px 2px 0;border-radius:50%;background:var(--accent);opacity:.8}
+.brand-meta{display:flex;flex-wrap:wrap;align-items:center;gap:7px 13px;margin-top:8px;color:#cbb16f;font-size:12px;font-weight:600;letter-spacing:.025em}
+.brand-meta .credit{color:#d8bd77;font-weight:700;white-space:nowrap}
+.brand-meta #meta{color:#b5a36f;white-space:nowrap}
+.brand-meta #meta::before{content:"";display:inline-block;width:4px;height:4px;margin:0 8px 2px 0;border-radius:50%;background:var(--accent);opacity:.85}
 /* One clean frame around the scrolling table. No artificial right-hand gutter. */
 .box{background:#282c20;border:1px solid #292f27;border-radius:12px;overflow:auto;padding:0;box-shadow:0 18px 45px rgba(0,0,0,.17);scrollbar-color:#444a3a #101410;overscroll-behavior-x:contain}
 table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums;margin:0}
@@ -151,9 +151,220 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 #info{min-width:190px;text-align:center;font-variant-numeric:tabular-nums}
 #tip{position:fixed;z-index:9;left:0;top:0;width:max-content;max-width:310px;padding:9px 11px;background:rgba(21,27,21,.98);border:1px solid rgba(216,185,111,.18);border-radius:8px;color:rgba(240,240,231,.8);font-size:12px;line-height:1.5;white-space:pre-line;text-align:left;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 8px 24px rgba(0,0,0,.42)}
 @media(max-width:1050px){header{align-items:flex-start;flex-direction:column;gap:21px}.links{justify-content:flex-start;max-width:100%}.website-teaser{min-height:48px}.toolbar-top{align-items:stretch;flex-direction:column}.search-wrap{flex-basis:auto;width:100%;max-width:none;min-width:0}}
-@media(max-width:760px){header,main{width:calc(100% - 28px)}header{padding:26px 0 22px}.brand{min-width:0;padding-left:15px}h1{font-size:clamp(34px,9vw,47px)}.sub{font-size:14px;max-width:460px}.links{gap:6px}.links a{min-height:35px;padding:7px 9px;font-size:11px}.links svg{width:14px;height:14px}.website-teaser{min-width:160px;margin:0 14px 4px 0;padding:7px 12px}.website-label{font-size:18px}main{padding-top:18px}.toolbar{padding:12px;border-radius:11px}.tabs{width:100%;display:grid;grid-template-columns:1fr 1fr}.tabs button{padding:9px 12px;font-size:15px}.filters{align-items:stretch;gap:10px}.filters>label{flex:1 1 100%;justify-content:space-between}.page-size-control{flex:1 1 100%;margin-left:0;justify-content:space-between}.page-size-control select{width:72%;max-width:220px}.faction-control{flex:1 1 100%;flex-wrap:wrap;gap:7px 10px}.faction-control>label{flex:1 1 100%;justify-content:space-between}.filters select{flex:1;min-width:0;max-width:72%}.custom{flex:1 1 100%;max-width:100%;padding:6px 0 0;border-left:0;border-top:1px solid rgba(216,185,111,.16)}.table-meta{font-size:10px}th,td{padding:10px 12px}th:nth-child(2),td:nth-child(2),tfoot td:nth-child(2){width:172px;min-width:172px;max-width:172px;left:40px}th:nth-child(1),td:nth-child(1),tfoot td:nth-child(1){left:0;width:40px;min-width:40px}.pager{gap:8px;flex-wrap:wrap}.pager button{min-width:78px;padding:8px}#info{order:-1;flex-basis:100%;min-width:0}}
-@media(max-width:420px){.links a{gap:5px}.table-meta{align-items:flex-start;flex-direction:column;gap:4px}.table-meta #meta::before{margin-left:0}}
+@media(max-width:760px){header,main{width:calc(100% - 28px)}header{padding:26px 0 22px}.brand{min-width:0;padding-left:15px}h1{font-size:clamp(34px,9vw,47px)}.sub{font-size:14px;max-width:460px}.links{gap:6px}.links a{min-height:35px;padding:7px 9px;font-size:11px}.links svg{width:14px;height:14px}.website-teaser{min-width:160px;margin:0 14px 4px 0;padding:7px 12px}.website-label{font-size:18px}main{padding-top:18px}.toolbar{padding:12px;border-radius:11px}.tabs{width:100%;display:grid;grid-template-columns:1fr 1fr}.tabs button{padding:9px 12px;font-size:15px}.filters{align-items:stretch;gap:10px}.filters>label{flex:1 1 100%;justify-content:space-between}.page-size-control{flex:1 1 100%;margin-left:0;justify-content:space-between}.page-size-control select{width:72%;max-width:220px}.faction-control{flex:1 1 100%;flex-wrap:wrap;gap:7px 10px}.faction-control>label{flex:1 1 100%;justify-content:space-between}.filters select{flex:1;min-width:0;max-width:72%}.custom{flex:1 1 100%;max-width:100%;padding:6px 0 0;border-left:0;border-top:1px solid rgba(216,185,111,.16)}.brand-meta{font-size:11px}th,td{padding:10px 12px}th:nth-child(2),td:nth-child(2),tfoot td:nth-child(2){width:172px;min-width:172px;max-width:172px;left:40px}th:nth-child(1),td:nth-child(1),tfoot td:nth-child(1){left:0;width:40px;min-width:40px}.pager{gap:8px;flex-wrap:wrap}.pager button{min-width:78px;padding:8px}#info{order:-1;flex-basis:100%;min-width:0}}
+@media(max-width:420px){.links a{gap:5px}.brand-meta{align-items:flex-start;gap:4px 10px}.brand-meta #meta::before{margin-left:0}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+
+
+/* Final palette refinement: near-black charcoal surfaces with restrained antique-gold accents. */
+:root {
+  --table-frame: #0e0f0e;
+  --table-head: #201f1a;
+  --table-row-odd: #171816;
+  --table-row-even: #121311;
+  --table-summary: #1d1c17;
+  --table-line: rgba(151, 147, 126, .22);
+}
+
+/* Category tabs: dark charcoal rather than green-tinted panels. */
+.tabs {
+  background: #080908;
+  border-color: #292821;
+}
+.tabs button {
+  color: #a4a397;
+}
+.tabs button:hover {
+  color: #f0d58e;
+  border-color: rgba(216,185,111,.42);
+  background: rgba(216,185,111,.045);
+}
+.tabs button.on,
+.tabs button.on:hover {
+  color: #f5e5b9;
+  background: linear-gradient(180deg, #29271f 0%, #1b1a15 100%);
+  border-color: rgba(216,185,111,.42);
+  box-shadow: inset 0 1px rgba(255,255,255,.035), 0 1px 5px rgba(0,0,0,.22);
+}
+
+/* Table frame and header are darker than the data area, with no olive-green cast. */
+.box,
+.box.edge-active {
+  background: var(--table-frame);
+  border-color: #2b2a24;
+  box-shadow: 0 18px 45px rgba(0,0,0,.24);
+  scrollbar-color: #39382f #0e0f0e;
+}
+.box thead th,
+.box thead th[data-key],
+.box thead th[data-key]:nth-child(n) {
+  background: linear-gradient(180deg, #1b1b17 0%, #111210 100%);
+  color: #aaa99d;
+  border-bottom: 2px solid rgba(216,185,111,.25);
+}
+.box thead th[data-key]:hover,
+.box thead th.player-sort:hover {
+  background: linear-gradient(180deg, #28261f 0%, #1c1b16 100%);
+  color: #fff3d0;
+  box-shadow: inset 0 0 0 1px rgba(216,185,111,.32);
+}
+.box thead th[data-key].on,
+.box thead th[data-key].on:hover {
+  background: linear-gradient(180deg, #26231b 0%, #191813 100%) !important;
+  color: #f0d58e;
+  box-shadow: inset 1px 0 rgba(216,185,111,.3), inset -1px 0 rgba(216,185,111,.3), inset 0 1px rgba(216,185,111,.3), inset 0 -1px rgba(216,185,111,.2);
+}
+.box thead th:nth-child(1) {
+  background: linear-gradient(180deg, #1b1b17 0%, #111210 100%);
+  color: #b5b1a1;
+}
+.box thead th:nth-child(2) {
+  background: linear-gradient(110deg, #22211c 0%, #171815 58%, #111210 100%);
+  color: #d8d3c2;
+}
+
+/* Neutral charcoal body rows, with a noticeable but elegant alternating column rhythm. */
+.box tbody td:nth-child(1) {
+  background: linear-gradient(180deg, #191a17 0%, #111210 100%);
+  color: #aaa99d;
+  border-right: 1px solid rgba(151,147,126,.16);
+}
+.box tbody td:nth-child(2) {
+  background: linear-gradient(110deg, #25241f 0%, #1c1d19 56%, #151613 100%);
+  color: #f0e8d1;
+  border-right: 1px solid rgba(216,185,111,.17);
+}
+.box tbody td:nth-child(n+3):nth-child(odd) {
+  background-color: var(--table-row-odd);
+}
+.box tbody td:nth-child(n+3):nth-child(even) {
+  background-color: var(--table-row-even);
+}
+.box tbody tr td.s {
+  background-image: linear-gradient(rgba(216,185,111,.035), rgba(216,185,111,.035));
+  box-shadow: inset 1px 0 rgba(216,185,111,.24), inset -1px 0 rgba(216,185,111,.24);
+}
+.box tbody tr td.s:nth-child(n+3):nth-child(even) {
+  background-color: var(--table-row-even);
+}
+.box tbody tr td.s:nth-child(n+3):nth-child(odd) {
+  background-color: var(--table-row-odd);
+}
+.box tbody tr:hover td:nth-child(1) {
+  background-image: linear-gradient(rgba(255,255,255,.05), rgba(255,255,255,.05)), linear-gradient(180deg, #191a17 0%, #111210 100%);
+}
+.box tbody tr:hover td:nth-child(2) {
+  background-image: linear-gradient(rgba(255,255,255,.045), rgba(255,255,255,.045)), linear-gradient(110deg, #25241f 0%, #1c1d19 56%, #151613 100%);
+  color: #fff8e5;
+}
+.box tbody tr:hover td:nth-child(n+3) {
+  background-image: linear-gradient(rgba(255,255,255,.045), rgba(255,255,255,.045));
+}
+.box tbody tr:hover td.s:nth-child(n+3) {
+  background-image: linear-gradient(rgba(255,255,255,.045), rgba(255,255,255,.045)), linear-gradient(rgba(216,185,111,.035), rgba(216,185,111,.035));
+  box-shadow: inset 1px 0 rgba(216,185,111,.28), inset -1px 0 rgba(216,185,111,.28);
+}
+.box tbody tr td.z {
+  color: #66675f;
+}
+.box tbody tr td.s.z {
+  color: rgba(240,213,142,.48);
+}
+
+/* Bottom all-statistics summary: its own dark, warm-charcoal strip with a fine gold divider. */
+.box tfoot td,
+.box tfoot td.total-value,
+.box tfoot td.total-value:nth-child(n+4):nth-child(even) {
+  background: var(--table-summary) !important;
+  color: #d4d0bf;
+  border-top: 2px solid rgba(216,185,111,.32);
+  border-bottom: 0;
+  font-weight: 700;
+}
+.box tfoot td:nth-child(1) {
+  background: linear-gradient(180deg, #201f19 0%, #141512 100%) !important;
+  color: #c5b98f;
+  border-top: 2px solid rgba(216,185,111,.32);
+}
+.box tfoot td:nth-child(2) {
+  background: linear-gradient(110deg, #252219 0%, #1a1914 58%, #131411 100%) !important;
+  color: #f0dca9;
+  border-right: 1px solid rgba(216,185,111,.18);
+  border-top: 2px solid rgba(216,185,111,.32);
+}
+.box tfoot td.total-value.s {
+  background: #242117 !important;
+  color: #f0d58e;
+  box-shadow: inset 1px 0 rgba(216,185,111,.3), inset -1px 0 rgba(216,185,111,.3), inset 0 -1px rgba(216,185,111,.2);
+}
+
+/* Match tooltip and scroll-area details to the same neutral charcoal palette. */
+#tip {
+  background: rgba(20,20,18,.98);
+  border-color: rgba(216,185,111,.22);
+}
+
+
+/* Consistent identity-column sizing in both Overview and Weapons. */
+#stats-table th:first-child,
+#stats-table tbody td:first-child,
+#stats-table tfoot td:first-child {
+  width: 42px;
+  min-width: 42px;
+  max-width: 42px;
+}
+#stats-table th:nth-child(2),
+#stats-table tbody td:nth-child(2),
+#stats-table tfoot td:nth-child(2) {
+  width: 205px;
+  min-width: 205px;
+  max-width: 205px;
+}
+/* The Player header also has data-key, so explicitly prevent generic stat sizing from shrinking it. */
+#stats-table thead th.player-sort {
+  width: 205px;
+  min-width: 205px;
+  max-width: 205px;
+}
+
+/* All stat columns use the same default width. Overview gets extra room only for Score and Kills. */
+#stats-table thead th[data-key]:not(.player-sort),
+#stats-table tbody td[class*="col-"],
+#stats-table tfoot td.total-value {
+  width: 90px;
+  min-width: 90px;
+  max-width: 90px;
+}
+#stats-table.view-overview .col-score {
+  width: 130px;
+  min-width: 130px;
+  max-width: 130px;
+}
+#stats-table.view-overview .col-kills {
+  width: 112px;
+  min-width: 112px;
+  max-width: 112px;
+}
+/* Deaths intentionally stays at the regular stat-column width (90px). */
+
+@media(max-width:760px) {
+  #stats-table th:first-child,
+  #stats-table tbody td:first-child,
+  #stats-table tfoot td:first-child {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+  }
+  #stats-table th:nth-child(2),
+  #stats-table tbody td:nth-child(2),
+  #stats-table tfoot td:nth-child(2),
+  #stats-table thead th.player-sort {
+    width: 172px;
+    min-width: 172px;
+    max-width: 172px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -161,6 +372,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   <div class="brand">
     <h1>Full Invasion <span>2</span></h1>
     <p class="sub">Lifetime stats (starting from 22.10.2026) - Gondolin Osiris servers</p>
+    <div class="brand-meta"><span class="credit">By Melodia-Patty</span><span id="meta">Last update: -</span></div>
   </div>
   <nav class="links" aria-label="Links">
     <div class="website-teaser" aria-label="Gondolin Website - Work in Progress">
@@ -189,8 +401,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
       <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
     </div>
   </section>
-  <div class="table-meta"><span class="credit">By Melodia-Patty</span><span id="meta">Last update: -</span></div>
-  <div class="box"><table><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div>
+  <div class="box"><table id="stats-table" class="view-overview"><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div>
   <div class="pager" id="pager" style="display:none"><button id="prev" type="button">Previous</button><span id="info"></span><button id="next" type="button">Next</button></div>
 </main>
 <div id="tip" role="tooltip"></div>
@@ -314,6 +525,7 @@ function renderTotals(rows,columns){
     columns.map(([key]) => '<td class="total-value col-' + key + (key === sortKey ? ' s' : '') + '">' + fmt(sums(key)) + '</td>').join('') + '</tr>';
 }
 function render(){
+  $('stats-table').className = tab === 'weapons' ? 'view-weapons' : 'view-overview';
   const definition = TABS[tab];
   const columns = definition.columns;
   if(sortKey !== 'name' && !columns.some(column => column[0] === sortKey)){
