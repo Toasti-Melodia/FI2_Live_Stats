@@ -36,7 +36,7 @@ body{
     linear-gradient(155deg,#070907 0%,#0c110d 44%,#090c09 74%,#060806 100%);
   background-attachment:fixed;
 }
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("background.png") center center/cover no-repeat;opacity:.075;mix-blend-mode:screen}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("background.png") center center/cover no-repeat;opacity:.08;mix-blend-mode:screen}
 header,main{width:min(100% - 48px,1440px);margin:0 auto}
 header{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:38px 0 27px;border-bottom:1px solid #20251f}
 .brand{position:relative;min-width:270px;padding-left:20px}
@@ -626,6 +626,154 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 .pm-empty{margin:0;color:var(--dim);font-size:13px}
 @media(max-width:760px){.pm{padding:0}.pm-dialog{min-height:100%;border-radius:0;margin:0;padding:20px 16px}.pm-bar{grid-template-columns:88px 1fr 64px}.pm-frow{grid-template-columns:minmax(90px,1.5fr) repeat(5,minmax(40px,1fr));font-size:12px}}
 @media(prefers-reduced-motion:reduce){.pm,.pm-dialog,.box.ghost{transition:none!important}}
+
+
+/* Reliable cross-browser tab switching: no sliding gold overlay or cloned table. */
+.tabs .tab-indicator { display: none !important; }
+.tabs button,
+.tabs button:hover,
+.tabs button.on,
+.tabs button.on:hover {
+  position: relative;
+  z-index: 1;
+}
+.tabs button {
+  transition: color .16s ease, background-color .16s ease, border-color .16s ease;
+}
+.tabs button.on,
+.tabs button.on:hover {
+  color: #fff5d8 !important;
+  background: linear-gradient(180deg, rgba(216,185,111,.17), rgba(216,185,111,.07)) !important;
+  border-color: rgba(216,185,111,.48) !important;
+  box-shadow: inset 0 1px rgba(255,255,255,.035) !important;
+}
+.tabs button:not(.on):hover {
+  color: var(--accent-bright) !important;
+  background: rgba(216,185,111,.045) !important;
+  border-color: rgba(216,185,111,.34) !important;
+}
+/* Animate the table frame itself. Opacity is broadly supported and avoids Firefox filter/clone glitches. */
+.box {
+  opacity: 1;
+  transition: opacity .16s ease !important;
+  will-change: opacity;
+}
+.box.is-switching {
+  opacity: 0 !important;
+  filter: none !important;
+  transform: none !important;
+  pointer-events: none !important;
+}
+/* Do not combine the frame fade with the older table blur/fade rules. */
+#stats-table,
+.box.is-switching #stats-table {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .box,
+  .tabs button { transition: none !important; }
+}
+
+
+/* Requested refinements: identity columns remain fixed; statistic columns share available space. */
+body::before{opacity:.08}
+#stats-table col.rank-column{width:42px}
+#stats-table col.player-column{width:220px}
+#stats-table th:first-child,#stats-table tbody td:first-child,#stats-table tfoot td:first-child{width:42px;min-width:42px;max-width:42px}
+#stats-table th:nth-child(2),#stats-table tbody td:nth-child(2),#stats-table tfoot td:nth-child(2),#stats-table thead th.player-sort{width:220px;min-width:220px;max-width:220px}
+#stats-table thead th[data-key]:not(.player-sort),#stats-table tbody td[class*="col-"],#stats-table tfoot td.total-value{width:auto;min-width:0;max-width:none}
+#stats-table tbody td:nth-child(2){
+  background:linear-gradient(115deg,#343727 0%,#292b20 54%,#202218 100%)!important;
+  color:#fff0c5!important;
+  border-right:1px solid rgba(216,185,111,.3);
+  box-shadow:inset 2px 0 rgba(216,185,111,.12),1px 0 0 rgba(216,185,111,.2);
+}
+#stats-table tbody tr:hover td:nth-child(2){background:linear-gradient(115deg,#41432e 0%,#333526 54%,#25271c 100%)!important;color:#fff8e5!important}
+.player-name-cell{padding:0 15px!important}
+.player-link{
+  display:block;width:100%;min-width:0;padding:12px 0;margin:0;border:0;border-radius:0;
+  color:inherit;background:transparent!important;font:inherit;text-align:left;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;cursor:pointer;box-shadow:none!important;
+}
+.player-link:hover{color:#fffbe8;text-decoration:underline;text-decoration-color:rgba(240,213,142,.65);text-underline-offset:3px}
+.player-link:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:3px}
+#body tr[data-id]{cursor:default}
+#body tr[data-id]:focus-visible{outline:none}
+@media(max-width:760px){
+  #stats-table col.rank-column{width:40px}
+  #stats-table col.player-column{width:180px}
+  #stats-table th:first-child,#stats-table tbody td:first-child,#stats-table tfoot td:first-child{width:40px;min-width:40px;max-width:40px}
+  #stats-table th:nth-child(2),#stats-table tbody td:nth-child(2),#stats-table tfoot td:nth-child(2),#stats-table thead th.player-sort{width:180px;min-width:180px;max-width:180px}
+  .player-name-cell{padding:0 12px!important}
+  .player-link{padding:10px 0}
+}
+/* Floating category tabs appear only after their original position scrolls off-screen. */
+.sticky-tabs-proxy{
+  display:none;position:fixed;top:0;z-index:30;padding:4px;background:rgba(10,12,9,.97);
+  border:1px solid rgba(216,185,111,.32);border-top:0;border-radius:0 0 11px 11px;
+  box-shadow:0 9px 24px rgba(0,0,0,.34);backdrop-filter:blur(8px);
+}
+.sticky-tabs-proxy .tabs{width:100%;max-width:100%;border:0;background:transparent;padding:0;}
+.sticky-tabs-proxy .tabs button{white-space:nowrap;}
+.sticky-head{
+  display:none;position:fixed;z-index:29;overflow:hidden;pointer-events:auto;
+  background:var(--table-frame);border:1px solid #38392a;border-top:0;
+  box-shadow:0 9px 20px rgba(0,0,0,.28);
+}
+.sticky-head table{table-layout:fixed;border-collapse:separate;border-spacing:0;margin:0;width:max-content;transform:translateX(0);}
+.sticky-head th{top:0;background:linear-gradient(180deg,#292b1f 0%,#1e2017 100%);color:#c0c0a9;border-bottom:2px solid rgba(216,185,111,.29);}
+.sticky-head th[data-key]:hover{background:linear-gradient(180deg,#343526 0%,#25271b 100%);color:#fff3d0;box-shadow:inset 0 0 0 1px rgba(216,185,111,.36);}
+.sticky-head th[data-key].on{background:linear-gradient(180deg,#302f21 0%,#222318 100%)!important;color:#f0d58e;box-shadow:inset 1px 0 rgba(216,185,111,.34),inset -1px 0 rgba(216,185,111,.34),inset 0 1px rgba(216,185,111,.33),inset 0 -1px rgba(216,185,111,.22);}
+.sticky-head th:nth-child(1){background:linear-gradient(180deg,#292b1f 0%,#1e2017 100%);color:#d0ceb2;}
+.sticky-head th:nth-child(2){background:linear-gradient(110deg,#303224 0%,#22251a 58%,#1b1e16 100%);color:#fff0c5;}
+/* Compact, balanced player profile. */
+.pm{padding:3vh 14px;align-items:center;}
+.pm{z-index:50}
+.pm-dialog{
+  width:min(100%,860px);max-height:94vh;overflow:auto;margin:auto 0;padding:20px;
+  background:radial-gradient(ellipse at 5% 0%,rgba(216,185,111,.09),transparent 43%),linear-gradient(155deg,#292b20 0%,#202117 46%,#171912 100%);
+  border:1px solid rgba(216,185,111,.34);border-radius:15px;
+  box-shadow:0 24px 70px rgba(0,0,0,.62),inset 0 1px rgba(255,255,255,.035);
+}
+.pm-head{align-items:center;padding-bottom:13px;margin-bottom:14px;border-bottom:1px solid rgba(216,185,111,.2);}
+.pm-name{font-size:clamp(25px,3vw,34px);text-shadow:0 2px 16px rgba(216,185,111,.12);}
+.pm-cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:14px;}
+.pm-card{padding:10px 12px;background:linear-gradient(145deg,rgba(58,58,40,.68),rgba(19,21,15,.92));border-color:rgba(216,185,111,.2);box-shadow:inset 0 1px rgba(255,255,255,.025);}
+.pm-card strong{font-size:22px;}
+.pm-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.pm-grid+.pm-grid{margin-top:12px;}
+.pm-primary{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1fr);align-items:stretch;}
+.pm-fav{grid-template-columns:repeat(3,minmax(0,1fr));}
+.pm-section{min-width:0;padding:14px;background:linear-gradient(155deg,rgba(42,44,31,.78),rgba(20,22,16,.92));border:1px solid rgba(216,185,111,.17);border-radius:11px;box-shadow:inset 0 1px rgba(255,255,255,.025);}
+.pm-section h3{padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid rgba(216,185,111,.17);letter-spacing:.14em;}
+.pm-line{font-size:13px;padding:5px 0;}
+.pm-bar{grid-template-columns:78px minmax(24px,1fr) 44px;gap:7px;font-size:12px;padding:5px 0;}
+.pm-track{height:8px;background:rgba(0,0,0,.42);box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);}
+.pm-track i{background:linear-gradient(90deg,#82713f,#d8b96f 70%,#f0d58e);box-shadow:0 0 7px rgba(216,185,111,.14);}
+.pm-fav .pm-bar{grid-template-columns:minmax(0,1fr) 40px;gap:4px 7px;}
+.pm-fav .pm-bar .pm-track{grid-column:1 / -1;grid-row:2;}
+.pm-fav .pm-bar span{font-size:12px;}
+.pm-frow{font-size:12px;gap:5px;}
+.pm-frow.pm-fhead{font-size:9px;letter-spacing:.04em;}
+.pm-head{padding-right:42px}
+.pm-close{position:sticky;float:right;top:0;margin-top:-8px;margin-right:-7px;margin-bottom:-34px;z-index:2;background:rgba(20,22,15,.9);}
+@media(max-width:760px){
+  .sticky-tabs-proxy{left:8px!important;width:calc(100vw - 16px)!important;}
+  .sticky-tabs-proxy .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}
+  .pm{padding:0;align-items:stretch;}
+  .pm-dialog{width:100%;max-height:100vh;min-height:100%;padding:18px 13px;border-radius:0;margin:0;}
+  .pm-primary{grid-template-columns:1fr;}
+  .pm-fav{grid-template-columns:1fr;}
+  .pm-grid{grid-template-columns:1fr;}
+  .pm-cards{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .pm-bar{grid-template-columns:100px minmax(24px,1fr) 54px;}
+  .pm-fav .pm-bar{grid-template-columns:minmax(0,1fr) 45px;}
+}
+@media(prefers-reduced-motion:reduce){.sticky-tabs-proxy,.sticky-head{scroll-behavior:auto;}}
+
 </style>
 </head>
 <body>
@@ -657,7 +805,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
       </div>
     </div>
     <div class="filters">
-      <div class="faction-control range-control"><label>Period<select id="range"><option value="all">All time</option><option value="week">This week</option><option value="month">This month</option><option value="quarter">This quarter (3 months)</option><option value="half">This half-year (6 months)</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
+      <div class="faction-control range-control"><label>Period<select id="range"><option value="all">All time</option><option value="week">This week</option><option value="month">This month</option><option value="quarter">Last 3 months</option><option value="half">Last 6 months</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
       <label>View stats<select id="mode"><option value="all">All</option><option value="as">As Defenders</option><option value="vs">Against Invaders</option></select></label>
       <div class="faction-control"><label>Faction<select id="faction"></select></label><span class="custom" id="custom"></span></div>
       <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
@@ -666,6 +814,8 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   <div class="box-wrap"><div class="box"><table id="stats-table" class="view-overview"><colgroup id="column-layout"></colgroup><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div></div>
   <div class="pager" id="pager" style="display:none"><button id="prev" type="button">Previous</button><span id="info"></span><button id="next" type="button">Next</button></div>
 </main>
+<div class="sticky-tabs-proxy" id="sticky-tabs-proxy" role="tablist" aria-label="Statistics category"></div>
+<div class="sticky-head" id="sticky-head" aria-hidden="true"><table id="sticky-head-table"><colgroup></colgroup><thead></thead></table></div>
 <div class="pm" id="player-modal" aria-hidden="true"><div class="pm-dialog" role="dialog" aria-modal="true" aria-labelledby="pm-name"><button type="button" class="pm-close" id="pm-close" aria-label="Close">&times;</button><div id="player-body"></div></div></div>
 <div id="tip" role="tooltip"></div>
 <script>
@@ -673,6 +823,15 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 let pageSize = 50;
 const $ = id => document.getElementById(id);
 const fmt = n => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+const fmtCompact = n => {
+  const value = Number(n) || 0;
+  const abs = Math.abs(value);
+  if(abs >= 1e9) return (value / 1e9).toFixed(abs >= 1e10 ? 0 : 1).replace(/\.0$/, '') + 'b';
+  if(abs >= 1e6) return (value / 1e6).toFixed(abs >= 1e7 ? 0 : 1).replace(/\.0$/, '') + 'm';
+  if(abs >= 1e4) return Math.round(value / 1e3) + 'k';
+  if(abs >= 1e3) return (value / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
+  return fmt(value);
+};
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plural = (n, one, many) => n === 1 ? one : many;
 const DEFENDER_FACTIONS = {22:'Ancient',23:'Arcane',24:'Calradia',25:'Crusaders',26:'Sigmar',27:'LOTR',28:'Saracens',99:'Custom Defenders'};
@@ -689,7 +848,7 @@ const TABS = {
     ['finals','End bosses','End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
     ['chests','Leg Chests','Legendary chests opened'],
     ['silver','Wizard Buffs','Allies buffed by Silver and Necro wizards'],
-    ['crowd','Crowd Kills','Kills made while 18 or more players are on the server'],
+    ['crowd','Crowd Kills','Kills earned in larger games with more than 20 players online and during events'],
     ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
   ]},
   weapons:{label:'Weapons',start:'kills',columns:[
@@ -702,16 +861,11 @@ const TABS = {
     ['xbow','Crossbows','Kills with crossbows'],
     ['throw','Throwing','Kills with throwing weapons'],
     ['firearm','Firearms','Kills with pistols and muskets'],
-    ['magic','Magic','Kills made with wands or other arcane stuff'],
+    ['magic','Magic','Wands, special custom ammo, or other magical stuff'],
     ['other','Other','Kills from all other sources, such as explosions, punches, or kicks'],
     ['headshots','Headshots','Head hits landed with bows, crossbows, throwing weapons and firearms'],
     ['shielding','Shielding','Enemy bots whose attack was first stopped by the shield of this player']
   ]},
-  top10:{label:'Weekly Top 10',start:'t10',columns:[
-    ['t10','Top 10 Points','Every week the top 10 players in each statistic column earn points: 10 for 1st place down to 1 for 10th. Deaths are not counted'],
-    ['t10n','Placements','How many weekly top 10 places the player has taken, across all columns'],
-    ['t10first','1st Places','How many times the player has been number one in a column for the week']
-  ]}
 };
 const EXTRA_KEYS = ['silver'];
 const ALL_KEYS = [...new Set([...Object.values(TABS).flatMap(definition => definition.columns.map(column => column[0])),...EXTRA_KEYS])];
@@ -800,7 +954,7 @@ function renderTotals(rows,columns){
   if(!rows.length){$('foot').innerHTML='';return;}
   const sums = key => rows.reduce((total,row) => total + (Number(row[key]) || 0),0);
   $('foot').innerHTML = '<tr><td></td><td>In total · ' + fmt(rows.length) + ' ' + plural(rows.length,'player','players') + '</td>' +
-    columns.map(([key]) => '<td class="total-value col-' + key + (key === sortKey ? ' s' : '') + '">' + fmt(sums(key)) + '</td>').join('') + '</tr>';
+    columns.map(([key]) => '<td class="total-value col-' + key + (key === sortKey ? ' s' : '') + '" title="' + fmt(sums(key)) + '">' + fmtCompact(sums(key)) + '</td>').join('') + '</tr>';
 }
 const measureContext = document.createElement('canvas').getContext('2d');
 const FONT_FAMILY = '"Source Sans 3",system-ui,sans-serif';
@@ -813,14 +967,14 @@ function syncColumnWidths(columns,rows,totalRows){
   const box = table.closest('.box');
   const mobile = window.matchMedia('(max-width:760px)').matches;
   const rankWidth = mobile ? 40 : 42;
-  const playerWidth = mobile ? 172 : 205;
+  const playerWidth = mobile ? 180 : 220;
   const padding = mobile ? 24 : 30;
   const minimumWidth = mobile ? 64 : 72;
   const needed = columns.map(([key,label]) => {
     let content = textWidth(label.toUpperCase(),'700 11px ' + FONT_FAMILY,0.72) + 16;
     for(const row of rows) content = Math.max(content,textWidth(fmt(row[key]),'700 14px ' + FONT_FAMILY,0));
     const total = totalRows.reduce((sum,row) => sum + (Number(row[key]) || 0),0);
-    content = Math.max(content,textWidth(fmt(total),'700 12px ' + FONT_FAMILY,0));
+    content = Math.max(content,textWidth(fmtCompact(total),'700 12px ' + FONT_FAMILY,0));
     return content + padding + 2;
   });
   const widths = new Array(columns.length).fill(minimumWidth);
@@ -869,7 +1023,7 @@ function render(){
     columns.map(([key,label,description]) => '<th scope="col" tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + esc(label) + '</span></th>').join('') + '</tr>';
 
   if(visible.length){
-    $('body').innerHTML = visible.map(row => '<tr class="' + (row.rank <= 3 ? 'r' + row.rank : '') + '" data-id="' + esc(row.id) + '" tabindex="0"><td>' + row.rank + '</td><td title="' + esc(row.name) + '">' + esc(row.name) + '</td>' +
+    $('body').innerHTML = visible.map(row => '<tr class="' + (row.rank <= 3 ? 'r' + row.rank : '') + '" data-id="' + esc(row.id) + '"><td>' + row.rank + '</td><td class="player-name-cell" title="' + esc(row.name) + '"><button class="player-link" type="button" data-player-id="' + esc(row.id) + '">' + esc(row.name) + '</button></td>' +
       columns.map(([key]) => '<td class="col-' + key + ' ' + (key === sortKey ? 's ' : '') + ((Number(row[key]) || 0) === 0 ? 'z' : '') + '">' + fmt(row[key]) + '</td>').join('') + '</tr>').join('');
   }else{
     const message = rows.length ? 'No players found' : 'No stats available for this selection';
@@ -880,51 +1034,64 @@ function render(){
   $('info').textContent = 'Page ' + (page + 1) + ' of ' + pages + ' (' + shown.length + ' ' + plural(shown.length,'player','players') + ')';
   $('prev').disabled = page === 0;
   $('next').disabled = page >= pages - 1;
+  syncStickyOverlays();
 }
-function updateTabSelection(activeTab, animate = true){
-  const tabs = $('tabs');
-  const indicator = tabs.querySelector('.tab-indicator');
-  const buttons = tabs.querySelectorAll('button[data-tab]');
-  buttons.forEach(button => {
+function updateTabSelection(activeTab){
+  $('tabs').querySelectorAll('button[data-tab]').forEach(button => {
     const active = button.dataset.tab === activeTab;
     button.classList.toggle('on', active);
     button.setAttribute('aria-selected', active ? 'true' : 'false');
   });
-
-  const target = tabs.querySelector('button[data-tab="' + activeTab + '"]');
-  if(!indicator || !target) return;
-
-  const tabsRect = tabs.getBoundingClientRect();
-  const targetRect = target.getBoundingClientRect();
-  const x = targetRect.left - tabsRect.left - tabs.clientLeft;
-
-  if(!animate){
-    // Set the initial pill geometry without animating it from the top-left corner.
-    indicator.style.setProperty('transition', 'none', 'important');
-    indicator.style.left = x + 'px';
-    indicator.style.width = targetRect.width + 'px';
-    indicator.getBoundingClientRect();
-    requestAnimationFrame(() => {
-      indicator.style.removeProperty('transition');
-      tabs.classList.add('indicator-ready');
-    });
-    return;
-  }
-
-  // Animating left and width is more reliable than translating a zero-width pill,
-  // particularly when the tabs switch to a grid on narrow screens.
-  tabs.classList.add('indicator-ready');
-  indicator.style.left = x + 'px';
-  indicator.style.width = targetRect.width + 'px';
 }
 function renderTabs(){
   const tabs = $('tabs');
-  const firstRender = !tabs.querySelector('button[data-tab]');
-  if(firstRender){
-    tabs.innerHTML = '<span class="tab-indicator" aria-hidden="true"></span>' +
-      Object.entries(TABS).map(([key,definition]) => '<button type="button" role="tab" aria-selected="' + (key === tab ? 'true' : 'false') + '" data-tab="' + key + '">' + esc(definition.label) + '</button>').join('');
+  if(!tabs.querySelector('button[data-tab]')){
+    tabs.innerHTML = Object.entries(TABS).map(([key,definition]) =>
+      '<button type="button" role="tab" aria-selected="' + (key === tab ? 'true' : 'false') + '" data-tab="' + key + '">' + esc(definition.label) + '</button>'
+    ).join('');
   }
-  updateTabSelection(tab, !firstRender);
+  updateTabSelection(tab);
+}
+function syncStickyOverlays(){
+  const sourceTabs = $('tabs');
+  const tabProxy = $('sticky-tabs-proxy');
+  const box = $('stats-table').closest('.box');
+  const table = $('stats-table');
+  const stickyHead = $('sticky-head');
+  const stickyTable = $('sticky-head-table');
+  const stickyColgroup = stickyTable.querySelector('colgroup');
+  const stickyThead = stickyTable.querySelector('thead');
+  if(!sourceTabs || !box || !table || !stickyHead) return;
+
+  const tabsRect = sourceTabs.getBoundingClientRect();
+  const boxRect = box.getBoundingClientRect();
+  const tabsShouldStick = tabsRect.top < 0 && boxRect.bottom > 0 && boxRect.top < window.innerHeight;
+  if(tabsShouldStick){
+    if(tabProxy.innerHTML !== sourceTabs.innerHTML) tabProxy.innerHTML = sourceTabs.innerHTML;
+    tabProxy.style.display = 'block';
+    tabProxy.style.left = Math.max(8,tabsRect.left) + 'px';
+    tabProxy.style.width = Math.min(tabsRect.width,window.innerWidth - Math.max(8,tabsRect.left) - 8) + 'px';
+  }else{
+    tabProxy.style.display = 'none';
+  }
+
+  const proxyBottom = tabsShouldStick ? tabProxy.getBoundingClientRect().bottom : 0;
+  const originalHeadHeight = $('head').getBoundingClientRect().height || 40;
+  const shouldStickHead = tabsShouldStick && boxRect.top < proxyBottom && boxRect.bottom > proxyBottom + originalHeadHeight;
+  if(!shouldStickHead){
+    stickyHead.style.display = 'none';
+    return;
+  }
+
+  if(stickyColgroup.innerHTML !== $('column-layout').innerHTML) stickyColgroup.innerHTML = $('column-layout').innerHTML;
+  if(stickyThead.innerHTML !== $('head').innerHTML) stickyThead.innerHTML = $('head').innerHTML;
+  stickyTable.style.width = table.style.width || table.getBoundingClientRect().width + 'px';
+  stickyHead.style.left = boxRect.left + 'px';
+  stickyHead.style.top = proxyBottom + 'px';
+  stickyHead.style.width = boxRect.width + 'px';
+  stickyHead.style.height = originalHeadHeight + 'px';
+  stickyTable.style.transform = 'translateX(-' + box.scrollLeft + 'px)';
+  stickyHead.style.display = 'block';
 }
 function sortBy(key){
   if(key === sortKey) ascending = !ascending;
@@ -946,33 +1113,45 @@ function showTip(header){
 }
 function hideTip(){tip.style.opacity='0';}
 
+let tableFadeTimer = null;
+const pendingTableUpdates = [];
+let pendingTab = null;
 function fadeTo(update){
-  const box = document.querySelector('.box:not(.ghost)');
-  if(!box || window.matchMedia('(prefers-reduced-motion:reduce)').matches){
-    update();
+  const box = document.querySelector('.box');
+  const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if(!box || reducedMotion){
+    if(tableFadeTimer !== null) window.clearTimeout(tableFadeTimer);
+    tableFadeTimer = null;
+    const updates = pendingTableUpdates.splice(0);
+    updates.push(update);
+    updates.forEach(callback => callback());
+    if(box) box.classList.remove('is-switching');
     return;
   }
-  const ghost = box.cloneNode(true);
-  ghost.classList.add('ghost');
-  ghost.setAttribute('aria-hidden','true');
-  ghost.style.width = box.offsetWidth + 'px';
-  ghost.style.height = box.offsetHeight + 'px';
-  box.parentElement.appendChild(ghost);
-  ghost.scrollLeft = box.scrollLeft;
-  ghost.scrollTop = box.scrollTop;
-  update();
-  ghost.getBoundingClientRect();
-  requestAnimationFrame(() => ghost.classList.add('out'));
-  const removeGhost = () => ghost.remove();
-  ghost.addEventListener('transitionend',removeGhost,{once:true});
-  setTimeout(removeGhost,500);
+
+  pendingTableUpdates.push(update);
+  if(tableFadeTimer !== null) window.clearTimeout(tableFadeTimer);
+  // Fade the current table out before replacing its contents.
+  box.classList.add('is-switching');
+  tableFadeTimer = window.setTimeout(() => {
+    const updates = pendingTableUpdates.splice(0);
+    tableFadeTimer = null;
+    updates.forEach(callback => callback());
+    box.getBoundingClientRect();
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        if(tableFadeTimer === null && pendingTableUpdates.length === 0){
+          box.classList.remove('is-switching');
+        }
+      });
+    });
+  }, 165);
 }
-$('tabs').addEventListener('click',event => {
-  const button = event.target.closest('button[data-tab]');
-  if(!button) return;
-  const nextTab = button.dataset.tab;
-  if(!nextTab || nextTab === tab) return;
-  updateTabSelection(nextTab, true);
+function switchTab(nextTab){
+  if(!nextTab || nextTab === (pendingTab || tab)) return;
+  pendingTab = nextTab;
+  updateTabSelection(nextTab);
   fadeTo(() => {
     tab = nextTab;
     sortKey = TABS[tab].start;
@@ -980,11 +1159,25 @@ $('tabs').addEventListener('click',event => {
     page = 0;
     renderTabs();
     render();
+    if(pendingTab === nextTab) pendingTab = null;
   });
+}
+$('tabs').addEventListener('click', event => {
+  const button = event.target.closest('button[data-tab]');
+  if(!button) return;
+  switchTab(button.dataset.tab);
 });
 $('head').addEventListener('click',event => {
   const header = event.target.closest('th[data-key]');
   if(header) sortBy(header.dataset.key);
+});
+$('sticky-head').addEventListener('click',event => {
+  const header = event.target.closest('th[data-key]');
+  if(header) sortBy(header.dataset.key);
+});
+$('sticky-tabs-proxy').addEventListener('click',event => {
+  const button = event.target.closest('button[data-tab]');
+  if(button) switchTab(button.dataset.tab);
 });
 $('head').addEventListener('keydown',event => {
   const header = event.target.closest('th[data-key]');
@@ -1002,7 +1195,10 @@ $('search').addEventListener('input',event => {query=event.target.value;page=0;r
 $('page-size').addEventListener('change',event => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();});
 $('prev').addEventListener('click',() => {page--;render();});
 $('next').addEventListener('click',() => {page++;render();});
-window.addEventListener('resize',() => {render();updateTabSelection(tab,true);});
+window.addEventListener('resize',() => {render();updateTabSelection(tab,true);syncStickyOverlays();});
+window.addEventListener('scroll',syncStickyOverlays,{passive:true});
+$('sticky-head').addEventListener('scroll',hideTip);
+$('stats-table').closest('.box').addEventListener('scroll',syncStickyOverlays,{passive:true});
 document.addEventListener('mouseover',event => {const header=event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
 document.addEventListener('focusin',event => {const header=event.target.closest && event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
 document.addEventListener('scroll',hideTip,true);
@@ -1032,10 +1228,36 @@ function joinedText(raw){
   else if(number >= 20000101 && number <= 21001231) date = new Date(Math.floor(number / 10000),Math.floor(number / 100) % 100 - 1,number % 100);
   return date && !Number.isNaN(date.getTime()) ? dayStamp(date.getTime()) : String(number);
 }
-function favoriteRows(list,emptyText){
+function favoriteDisplayName(item,kind){
+  let name = item && (item.name ?? item.troopName ?? item.troop_name ?? item.displayName ?? item.id);
+  if(kind === 'hero'){
+    const rawId = Number(item && (item.troopId ?? item.troop_id ?? item.id ?? (typeof name === 'number' || /^\d+$/.test(String(name ?? '')) ? name : NaN)));
+    if(Number.isInteger(rawId) && rawId >= 1079 && rawId <= 1790){
+      const correctedId = rawId - 1;
+      const dictionaries = [current.troopNames,current.troop_names,current.troops,current.units];
+      for(const dictionary of dictionaries){
+        if(!dictionary) continue;
+        const entry = Array.isArray(dictionary) ? dictionary[correctedId] : dictionary[correctedId] ?? dictionary[String(correctedId)];
+        if(typeof entry === 'string' && entry) return entry;
+        if(entry && typeof entry === 'object'){
+          const resolved = entry.name ?? entry.troopName ?? entry.troop_name ?? entry.displayName;
+          if(resolved) return String(resolved);
+        }
+      }
+      // Keep an existing named entry intact; only numeric IDs need the corrected lookup fallback.
+      if(name == null || /^\d+$/.test(String(name))) return 'Troop ' + correctedId;
+    }
+  }
+  return String(name ?? 'Unknown');
+}
+function favoriteRows(list,emptyText,kind){
   if(!list || !list.length) return '<p class="pm-empty">' + esc(emptyText) + '</p>';
-  const top = Number(list[0].count) || 1;
-  return list.map(item => '<div class="pm-bar"><span title="' + esc(item.name) + '">' + esc(item.name) + '</span><div class="pm-track"><i style="width:' + (item.count / top * 100).toFixed(1) + '%"></i></div><b>' + fmt(item.count) + '</b></div>').join('');
+  const top = Math.max(1,...list.map(item => Number(item.count) || 0));
+  return list.map(item => {
+    const name = favoriteDisplayName(item,kind);
+    const count = Number(item.count) || 0;
+    return '<div class="pm-bar"><span title="' + esc(name) + '">' + esc(name) + '</span><div class="pm-track"><i style="width:' + (count / top * 100).toFixed(1) + '%"></i></div><b>' + fmt(count) + '</b></div>';
+  }).join('');
 }
 function openPlayer(id){
   const player = current.players.find(item => String(item.id) === String(id));
@@ -1043,22 +1265,19 @@ function openPlayer(id){
   const value = key => Number(player[key]) || 0;
   const line = (label,text,zero) => '<div class="pm-line' + (zero ? ' zero' : '') + '"><span>' + esc(label) + '</span><b>' + esc(text) + '</b></div>';
   const place = current.players.filter(item => (Number(item.score) || 0) > value('score')).length + 1;
-  const topPlace = value('t10') > 0 ? current.players.filter(item => (Number(item.t10) || 0) > value('t10')).length + 1 : 0;
   const cards = ['score','kills','deaths','points','waves','wins'].map(key => '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span><strong>' + fmt(value(key)) + '</strong></div>').join('');
   const details = ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],fmt(value(key)),value(key) === 0)).join('');
-  const weaponTotal = WEAPON_KEYS.reduce((total,key) => total + value(key),0);
-  const weapons = WEAPON_KEYS.map(key => {
-    const share = weaponTotal ? value(key) / weaponTotal * 100 : 0;
-    return '<div class="pm-bar"><span>' + esc(LABELS[key]) + '</span><div class="pm-track"><i style="width:' + share.toFixed(1) + '%"></i></div><b>' + fmt(value(key)) + '</b></div>';
+  const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
+  const weapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a)).map(key => {
+    const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
+    return '<div class="pm-bar"><span title="' + share.toFixed(1) + '% of total kills">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + share.toFixed(1) + '% of total kills"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + share.toFixed(1) + '% of total kills">' + fmt(value(key)) + '</b></div>';
   }).join('');
-  const weekly = line('Top 10 points',fmt(value('t10')),value('t10') === 0) + line('Position',topPlace ? '#' + topPlace : '-',!topPlace) + line('Placements',fmt(value('t10n')),value('t10n') === 0) + line('1st places',fmt(value('t10first')),value('t10first') === 0);
   const activity = line('Joined the server',joinedText(player.joined),!player.joined) + [['commands','Commands used'],['anvils','Anvils used'],['refills','Refills used'],['wardrobes','Wardrobes used']].map(([key,label]) => line(label,fmt(value(key)),value(key) === 0)).join('');
   const fav = player.fav || {};
-  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || player.id) + '</h2><span class="pm-meta">ID <b>' + esc(player.id) + '</b> · #<b>' + place + '</b> by Score · all-time stats</span></div>' +
+  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">#<b>' + place + '</b> by Score · all-time stats</span></div>' +
     '<div class="pm-cards">' + cards + '</div>' +
-    '<div class="pm-grid"><section class="pm-section"><h3>Overview</h3>' + details + '</section><section class="pm-section"><h3>Kills by weapon</h3>' + weapons + '</section></div>' +
-    '<div class="pm-grid"><section class="pm-section"><h3>Weekly Top 10</h3>' + weekly + '</section><section class="pm-section"><h3>Activity</h3>' + activity + '</section></div>' +
-    '<div class="pm-grid pm-fav"><section class="pm-section"><h3>Favourite heroes</h3>' + favoriteRows(fav.h,'No spawns recorded yet') + '</section><section class="pm-section"><h3>Favourite units</h3>' + favoriteRows(fav.n,'No spawns recorded yet') + '</section><section class="pm-section"><h3>Most played maps</h3>' + favoriteRows(player.maps,'No maps recorded yet') + '</section></div>' +
+    '<div class="pm-grid pm-primary"><section class="pm-section"><h3>Overview</h3>' + details + '</section><section class="pm-section"><h3>Kills by weapon</h3>' + weapons + '</section><section class="pm-section"><h3>Activity</h3>' + activity + '</section></div>' +
+    '<div class="pm-grid pm-fav"><section class="pm-section"><h3>Favourite heroes</h3>' + favoriteRows(fav.h,'No spawns recorded yet','hero') + '</section><section class="pm-section"><h3>Favourite units</h3>' + favoriteRows(fav.n,'No spawns recorded yet','unit') + '</section><section class="pm-section"><h3>Most played maps</h3>' + favoriteRows(player.maps,'No maps recorded yet','map') + '</section></div>' +
     '<div class="pm-grid"><section class="pm-section"><h3>As defenders</h3>' + factionRows(player,'as',DEFENDER_FACTIONS) + '</section><section class="pm-section"><h3>Against invaders</h3>' + factionRows(player,'vs',INVADER_FACTIONS) + '</section></div>';
   modalReturnFocus = document.activeElement;
   modal.classList.add('open');
@@ -1076,12 +1295,8 @@ function closePlayer(){
   if(modalReturnFocus && modalReturnFocus.focus) modalReturnFocus.focus();
 }
 $('body').addEventListener('click',event => {
-  const row = event.target.closest('tr[data-id]');
-  if(row) openPlayer(row.dataset.id);
-});
-$('body').addEventListener('keydown',event => {
-  const row = event.target.closest('tr[data-id]');
-  if(row && event.key === 'Enter') openPlayer(row.dataset.id);
+  const playerLink = event.target.closest('button.player-link[data-player-id]');
+  if(playerLink) openPlayer(playerLink.dataset.playerId);
 });
 $('pm-close').addEventListener('click',closePlayer);
 modal.addEventListener('click',event => {if(event.target === modal) closePlayer();});
