@@ -850,6 +850,85 @@ body::before{opacity:.08}
   .tabs .tab-indicator,.tabs button,.box,.pm,.pm-dialog{transition:none!important;}
 }
 
+
+
+/* Final requested motion and player-panel alignment. These explicit transitions remain active
+   even when the operating system requests reduced motion, because the site navigation relies on them. */
+.tabs .tab-indicator {
+  transition: left .38s cubic-bezier(.22,.8,.25,1), width .38s cubic-bezier(.22,.8,.25,1), opacity .14s ease !important;
+  will-change: left, width, opacity;
+}
+.tabs button {
+  transition: color .22s ease, background-color .22s ease, border-color .22s ease !important;
+}
+.box {
+  transition: opacity .24s ease !important;
+  will-change: opacity;
+}
+.box.is-switching {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.sticky-head {
+  transition: opacity .24s ease !important;
+}
+.sticky-head.is-switching { opacity: 0 !important; }
+
+/* The overlay is deliberately subtle: content remains visible behind the player profile. */
+#player-modal {
+  background: rgba(3,4,3,.38) !important;
+  -webkit-backdrop-filter: blur(1.1px) brightness(.985) !important;
+  backdrop-filter: blur(1.1px) brightness(.985) !important;
+  transition: opacity .24s ease, visibility .24s ease, background-color .24s ease !important;
+}
+#player-modal .pm-dialog {
+  position: relative;
+  isolation: isolate;
+  transition: transform .26s cubic-bezier(.2,.75,.25,1), opacity .26s ease !important;
+}
+#player-modal .pm-dialog::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: url("background2.png") center center / cover no-repeat;
+  opacity: .075;
+  pointer-events: none;
+}
+#player-modal .pm-dialog > #player-body {
+  position: relative;
+  z-index: 1;
+}
+#player-modal .pm-dialog > .pm-close {
+  z-index: 3;
+}
+
+/* The Kills and Waves summary cards sit directly above a matching-width Weapons panel. */
+#player-modal .pm-cards,
+#player-modal .pm-primary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 9px;
+  align-items: stretch;
+}
+#player-modal .pm-primary > .pm-section {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+/* Faction numbers align under their own headings instead of looking pinned to the right edge. */
+#player-modal .pm-frow span:not(:first-child) {
+  text-align: center !important;
+}
+#player-modal .pm-frow.pm-fhead span:not(:first-child) {
+  text-align: center !important;
+}
+@media(max-width:760px) {
+  #player-modal .pm-primary { grid-template-columns: minmax(0,1fr); }
+  #player-modal .pm-cards { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+
 </style>
 </head>
 <body>
@@ -1026,10 +1105,11 @@ function compare(a,b){
   }
   return a.name.localeCompare(b.name,undefined,{sensitivity:'base'});
 }
-function renderTotals(rows,columns){
+function renderTotals(rows,columns,totalPlayerCount){
   if(!rows.length){$('foot').innerHTML='';return;}
   const sums = key => rows.reduce((total,row) => total + (Number(row[key]) || 0),0);
-  $('foot').innerHTML = '<tr><td></td><td>In total · ' + fmt(rows.length) + ' ' + plural(rows.length,'player','players') + '</td>' +
+  const playerCount = Number.isFinite(totalPlayerCount) ? totalPlayerCount : rows.length;
+  $('foot').innerHTML = '<tr><td></td><td>In total · ' + fmt(playerCount) + ' ' + plural(playerCount,'player','players') + '</td>' +
     columns.map(([key]) => '<td class="total-value col-' + key + (key === sortKey ? ' s' : '') + '" title="' + fmt(sums(key)) + '">' + fmtCompact(sums(key)) + '</td>').join('') + '</tr>';
 }
 const measureContext = document.createElement('canvas').getContext('2d');
@@ -1111,7 +1191,7 @@ function render(){
   const visible = shown.slice(page * effectivePageSize,page * effectivePageSize + effectivePageSize);
 
   syncColumnWidths(columns,shown,shown);
-  renderTotals(visible,columns);
+  renderTotals(visible,columns,shown.length);
   $('head').innerHTML = '<tr><th scope="col">#</th><th scope="col" tabindex="0" data-key="name" class="player-sort ' + (sortKey === 'name' ? (ascending ? 'on asc' : 'on') : '') + '"><span>Player</span></th>' +
     columns.map(([key,label,description]) => '<th scope="col" tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + esc(label) + '</span></th>').join('') + '</tr>';
 
@@ -1137,11 +1217,13 @@ function positionTabIndicator(container){
   const left = active.offsetLeft;
   const width = active.offsetWidth;
   if(!container.classList.contains('indicator-ready')){
-    indicator.style.transition = 'none';
+    indicator.style.setProperty('transition','none','important');
     indicator.style.left = left + 'px';
     indicator.style.width = width + 'px';
     container.classList.add('indicator-ready');
-    window.requestAnimationFrame(() => { indicator.style.transition = ''; });
+    // Force the starting position to be committed before enabling the sliding transition.
+    indicator.getBoundingClientRect();
+    window.requestAnimationFrame(() => { indicator.style.removeProperty('transition'); });
   }else{
     indicator.style.left = left + 'px';
     indicator.style.width = width + 'px';
@@ -1238,9 +1320,8 @@ let pendingTab = null;
 function fadeTo(update){
   const box = document.querySelector('.box');
   const stickyHead = $('sticky-head');
-  const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if(!box || reducedMotion){
+  if(!box){
     if(tableFadeTimer !== null) window.clearTimeout(tableFadeTimer);
     tableFadeTimer = null;
     const updates = pendingTableUpdates.splice(0);
@@ -1270,7 +1351,7 @@ function fadeTo(update){
         }
       });
     });
-  }, 165);
+  }, 225);
 }
 function switchTab(nextTab){
   if(!nextTab || nextTab === (pendingTab || tab)) return;
