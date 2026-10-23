@@ -774,6 +774,82 @@ body::before{opacity:.08}
 }
 @media(prefers-reduced-motion:reduce){.sticky-tabs-proxy,.sticky-head{scroll-behavior:auto;}}
 
+
+
+/* Final interaction pass: a real sliding gold tab, polished sticky table rail and compact profile grid. */
+.tabs{position:relative;isolation:isolate;overflow:hidden;}
+.tabs .tab-indicator{
+  display:block!important;position:absolute;z-index:0;top:4px;bottom:4px;left:0;width:0;
+  border:1px solid rgba(216,185,111,.52);border-radius:999px;
+  background:linear-gradient(180deg,rgba(216,185,111,.19),rgba(216,185,111,.075));
+  box-shadow:inset 0 1px rgba(255,255,255,.035),0 2px 8px rgba(0,0,0,.15);
+  opacity:0;pointer-events:none;
+  transition:left .32s cubic-bezier(.22,.8,.25,1),width .32s cubic-bezier(.22,.8,.25,1),opacity .12s ease;
+  will-change:left,width;
+}
+.tabs.indicator-ready .tab-indicator{opacity:1;}
+.tabs button,.tabs button:hover,.tabs button.on,.tabs button.on:hover{
+  position:relative;z-index:1;background:transparent!important;border-color:transparent!important;box-shadow:none!important;
+}
+.tabs button{transition:color .2s ease;}
+.tabs button.on,.tabs button.on:hover{color:#fff5d8!important;}
+.tabs button:not(.on):hover{color:var(--accent-bright)!important;}
+/* Cross-browser fade uses only opacity on the actual table frame. */
+.box{transition:opacity .18s ease!important;will-change:opacity;}
+.box.is-switching{opacity:0!important;filter:none!important;transform:none!important;pointer-events:none!important;}
+#stats-table,.box.is-switching #stats-table{opacity:1!important;filter:none!important;transform:none!important;transition:none!important;}
+/* One cohesive full-width sticky rail; the column headings sit directly under it. */
+.sticky-tabs-proxy{
+  box-sizing:border-box;padding:5px 8px;width:auto;min-height:43px;
+  background:rgba(10,12,9,.985);border:1px solid rgba(216,185,111,.28);border-top:0;
+  border-radius:0 0 8px 8px;box-shadow:0 5px 15px rgba(0,0,0,.28);
+  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+}
+.sticky-tabs-proxy .tabs{display:flex;width:max-content;max-width:100%;gap:4px;padding:0;border:0;background:transparent;overflow:hidden;}
+.sticky-tabs-proxy .tabs button{min-height:31px;padding:6px 18px;font-size:14px;white-space:nowrap;}
+.sticky-head{border:1px solid rgba(216,185,111,.26);border-top:0;border-radius:0 0 8px 8px;box-shadow:0 7px 18px rgba(0,0,0,.3);opacity:1;transition:opacity .18s ease;}
+.sticky-head.is-switching{opacity:0!important;}
+.sticky-head th{height:41px;padding:9px 12px;}
+/* Darken and soften the page only while the player panel is open. */
+.pm{
+  background:rgba(3,4,3,.83);
+  -webkit-backdrop-filter:blur(2px) brightness(.94);
+  backdrop-filter:blur(2px) brightness(.94);
+  transition:opacity .22s ease,visibility .22s ease,background-color .22s ease;
+}
+.pm-dialog{
+  opacity:.97;transform:translateY(8px) scale(.988);
+  transition:transform .22s ease,opacity .22s ease;
+  overflow-x:hidden;
+}
+.pm.open .pm-dialog{opacity:1;transform:translateY(0) scale(1);}
+.pm-grid,.pm-section,.pm-faction-table{min-width:0;max-width:100%;}
+.pm-section{overflow:hidden;}
+.pm-primary{grid-template-columns:minmax(0,1fr) minmax(0,1.12fr) minmax(0,1fr);gap:10px;}
+.pm-frow{
+  width:100%;max-width:100%;box-sizing:border-box;
+  grid-template-columns:minmax(0,1.45fr) repeat(5,minmax(0,1fr));
+  gap:4px;padding:6px 0;font-size:11px;line-height:1.35;
+}
+.pm-frow span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pm-frow span:not(:first-child){text-align:right;font-variant-numeric:tabular-nums;}
+.pm-frow.pm-fhead{font-size:8px;letter-spacing:.025em;}
+.pm-faction-table{width:100%;overflow:hidden;}
+@media(max-width:760px){
+  .sticky-tabs-proxy{left:14px!important;width:calc(100vw - 28px)!important;padding:5px 6px;}
+  .sticky-tabs-proxy .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;}
+  .sticky-tabs-proxy .tabs button{padding:6px 10px;font-size:13px;}
+  .sticky-head th{padding:8px 10px;}
+  .pm-dialog{width:min(100%,680px);max-height:92vh;padding:16px 12px;}
+  .pm-grid.pm-primary,.pm-fav,.pm-grid{grid-template-columns:minmax(0,1fr);}
+  .pm-cards{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .pm-frow{grid-template-columns:minmax(0,1.35fr) repeat(5,minmax(0,1fr));gap:3px;font-size:10px;}
+  .pm-frow.pm-fhead{font-size:7.5px;letter-spacing:0;}
+}
+@media(prefers-reduced-motion:reduce){
+  .tabs .tab-indicator,.tabs button,.box,.pm,.pm-dialog{transition:none!important;}
+}
+
 </style>
 </head>
 <body>
@@ -1035,7 +1111,7 @@ function render(){
   const visible = shown.slice(page * effectivePageSize,page * effectivePageSize + effectivePageSize);
 
   syncColumnWidths(columns,shown,shown);
-  renderTotals(shown,columns);
+  renderTotals(visible,columns);
   $('head').innerHTML = '<tr><th scope="col">#</th><th scope="col" tabindex="0" data-key="name" class="player-sort ' + (sortKey === 'name' ? (ascending ? 'on asc' : 'on') : '') + '"><span>Player</span></th>' +
     columns.map(([key,label,description]) => '<th scope="col" tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + esc(label) + '</span></th>').join('') + '</tr>';
 
@@ -1053,17 +1129,39 @@ function render(){
   $('next').disabled = page >= pages - 1;
   syncStickyOverlays();
 }
+function positionTabIndicator(container){
+  if(!container) return;
+  const indicator = container.querySelector('.tab-indicator');
+  const active = container.querySelector('button[data-tab].on');
+  if(!indicator || !active) return;
+  const left = active.offsetLeft;
+  const width = active.offsetWidth;
+  if(!container.classList.contains('indicator-ready')){
+    indicator.style.transition = 'none';
+    indicator.style.left = left + 'px';
+    indicator.style.width = width + 'px';
+    container.classList.add('indicator-ready');
+    window.requestAnimationFrame(() => { indicator.style.transition = ''; });
+  }else{
+    indicator.style.left = left + 'px';
+    indicator.style.width = width + 'px';
+  }
+}
 function updateTabSelection(activeTab){
-  $('tabs').querySelectorAll('button[data-tab]').forEach(button => {
-    const active = button.dataset.tab === activeTab;
-    button.classList.toggle('on', active);
-    button.setAttribute('aria-selected', active ? 'true' : 'false');
+  const containers = [$('tabs'), $('sticky-tabs-proxy').querySelector('.tabs')].filter(Boolean);
+  containers.forEach(container => {
+    container.querySelectorAll('button[data-tab]').forEach(button => {
+      const active = button.dataset.tab === activeTab;
+      button.classList.toggle('on', active);
+      button.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    positionTabIndicator(container);
   });
 }
 function renderTabs(){
   const tabs = $('tabs');
   if(!tabs.querySelector('button[data-tab]')){
-    tabs.innerHTML = Object.entries(TABS).map(([key,definition]) =>
+    tabs.innerHTML = '<span class="tab-indicator" aria-hidden="true"></span>' + Object.entries(TABS).map(([key,definition]) =>
       '<button type="button" role="tab" aria-selected="' + (key === tab ? 'true' : 'false') + '" data-tab="' + key + '">' + esc(definition.label) + '</button>'
     ).join('');
   }
@@ -1089,8 +1187,9 @@ function syncStickyOverlays(){
       tabProxy.innerHTML = '<div class="tabs">' + sourceTabs.innerHTML + '</div>';
     }
     tabProxy.style.display = 'block';
-    tabProxy.style.left = Math.max(8,tabsRect.left) + 'px';
-    tabProxy.style.width = Math.min(tabsRect.width,window.innerWidth - Math.max(8,tabsRect.left) - 8) + 'px';
+    tabProxy.style.left = boxRect.left + 'px';
+    tabProxy.style.width = boxRect.width + 'px';
+    positionTabIndicator(tabProxy.querySelector('.tabs'));
   }else{
     tabProxy.style.display = 'none';
   }
@@ -1138,6 +1237,7 @@ const pendingTableUpdates = [];
 let pendingTab = null;
 function fadeTo(update){
   const box = document.querySelector('.box');
+  const stickyHead = $('sticky-head');
   const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if(!box || reducedMotion){
@@ -1147,22 +1247,26 @@ function fadeTo(update){
     updates.push(update);
     updates.forEach(callback => callback());
     if(box) box.classList.remove('is-switching');
+    if(stickyHead) stickyHead.classList.remove('is-switching');
     return;
   }
 
   pendingTableUpdates.push(update);
   if(tableFadeTimer !== null) window.clearTimeout(tableFadeTimer);
-  // Fade the current table out before replacing its contents.
+  // Fade both the visible table and its floating header before replacing the contents.
   box.classList.add('is-switching');
+  if(stickyHead && getComputedStyle(stickyHead).display !== 'none') stickyHead.classList.add('is-switching');
   tableFadeTimer = window.setTimeout(() => {
     const updates = pendingTableUpdates.splice(0);
     tableFadeTimer = null;
     updates.forEach(callback => callback());
     box.getBoundingClientRect();
+    if(stickyHead) stickyHead.getBoundingClientRect();
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         if(tableFadeTimer === null && pendingTableUpdates.length === 0){
           box.classList.remove('is-switching');
+          if(stickyHead) stickyHead.classList.remove('is-switching');
         }
       });
     });
@@ -1235,6 +1339,21 @@ const LABELS = {silver:'Wizard buffs'};
 Object.values(TABS).forEach(definition => definition.columns.forEach(column => {LABELS[column[0]] = column[1];}));
 const modal = $('player-modal');
 let modalReturnFocus = null;
+const uiSounds = {
+  open: new Audio('click.mp3'),
+  close: new Audio('sfx3.mp3')
+};
+Object.values(uiSounds).forEach(sound => { sound.preload = 'auto'; sound.volume = 0.55; });
+function playUiSound(kind){
+  const sound = uiSounds[kind];
+  if(!sound) return;
+  try{
+    sound.pause();
+    sound.currentTime = 0;
+    const playback = sound.play();
+    if(playback && typeof playback.catch === 'function') playback.catch(() => {});
+  }catch(error){ /* Audio files are optional; the UI must keep working if one is missing. */ }
+}
 function factionRows(player,mode,names){
   const keys = ['kills','deaths','waves','wins','score'];
   const source = (player.fac && player.fac[mode]) || {};
@@ -1243,8 +1362,8 @@ function factionRows(player,mode,names){
     .filter(({stat}) => keys.some(key => Number(stat[key]) > 0))
     .sort((a,b) => (Number(b.stat.kills) || 0) - (Number(a.stat.kills) || 0));
   if(!list.length) return '<p class="pm-empty">No data yet</p>';
-  return '<div class="pm-frow pm-fhead"><span>Faction</span><span>Kills</span><span>Deaths</span><span>Waves</span><span>Wins</span><span>Score</span></div>' +
-    list.map(({name,stat}) => '<div class="pm-frow"><span>' + esc(name) + '</span>' + keys.map(key => '<span>' + fmt(stat[key]) + '</span>').join('') + '</div>').join('');
+  return '<div class="pm-faction-table"><div class="pm-frow pm-fhead"><span>Faction</span><span>Kills</span><span>Deaths</span><span>Waves</span><span>Wins</span><span>Score</span></div>' +
+    list.map(({name,stat}) => '<div class="pm-frow"><span title="' + esc(name) + '">' + esc(name) + '</span>' + keys.map(key => '<span title="' + esc(fmt(stat[key])) + '">' + fmtCompact(stat[key]) + '</span>').join('') + '</div>').join('') + '</div>';
 }
 function joinedText(raw){
   const number = Number(raw) || 0;
@@ -1289,9 +1408,9 @@ function favoriteRows(list,emptyText,kind){
 function openPlayer(id){
   const player = current.players.find(item => String(item.id) === String(id));
   if(!player) return;
+  playUiSound('open');
   const value = key => Number(player[key]) || 0;
   const line = (label,text,zero) => '<div class="pm-line' + (zero ? ' zero' : '') + '"><span>' + esc(label) + '</span><b>' + esc(text) + '</b></div>';
-  const place = current.players.filter(item => (Number(item.score) || 0) > value('score')).length + 1;
   const cards = ['score','kills','deaths','points','waves','wins'].map(key => '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span><strong>' + fmt(value(key)) + '</strong></div>').join('');
   const details = ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],fmt(value(key)),value(key) === 0)).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
@@ -1301,7 +1420,7 @@ function openPlayer(id){
   }).join('');
   const activity = line('Joined the server',joinedText(player.joined),!player.joined) + [['commands','Commands used'],['anvils','Anvils used'],['refills','Refills used'],['wardrobes','Wardrobes used']].map(([key,label]) => line(label,fmt(value(key)),value(key) === 0)).join('');
   const fav = player.fav || {};
-  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">#<b>' + place + '</b> by Score · all-time stats</span></div>' +
+  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats</span></div>' +
     '<div class="pm-cards">' + cards + '</div>' +
     '<div class="pm-grid pm-primary"><section class="pm-section"><h3>Overview</h3>' + details + '</section><section class="pm-section"><h3>Kills by weapon</h3>' + weapons + '</section><section class="pm-section"><h3>Activity</h3>' + activity + '</section></div>' +
     '<div class="pm-grid pm-fav"><section class="pm-section"><h3>Favourite heroes</h3>' + favoriteRows(fav.h,'No spawns recorded yet','hero') + '</section><section class="pm-section"><h3>Favourite units</h3>' + favoriteRows(fav.n,'No spawns recorded yet','unit') + '</section><section class="pm-section"><h3>Most played maps</h3>' + favoriteRows(player.maps,'No maps recorded yet','map') + '</section></div>' +
@@ -1316,6 +1435,7 @@ function openPlayer(id){
 }
 function closePlayer(){
   if(!modal.classList.contains('open')) return;
+  playUiSound('close');
   modal.classList.remove('open');
   modal.setAttribute('aria-hidden','true');
   document.body.style.overflow = '';
