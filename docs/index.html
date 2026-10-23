@@ -151,7 +151,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 #info{min-width:190px;text-align:center;font-variant-numeric:tabular-nums}
 #tip{position:fixed;z-index:9;left:0;top:0;width:max-content;max-width:310px;padding:9px 11px;background:rgba(21,27,21,.98);border:1px solid rgba(216,185,111,.18);border-radius:8px;color:rgba(240,240,231,.8);font-size:12px;line-height:1.5;white-space:pre-line;text-align:left;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 8px 24px rgba(0,0,0,.42)}
 @media(max-width:1050px){header{align-items:flex-start;flex-direction:column;gap:21px}.links{justify-content:flex-start;max-width:100%}.website-teaser{min-height:48px}.toolbar-top{align-items:stretch;flex-direction:column}.search-wrap{flex-basis:auto;width:100%;max-width:none;min-width:0}}
-@media(max-width:760px){header,main{width:calc(100% - 28px)}header{padding:26px 0 22px}.brand{min-width:0;padding-left:15px}h1{font-size:clamp(34px,9vw,47px)}.sub{font-size:14px;max-width:460px}.links{gap:6px}.links a{min-height:35px;padding:7px 9px;font-size:11px}.links svg{width:14px;height:14px}.website-teaser{min-width:160px;margin:0 14px 4px 0;padding:7px 12px}.website-label{font-size:18px}main{padding-top:18px}.toolbar{padding:12px;border-radius:11px}.tabs{width:100%;display:grid;grid-template-columns:1fr 1fr}.tabs button{padding:9px 12px;font-size:15px}.filters{align-items:stretch;gap:10px}.filters>label{flex:1 1 100%;justify-content:space-between}.page-size-control{flex:1 1 100%;margin-left:0;justify-content:space-between}.page-size-control select{width:72%;max-width:220px}.faction-control{flex:1 1 100%;flex-wrap:wrap;gap:7px 10px}.faction-control>label{flex:1 1 100%;justify-content:space-between}.filters select{flex:1;min-width:0;max-width:72%}.custom{flex:1 1 100%;max-width:100%;padding:6px 0 0;border-left:0;border-top:1px solid rgba(216,185,111,.16)}.brand-meta{font-size:11px}th,td{padding:10px 12px}th:nth-child(2),td:nth-child(2),tfoot td:nth-child(2){width:172px;min-width:172px;max-width:172px;left:40px}th:nth-child(1),td:nth-child(1),tfoot td:nth-child(1){left:0;width:40px;min-width:40px}.pager{gap:8px;flex-wrap:wrap}.pager button{min-width:78px;padding:8px}#info{order:-1;flex-basis:100%;min-width:0}}
+@media(max-width:760px){header,main{width:calc(100% - 28px)}header{padding:26px 0 22px}.brand{min-width:0;padding-left:15px}h1{font-size:clamp(34px,9vw,47px)}.sub{font-size:14px;max-width:460px}.links{gap:6px}.links a{min-height:35px;padding:7px 9px;font-size:11px}.links svg{width:14px;height:14px}.website-teaser{min-width:160px;margin:0 14px 4px 0;padding:7px 12px}.website-label{font-size:18px}main{padding-top:18px}.toolbar{padding:12px;border-radius:11px}.tabs{width:100%;display:grid;grid-template-columns:repeat(3,1fr)}.tabs button{padding:9px 12px;font-size:15px}.filters{align-items:stretch;gap:10px}.filters>label{flex:1 1 100%;justify-content:space-between}.page-size-control{flex:1 1 100%;margin-left:0;justify-content:space-between}.page-size-control select{width:72%;max-width:220px}.faction-control{flex:1 1 100%;flex-wrap:wrap;gap:7px 10px}.faction-control>label{flex:1 1 100%;justify-content:space-between}.filters select{flex:1;min-width:0;max-width:72%}.custom{flex:1 1 100%;max-width:100%;padding:6px 0 0;border-left:0;border-top:1px solid rgba(216,185,111,.16)}.brand-meta{font-size:11px}th,td{padding:10px 12px}th:nth-child(2),td:nth-child(2),tfoot td:nth-child(2){width:172px;min-width:172px;max-width:172px;left:40px}th:nth-child(1),td:nth-child(1),tfoot td:nth-child(1){left:0;width:40px;min-width:40px}.pager{gap:8px;flex-wrap:wrap}.pager button{min-width:78px;padding:8px}#info{order:-1;flex-basis:100%;min-width:0}}
 @media(max-width:420px){.links a{gap:5px}.brand-meta{align-items:flex-start;gap:4px 10px}.brand-meta #meta::before{margin-left:0}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
 
@@ -588,9 +588,44 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   #stats-table { transition:none !important; }
 }
 
-.box{view-transition-name:stats-box}
-::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
-::view-transition-old(stats-box),::view-transition-new(stats-box){animation-duration:.3s;animation-timing-function:ease}
+.box-wrap{position:relative}
+.box.ghost{position:absolute;left:0;top:0;z-index:8;pointer-events:none;opacity:1;transition:opacity .3s ease}
+.box.ghost.out{opacity:0}
+#stats-table thead th[data-key]:not(.player-sort),#stats-table tbody td[class*="col-"],#stats-table tfoot td.total-value,#stats-table.view-overview .col-score,#stats-table.view-overview .col-kills{width:auto;min-width:0;max-width:none}
+#body tr[data-id]{cursor:pointer}
+#body tr[data-id]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.pm{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-start;justify-content:center;padding:4vh 16px;overflow-y:auto;background:rgba(5,6,4,.78);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease}
+.pm.open{opacity:1;visibility:visible}
+.pm-dialog{position:relative;width:min(100%,920px);margin:auto 0;padding:26px;background:linear-gradient(160deg,#242619 0%,#181a12 100%);border:1px solid rgba(216,185,111,.3);border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.55);transform:translateY(8px);transition:transform .2s ease}
+.pm.open .pm-dialog{transform:none}
+.pm-close{position:absolute;top:12px;right:14px;width:34px;height:34px;padding:0;font-size:24px;line-height:1;color:var(--dim);background:transparent;border:1px solid transparent;border-radius:8px;cursor:pointer}
+.pm-close:hover{color:var(--accent-bright);border-color:var(--accent-line)}
+.pm-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;padding-right:40px;margin-bottom:18px}
+.pm-name{margin:0;font:700 clamp(26px,4vw,38px)/1.05 var(--display);color:#fffdf5;overflow-wrap:anywhere}
+.pm-meta{color:var(--dim);font-size:13px}
+.pm-meta b{color:var(--accent-bright);font-weight:600}
+.pm-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:22px}
+.pm-card{padding:12px 14px;background:rgba(0,0,0,.22);border:1px solid rgba(216,185,111,.16);border-radius:10px}
+.pm-card span{display:block;color:var(--dim);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.pm-card strong{display:block;margin-top:3px;font:700 24px/1.1 var(--display);color:var(--accent-bright);font-variant-numeric:tabular-nums}
+.pm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.pm-section h3{margin:0 0 10px;color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.pm-line{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid rgba(155,163,145,.1);font-size:14px;color:var(--cell)}
+.pm-line b{color:#fff5d7;font-weight:600;font-variant-numeric:tabular-nums}
+.pm-line.zero b{color:#66675f;font-weight:400}
+.pm-bar{display:grid;grid-template-columns:104px 1fr 76px;align-items:center;gap:10px;padding:5px 0;font-size:13px;color:var(--cell)}
+.pm-track{height:7px;border-radius:4px;background:rgba(0,0,0,.35);overflow:hidden}
+.pm-track i{display:block;height:100%;background:linear-gradient(90deg,#9c8548,var(--accent-bright));border-radius:4px}
+.pm-bar b{text-align:right;color:#fff5d7;font-weight:600;font-variant-numeric:tabular-nums}
+.pm-grid+.pm-grid{margin-top:22px}
+.pm-bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pm-fav .pm-bar{grid-template-columns:minmax(150px,1.4fr) 1fr 56px}
+.pm-frow{display:grid;grid-template-columns:minmax(110px,1.6fr) repeat(5,minmax(52px,1fr));gap:8px;padding:6px 0;border-bottom:1px solid rgba(155,163,145,.1);font-size:13px;color:var(--cell);font-variant-numeric:tabular-nums}
+.pm-frow span:not(:first-child){text-align:right}
+.pm-frow.pm-fhead{color:var(--dim);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.pm-empty{margin:0;color:var(--dim);font-size:13px}
+@media(max-width:760px){.pm{padding:0}.pm-dialog{min-height:100%;border-radius:0;margin:0;padding:20px 16px}.pm-bar{grid-template-columns:88px 1fr 64px}.pm-frow{grid-template-columns:minmax(90px,1.5fr) repeat(5,minmax(40px,1fr));font-size:12px}}
+@media(prefers-reduced-motion:reduce){.pm,.pm-dialog,.box.ghost{transition:none!important}}
 </style>
 </head>
 <body>
@@ -622,15 +657,16 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
       </div>
     </div>
     <div class="filters">
-      <div class="faction-control range-control"><label>Period<select id="range"><option value="all">All time</option><option value="week">This week</option><option value="month">This month</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
+      <div class="faction-control range-control"><label>Period<select id="range"><option value="all">All time</option><option value="week">This week</option><option value="month">This month</option><option value="quarter">This quarter (3 months)</option><option value="half">This half-year (6 months)</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
       <label>View stats<select id="mode"><option value="all">All</option><option value="as">As Defenders</option><option value="vs">Against Invaders</option></select></label>
       <div class="faction-control"><label>Faction<select id="faction"></select></label><span class="custom" id="custom"></span></div>
       <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
     </div>
   </section>
-  <div class="box"><table id="stats-table" class="view-overview"><colgroup id="column-layout"></colgroup><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div>
+  <div class="box-wrap"><div class="box"><table id="stats-table" class="view-overview"><colgroup id="column-layout"></colgroup><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div></div>
   <div class="pager" id="pager" style="display:none"><button id="prev" type="button">Previous</button><span id="info"></span><button id="next" type="button">Next</button></div>
 </main>
+<div class="pm" id="player-modal" aria-hidden="true"><div class="pm-dialog" role="dialog" aria-modal="true" aria-labelledby="pm-name"><button type="button" class="pm-close" id="pm-close" aria-label="Close">&times;</button><div id="player-body"></div></div></div>
 <div id="tip" role="tooltip"></div>
 <script>
 'use strict';
@@ -652,22 +688,33 @@ const TABS = {
     ['bosses','Bosses','Bosses slain by player. Credit goes to the one who dealt the most damage'],
     ['finals','End bosses','End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
     ['chests','Leg Chests','Legendary chests opened'],
+    ['silver','Wizard Buffs','Allies buffed by Silver and Necro wizards'],
+    ['crowd','Crowd Kills','Kills made while 18 or more players are on the server'],
     ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
   ]},
   weapons:{label:'Weapons',start:'kills',columns:[
     ['kills','Kills','All enemy bots killed, whatever the weapon'],
     ['w1h','One-handed','Kills with one-handed weapons'],
     ['w2h','Two-handed','Kills with two-handed weapons'],
-    ['pole','Polearms','Kills with polearms'],
+    ['pole','Polearms','Kills with polearms such as halberds, glaives or bardiches'],
+    ['spear','Spears','Kills with spears, lances and pikes - thrusting polearms'],
     ['bow','Bows','Kills with bows'],
     ['xbow','Crossbows','Kills with crossbows'],
     ['throw','Throwing','Kills with throwing weapons'],
     ['firearm','Firearms','Kills with pistols and muskets'],
     ['magic','Magic','Kills made with wands or other arcane stuff'],
-    ['other','Other','Kills from all other sources, such as explosions, punches, or kicks']
+    ['other','Other','Kills from all other sources, such as explosions, punches, or kicks'],
+    ['headshots','Headshots','Head hits landed with bows, crossbows, throwing weapons and firearms'],
+    ['shielding','Shielding','Enemy bots whose attack was first stopped by the shield of this player']
+  ]},
+  top10:{label:'Weekly Top 10',start:'t10',columns:[
+    ['t10','Top 10 Points','Every week the top 10 players in each statistic column earn points: 10 for 1st place down to 1 for 10th. Deaths are not counted'],
+    ['t10n','Placements','How many weekly top 10 places the player has taken, across all columns'],
+    ['t10first','1st Places','How many times the player has been number one in a column for the week']
   ]}
 };
-const ALL_KEYS = [...new Set(Object.values(TABS).flatMap(definition => definition.columns.map(column => column[0])))];
+const EXTRA_KEYS = ['silver'];
+const ALL_KEYS = [...new Set([...Object.values(TABS).flatMap(definition => definition.columns.map(column => column[0])),...EXTRA_KEYS])];
 let data = {players:[]};
 let tab = 'overview';
 let sortKey = 'score';
@@ -708,7 +755,7 @@ function buildRows(){
   const mode = modeSelect.value;
   if(mode === 'all'){
     return data.players.map(player => {
-      const row = {name:String(player.name ?? '')};
+      const row = {id:String(player.id ?? ''),name:String(player.name ?? '')};
       ALL_KEYS.forEach(key => row[key] = Number(player[key]) || 0);
       return row;
     });
@@ -717,7 +764,7 @@ function buildRows(){
   const rows = [];
   for(const player of data.players){
     const byFaction = (player.fac && player.fac[mode]) || {};
-    const row = {name:String(player.name ?? '')};
+    const row = {id:String(player.id ?? ''),name:String(player.name ?? '')};
     for(const key of ALL_KEYS){
       row[key] = factionIds.reduce((total,id) => total + (Number(byFaction[id] && byFaction[id][key]) || 0),0);
     }
@@ -755,34 +802,52 @@ function renderTotals(rows,columns){
   $('foot').innerHTML = '<tr><td></td><td>In total · ' + fmt(rows.length) + ' ' + plural(rows.length,'player','players') + '</td>' +
     columns.map(([key]) => '<td class="total-value col-' + key + (key === sortKey ? ' s' : '') + '">' + fmt(sums(key)) + '</td>').join('') + '</tr>';
 }
-function syncColumnWidths(columns){
+const measureContext = document.createElement('canvas').getContext('2d');
+const FONT_FAMILY = '"Source Sans 3",system-ui,sans-serif';
+function textWidth(text,font,spacing){
+  measureContext.font = font;
+  return measureContext.measureText(text).width + text.length * spacing;
+}
+function syncColumnWidths(columns,rows,totalRows){
   const table = $('stats-table');
   const box = table.closest('.box');
   const mobile = window.matchMedia('(max-width:760px)').matches;
   const rankWidth = mobile ? 40 : 42;
   const playerWidth = mobile ? 172 : 205;
-  const statBaseWidths = columns.map(([key]) => {
-    if(tab === 'overview' && key === 'score') return 130;
-    if(tab === 'overview' && key === 'kills') return 112;
-    return 90;
+  const padding = mobile ? 24 : 30;
+  const minimumWidth = mobile ? 64 : 72;
+  const needed = columns.map(([key,label]) => {
+    let content = textWidth(label.toUpperCase(),'700 11px ' + FONT_FAMILY,0.72) + 16;
+    for(const row of rows) content = Math.max(content,textWidth(fmt(row[key]),'700 14px ' + FONT_FAMILY,0));
+    const total = totalRows.reduce((sum,row) => sum + (Number(row[key]) || 0),0);
+    content = Math.max(content,textWidth(fmt(total),'700 12px ' + FONT_FAMILY,0));
+    return content + padding + 2;
   });
-  const baseTotal = rankWidth + playerWidth + statBaseWidths.reduce((sum,width) => sum + width,0);
-  // Fill wide screens by adding the same amount to every stat column only.
-  // This keeps # and Player identical between tabs and preserves equal Weapons columns.
-  const extraPerStat = Math.max(0,box.clientWidth - baseTotal) / statBaseWidths.length;
-  const statWidths = statBaseWidths.map(width => width + extraPerStat);
-  const allWidths = [rankWidth,playerWidth,...statWidths];
+  const widths = new Array(columns.length).fill(minimumWidth);
+  let free = columns.map((column,index) => index);
+  let space = Math.max(0,box.clientWidth - rankWidth - playerWidth);
+  while(free.length){
+    const equal = space / free.length;
+    const grown = free.filter(index => needed[index] > equal);
+    if(!grown.length){
+      free.forEach(index => widths[index] = Math.max(equal,minimumWidth));
+      break;
+    }
+    grown.forEach(index => {
+      widths[index] = needed[index];
+      space -= needed[index];
+    });
+    free = free.filter(index => !grown.includes(index));
+  }
   $('column-layout').innerHTML = '<col class="rank-column" style="width:' + rankWidth + 'px">' +
     '<col class="player-column" style="width:' + playerWidth + 'px">' +
-    columns.map(([key],index) => '<col class="col-' + key + '" style="width:' + statWidths[index].toFixed(3) + 'px">').join('');
-  table.style.width = allWidths.reduce((sum,width) => sum + width,0).toFixed(3) + 'px';
+    columns.map(([key],index) => '<col class="col-' + key + '" style="width:' + widths[index].toFixed(3) + 'px">').join('');
+  table.style.width = (rankWidth + playerWidth + widths.reduce((sum,width) => sum + width,0)).toFixed(3) + 'px';
 }
-
 function render(){
   $('stats-table').className = tab === 'weapons' ? 'view-weapons' : 'view-overview';
   const definition = TABS[tab];
   const columns = definition.columns;
-  syncColumnWidths(columns);
   if(sortKey !== 'name' && !columns.some(column => column[0] === sortKey)){
     sortKey = definition.start;
     ascending = false;
@@ -798,12 +863,13 @@ function render(){
   page = Math.min(page,pages - 1);
   const visible = shown.slice(page * effectivePageSize,page * effectivePageSize + effectivePageSize);
 
+  syncColumnWidths(columns,visible,shown);
   renderTotals(shown,columns);
   $('head').innerHTML = '<tr><th scope="col">#</th><th scope="col" tabindex="0" data-key="name" class="player-sort ' + (sortKey === 'name' ? (ascending ? 'on asc' : 'on') : '') + '"><span>Player</span></th>' +
     columns.map(([key,label,description]) => '<th scope="col" tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + esc(label) + '</span></th>').join('') + '</tr>';
 
   if(visible.length){
-    $('body').innerHTML = visible.map(row => '<tr class="' + (row.rank <= 3 ? 'r' + row.rank : '') + '"><td>' + row.rank + '</td><td title="' + esc(row.name) + '">' + esc(row.name) + '</td>' +
+    $('body').innerHTML = visible.map(row => '<tr class="' + (row.rank <= 3 ? 'r' + row.rank : '') + '" data-id="' + esc(row.id) + '" tabindex="0"><td>' + row.rank + '</td><td title="' + esc(row.name) + '">' + esc(row.name) + '</td>' +
       columns.map(([key]) => '<td class="col-' + key + ' ' + (key === sortKey ? 's ' : '') + ((Number(row[key]) || 0) === 0 ? 'z' : '') + '">' + fmt(row[key]) + '</td>').join('') + '</tr>').join('');
   }else{
     const message = rows.length ? 'No players found' : 'No stats available for this selection';
@@ -881,11 +947,25 @@ function showTip(header){
 function hideTip(){tip.style.opacity='0';}
 
 function fadeTo(update){
-  if(!document.startViewTransition || window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+  const box = document.querySelector('.box:not(.ghost)');
+  if(!box || window.matchMedia('(prefers-reduced-motion:reduce)').matches){
     update();
     return;
   }
-  document.startViewTransition(update);
+  const ghost = box.cloneNode(true);
+  ghost.classList.add('ghost');
+  ghost.setAttribute('aria-hidden','true');
+  ghost.style.width = box.offsetWidth + 'px';
+  ghost.style.height = box.offsetHeight + 'px';
+  box.parentElement.appendChild(ghost);
+  ghost.scrollLeft = box.scrollLeft;
+  ghost.scrollTop = box.scrollTop;
+  update();
+  ghost.getBoundingClientRect();
+  requestAnimationFrame(() => ghost.classList.add('out'));
+  const removeGhost = () => ghost.remove();
+  ghost.addEventListener('transitionend',removeGhost,{once:true});
+  setTimeout(removeGhost,500);
 }
 $('tabs').addEventListener('click',event => {
   const button = event.target.closest('button[data-tab]');
@@ -922,11 +1002,91 @@ $('search').addEventListener('input',event => {query=event.target.value;page=0;r
 $('page-size').addEventListener('change',event => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();});
 $('prev').addEventListener('click',() => {page--;render();});
 $('next').addEventListener('click',() => {page++;render();});
-window.addEventListener('resize',() => {syncColumnWidths(TABS[tab].columns);updateTabSelection(tab,true);});
+window.addEventListener('resize',() => {render();updateTabSelection(tab,true);});
 document.addEventListener('mouseover',event => {const header=event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
 document.addEventListener('focusin',event => {const header=event.target.closest && event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
 document.addEventListener('scroll',hideTip,true);
 document.documentElement.addEventListener('mouseleave',hideTip);
+const WEAPON_KEYS = ['w1h','w2h','pole','spear','bow','xbow','throw','firearm','magic','other'];
+const LABELS = {silver:'Wizard buffs'};
+Object.values(TABS).forEach(definition => definition.columns.forEach(column => {LABELS[column[0]] = column[1];}));
+const modal = $('player-modal');
+let modalReturnFocus = null;
+function factionRows(player,mode,names){
+  const keys = ['kills','deaths','waves','wins','score'];
+  const source = (player.fac && player.fac[mode]) || {};
+  const list = Object.entries(source)
+    .map(([id,stat]) => ({name:names[id] || 'Faction ' + id,stat}))
+    .filter(({stat}) => keys.some(key => Number(stat[key]) > 0))
+    .sort((a,b) => (Number(b.stat.kills) || 0) - (Number(a.stat.kills) || 0));
+  if(!list.length) return '<p class="pm-empty">No data yet</p>';
+  return '<div class="pm-frow pm-fhead"><span>Faction</span><span>Kills</span><span>Deaths</span><span>Waves</span><span>Wins</span><span>Score</span></div>' +
+    list.map(({name,stat}) => '<div class="pm-frow"><span>' + esc(name) + '</span>' + keys.map(key => '<span>' + fmt(stat[key]) + '</span>').join('') + '</div>').join('');
+}
+function joinedText(raw){
+  const number = Number(raw) || 0;
+  if(!number) return 'unknown';
+  let date = null;
+  if(number >= 1e9 && number < 1e11) date = new Date(number * 1000);
+  else if(number >= 1e11 && number < 1e14) date = new Date(number);
+  else if(number >= 20000101 && number <= 21001231) date = new Date(Math.floor(number / 10000),Math.floor(number / 100) % 100 - 1,number % 100);
+  return date && !Number.isNaN(date.getTime()) ? dayStamp(date.getTime()) : String(number);
+}
+function favoriteRows(list,emptyText){
+  if(!list || !list.length) return '<p class="pm-empty">' + esc(emptyText) + '</p>';
+  const top = Number(list[0].count) || 1;
+  return list.map(item => '<div class="pm-bar"><span title="' + esc(item.name) + '">' + esc(item.name) + '</span><div class="pm-track"><i style="width:' + (item.count / top * 100).toFixed(1) + '%"></i></div><b>' + fmt(item.count) + '</b></div>').join('');
+}
+function openPlayer(id){
+  const player = current.players.find(item => String(item.id) === String(id));
+  if(!player) return;
+  const value = key => Number(player[key]) || 0;
+  const line = (label,text,zero) => '<div class="pm-line' + (zero ? ' zero' : '') + '"><span>' + esc(label) + '</span><b>' + esc(text) + '</b></div>';
+  const place = current.players.filter(item => (Number(item.score) || 0) > value('score')).length + 1;
+  const topPlace = value('t10') > 0 ? current.players.filter(item => (Number(item.t10) || 0) > value('t10')).length + 1 : 0;
+  const cards = ['score','kills','deaths','points','waves','wins'].map(key => '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span><strong>' + fmt(value(key)) + '</strong></div>').join('');
+  const details = ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],fmt(value(key)),value(key) === 0)).join('');
+  const weaponTotal = WEAPON_KEYS.reduce((total,key) => total + value(key),0);
+  const weapons = WEAPON_KEYS.map(key => {
+    const share = weaponTotal ? value(key) / weaponTotal * 100 : 0;
+    return '<div class="pm-bar"><span>' + esc(LABELS[key]) + '</span><div class="pm-track"><i style="width:' + share.toFixed(1) + '%"></i></div><b>' + fmt(value(key)) + '</b></div>';
+  }).join('');
+  const weekly = line('Top 10 points',fmt(value('t10')),value('t10') === 0) + line('Position',topPlace ? '#' + topPlace : '-',!topPlace) + line('Placements',fmt(value('t10n')),value('t10n') === 0) + line('1st places',fmt(value('t10first')),value('t10first') === 0);
+  const activity = line('Joined the server',joinedText(player.joined),!player.joined) + [['commands','Commands used'],['anvils','Anvils used'],['refills','Refills used'],['wardrobes','Wardrobes used']].map(([key,label]) => line(label,fmt(value(key)),value(key) === 0)).join('');
+  const fav = player.fav || {};
+  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || player.id) + '</h2><span class="pm-meta">ID <b>' + esc(player.id) + '</b> · #<b>' + place + '</b> by Score · all-time stats</span></div>' +
+    '<div class="pm-cards">' + cards + '</div>' +
+    '<div class="pm-grid"><section class="pm-section"><h3>Overview</h3>' + details + '</section><section class="pm-section"><h3>Kills by weapon</h3>' + weapons + '</section></div>' +
+    '<div class="pm-grid"><section class="pm-section"><h3>Weekly Top 10</h3>' + weekly + '</section><section class="pm-section"><h3>Activity</h3>' + activity + '</section></div>' +
+    '<div class="pm-grid pm-fav"><section class="pm-section"><h3>Favourite heroes</h3>' + favoriteRows(fav.h,'No spawns recorded yet') + '</section><section class="pm-section"><h3>Favourite units</h3>' + favoriteRows(fav.n,'No spawns recorded yet') + '</section><section class="pm-section"><h3>Most played maps</h3>' + favoriteRows(player.maps,'No maps recorded yet') + '</section></div>' +
+    '<div class="pm-grid"><section class="pm-section"><h3>As defenders</h3>' + factionRows(player,'as',DEFENDER_FACTIONS) + '</section><section class="pm-section"><h3>Against invaders</h3>' + factionRows(player,'vs',INVADER_FACTIONS) + '</section></div>';
+  modalReturnFocus = document.activeElement;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  modal.scrollTop = 0;
+  $('pm-close').focus();
+  hideTip();
+}
+function closePlayer(){
+  if(!modal.classList.contains('open')) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+  if(modalReturnFocus && modalReturnFocus.focus) modalReturnFocus.focus();
+}
+$('body').addEventListener('click',event => {
+  const row = event.target.closest('tr[data-id]');
+  if(row) openPlayer(row.dataset.id);
+});
+$('body').addEventListener('keydown',event => {
+  const row = event.target.closest('tr[data-id]');
+  if(row && event.key === 'Enter') openPlayer(row.dataset.id);
+});
+$('pm-close').addEventListener('click',closePlayer);
+modal.addEventListener('click',event => {if(event.target === modal) closePlayer();});
+document.addEventListener('keydown',event => {if(event.key === 'Escape') closePlayer();});
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => render());
 const stamp = milliseconds => new Date(milliseconds).toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
 const dayStamp = milliseconds => new Date(milliseconds).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
 function diffNumbers(now,before){
@@ -1003,11 +1163,7 @@ function applyRange(){
    * keep the option usable, show recorded data, and make the fallback explicit.
    */
   data = {players:current.players};
-  if(trackingStart && trackingStart >= periodStart(range)){
-    $('range-note').textContent = 'Tracking since ' + dayStamp(trackingStart);
-  }else{
-    $('range-note').textContent = 'Showing all recorded stats · period snapshot unavailable';
-  }
+  $('range-note').textContent = '';
 }
 rangeSelect.addEventListener('change',() => fadeTo(() => {range = rangeSelect.value;applyRange();page=0;render();}));
 const loadBaseline = name => fetch(name + '.json?' + Date.now(),{cache:'no-store'}).then(response => response.ok ? response.json() : null).catch(() => null);
@@ -1018,11 +1174,11 @@ Promise.all([
     if(!response.ok) throw new Error('Could not load stats.json');
     return response.json();
   }),
-  loadBaseline('week'),loadBaseline('month'),loadBaseline('year')
-]).then(([loaded,week,month,year]) => {
+  loadBaseline('week'),loadBaseline('month'),loadBaseline('quarter'),loadBaseline('half'),loadBaseline('year')
+]).then(([loaded,week,month,quarter,half,year]) => {
   if(!loaded || !Array.isArray(loaded.players)) throw new Error('Invalid stats.json format');
   current = loaded;
-  Object.entries({week,month,year}).forEach(([name,baseline]) => {
+  Object.entries({week,month,quarter,half,year}).forEach(([name,baseline]) => {
     if(baseline && Array.isArray(baseline.players)) baselines[name] = baseline;
   });
   applyRange();
