@@ -929,6 +929,78 @@ body::before{opacity:.08}
   #player-modal .pm-cards { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 
+
+
+/* Final requested pass: keep all controls visible while scrolling and make table transitions lively but quick. */
+.toolbar{
+  position:sticky!important;
+  top:0!important;
+  z-index:35!important;
+  background:linear-gradient(112deg,rgba(18,25,18,.995) 0%,rgba(12,15,12,.992) 54%,rgba(24,21,13,.992) 100%)!important;
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  box-shadow:0 10px 24px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.02)!important;
+}
+/* The tab rail is already inside the sticky toolbar, so the old floating duplicate stays off. */
+#sticky-tabs-proxy{display:none!important;}
+.box{
+  opacity:1!important;
+  transform:translateY(0);
+  transition:opacity .16s ease,transform .19s cubic-bezier(.2,.7,.25,1)!important;
+  will-change:opacity,transform;
+}
+.box.is-switching{
+  opacity:0!important;
+  transform:translateY(7px)!important;
+  filter:none!important;
+  pointer-events:none!important;
+}
+.sticky-head{
+  z-index:34!important;
+  transition:opacity .14s ease,transform .18s cubic-bezier(.2,.7,.25,1)!important;
+  transform:translateY(0);
+}
+.sticky-head.is-switching{opacity:0!important;transform:translateY(5px)!important;}
+@media(max-width:760px){
+  /* Keep the full set of controls accessible without a tall, stacked mobile toolbar. */
+  .toolbar{padding:8px!important;border-radius:0 0 10px 10px!important;margin-bottom:12px!important;}
+  .toolbar-top{
+    display:grid!important;grid-template-columns:minmax(0,.95fr) minmax(0,1.2fr)!important;
+    align-items:center!important;gap:8px!important;padding-bottom:8px!important;
+  }
+  .bar-controls{min-width:0!important;flex:initial!important;}
+  .tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important;max-width:100%!important;gap:2px!important;padding:2px!important;}
+  .tabs button{min-width:0!important;padding:7px 5px!important;font-size:13px!important;white-space:nowrap;}
+  .search-wrap{display:block!important;flex:initial!important;width:100%!important;max-width:none!important;min-width:0!important;}
+  .search-label{display:none!important;}
+  .search-field input{min-height:34px!important;padding:6px 5px 6px 30px!important;font-size:12px!important;}
+  .filters{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    align-items:center!important;gap:7px 9px!important;padding-top:8px!important;
+  }
+  .filters>label,.faction-control>label{
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    gap:4px!important;width:100%!important;min-width:0!important;font-size:11px!important;
+  }
+  .faction-control{display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:0!important;min-width:0!important;}
+  .filters select,.faction-control select{
+    flex:0 1 58%!important;width:58%!important;min-width:0!important;max-width:58%!important;
+    padding:6px 21px 6px 7px!important;font-size:11px!important;
+  }
+  .custom{display:none!important;}
+  .page-size-control{
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    flex:initial!important;gap:4px!important;margin:0!important;min-width:0!important;white-space:normal!important;
+  }
+  .page-size-control label{flex:1 1 auto!important;min-width:0!important;font-size:10px!important;line-height:1.1!important;}
+  .page-size-control select{flex:0 1 43%!important;width:43%!important;min-width:0!important;max-width:43%!important;padding:6px 20px 6px 7px!important;font-size:11px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+  /* Keep the short interface transitions requested for category switching, even if the OS
+     suppresses decorative motion. They use opacity and translate only, without filters. */
+  .box,.box.is-switching,.sticky-head,.sticky-head.is-switching,.tabs .tab-indicator{transition-duration:.12s!important;}
+}
+
 </style>
 </head>
 <body>
@@ -963,7 +1035,7 @@ body::before{opacity:.08}
       <div class="faction-control range-control"><label>Period<select id="range"><option value="all">All time</option><option value="week">This week</option><option value="month">This month</option><option value="quarter">Last 3 months</option><option value="half">Last 6 months</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
       <label>View stats<select id="mode"><option value="all">All</option><option value="as">As Defenders</option><option value="vs">Against Invaders</option></select></label>
       <div class="faction-control"><label>Faction<select id="faction"></select></label><span class="custom" id="custom"></span></div>
-      <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
+      <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
     </div>
   </section>
   <div class="box-wrap"><div class="box"><table id="stats-table" class="view-overview"><colgroup id="column-layout"></colgroup><thead id="head"></thead><tbody id="body"></tbody><tfoot id="foot"></tfoot></table></div></div>
@@ -975,7 +1047,7 @@ body::before{opacity:.08}
 <div id="tip" role="tooltip"></div>
 <script>
 'use strict';
-let pageSize = 50;
+let pageSize = 20;
 const $ = id => document.getElementById(id);
 const fmt = n => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
 const fmtCompact = n => {
@@ -1191,7 +1263,7 @@ function render(){
   const visible = shown.slice(page * effectivePageSize,page * effectivePageSize + effectivePageSize);
 
   syncColumnWidths(columns,shown,shown);
-  renderTotals(visible,columns,shown.length);
+  renderTotals(visible,columns,visible.length);
   $('head').innerHTML = '<tr><th scope="col">#</th><th scope="col" tabindex="0" data-key="name" class="player-sort ' + (sortKey === 'name' ? (ascending ? 'on asc' : 'on') : '') + '"><span>Player</span></th>' +
     columns.map(([key,label,description]) => '<th scope="col" tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + esc(label) + '</span></th>').join('') + '</tr>';
 
@@ -1250,47 +1322,48 @@ function renderTabs(){
   updateTabSelection(tab);
 }
 function syncStickyOverlays(){
-  const sourceTabs = $('tabs');
-  const tabProxy = $('sticky-tabs-proxy');
-  const box = $('stats-table').closest('.box');
+  const toolbar = document.querySelector('.toolbar');
   const table = $('stats-table');
+  const box = table && table.closest('.box');
+  const tabProxy = $('sticky-tabs-proxy');
   const stickyHead = $('sticky-head');
   const stickyTable = $('sticky-head-table');
-  const stickyColgroup = stickyTable.querySelector('colgroup');
-  const stickyThead = stickyTable.querySelector('thead');
-  if(!sourceTabs || !box || !table || !stickyHead) return;
+  if(tabProxy) tabProxy.style.display = 'none';
+  if(!toolbar || !table || !box || !stickyHead || !stickyTable) return;
 
-  const tabsRect = sourceTabs.getBoundingClientRect();
+  const toolbarRect = toolbar.getBoundingClientRect();
   const boxRect = box.getBoundingClientRect();
-  const tabsShouldStick = tabsRect.top < 0 && boxRect.bottom > 0 && boxRect.top < window.innerHeight;
-  if(tabsShouldStick){
-    const proxyTabs = tabProxy.querySelector('.tabs');
-    if(!proxyTabs || proxyTabs.innerHTML !== sourceTabs.innerHTML){
-      tabProxy.innerHTML = '<div class="tabs">' + sourceTabs.innerHTML + '</div>';
-    }
-    tabProxy.style.display = 'block';
-    tabProxy.style.left = boxRect.left + 'px';
-    tabProxy.style.width = boxRect.width + 'px';
-    positionTabIndicator(tabProxy.querySelector('.tabs'));
-  }else{
-    tabProxy.style.display = 'none';
-  }
+  const sourceHead = $('head');
+  const headRect = sourceHead.getBoundingClientRect();
+  const headerHeight = headRect.height || 41;
+  const stickyTableHead = stickyTable.querySelector('thead');
+  const stickyColgroup = stickyTable.querySelector('colgroup');
 
-  const proxyBottom = tabsShouldStick ? tabProxy.getBoundingClientRect().bottom : 0;
-  const originalHeadHeight = $('head').getBoundingClientRect().height || 40;
-  const shouldStickHead = tabsShouldStick && boxRect.top < proxyBottom && boxRect.bottom > proxyBottom + originalHeadHeight;
+  // The toolbar itself remains at the top while scrolling. Mirror the table's column
+  // headings only after their original position passes behind the sticky toolbar.
+  const toolbarPinned = toolbarRect.top <= 1;
+  const headerBehindToolbar = headRect.top < toolbarRect.bottom - 1;
+  const tableStillVisible = boxRect.bottom > toolbarRect.bottom + headerHeight &&
+    boxRect.top < window.innerHeight;
+  const shouldStickHead = toolbarPinned && headerBehindToolbar && tableStillVisible;
+
   if(!shouldStickHead){
     stickyHead.style.display = 'none';
+    stickyHead.classList.remove('is-switching');
     return;
   }
 
-  if(stickyColgroup.innerHTML !== $('column-layout').innerHTML) stickyColgroup.innerHTML = $('column-layout').innerHTML;
-  if(stickyThead.innerHTML !== $('head').innerHTML) stickyThead.innerHTML = $('head').innerHTML;
+  if(stickyColgroup.innerHTML !== $('column-layout').innerHTML) {
+    stickyColgroup.innerHTML = $('column-layout').innerHTML;
+  }
+  if(stickyTableHead.innerHTML !== sourceHead.innerHTML) {
+    stickyTableHead.innerHTML = sourceHead.innerHTML;
+  }
   stickyTable.style.width = table.style.width || table.getBoundingClientRect().width + 'px';
   stickyHead.style.left = boxRect.left + 'px';
-  stickyHead.style.top = proxyBottom + 'px';
+  stickyHead.style.top = toolbarRect.bottom + 'px';
   stickyHead.style.width = boxRect.width + 'px';
-  stickyHead.style.height = originalHeadHeight + 'px';
+  stickyHead.style.height = headerHeight + 'px';
   stickyTable.style.transform = 'translateX(-' + box.scrollLeft + 'px)';
   stickyHead.style.display = 'block';
 }
@@ -1348,10 +1421,11 @@ function fadeTo(update){
         if(tableFadeTimer === null && pendingTableUpdates.length === 0){
           box.classList.remove('is-switching');
           if(stickyHead) stickyHead.classList.remove('is-switching');
+          syncStickyOverlays();
         }
       });
     });
-  }, 225);
+  }, 155);
 }
 function switchTab(nextTab){
   if(!nextTab || nextTab === (pendingTab || tab)) return;
