@@ -151,7 +151,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 #info{min-width:190px;text-align:center;font-variant-numeric:tabular-nums}
 #tip{position:fixed;z-index:9;left:0;top:0;width:max-content;max-width:310px;padding:9px 11px;background:rgba(21,27,21,.98);border:1px solid rgba(216,185,111,.18);border-radius:8px;color:rgba(240,240,231,.8);font-size:12px;line-height:1.5;white-space:pre-line;text-align:left;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 8px 24px rgba(0,0,0,.42)}
 @media(max-width:1050px){header{align-items:flex-start;flex-direction:column;gap:21px}.links{justify-content:flex-start;max-width:100%}.website-teaser{min-height:48px}.toolbar-top{align-items:stretch;flex-direction:column}.search-wrap{flex-basis:auto;width:100%;max-width:none;min-width:0}}
-@media(max-width:760px){header,main{width:calc(100% - 28px)}header{padding:26px 0 22px}.brand{min-width:0;padding-left:15px}h1{font-size:clamp(34px,9vw,47px)}.sub{font-size:14px;max-width:460px}.links{gap:6px}.links a{min-height:35px;padding:7px 9px;font-size:11px}.links svg{width:14px;height:14px}.website-teaser{min-width:160px;margin:0 14px 4px 0;padding:7px 12px}.website-label{font-size:18px}main{padding-top:18px}.toolbar{padding:12px;border-radius:11px}.tabs{width:100%;display:grid;grid-template-columns:repeat(3,1fr)}.tabs button{padding:9px 12px;font-size:15px}.filters{align-items:stretch;gap:10px}.filters>label{flex:1 1 100%;justify-content:space-between}.page-size-control{flex:1 1 100%;margin-left:0;justify-content:space-between}.page-size-control select{width:72%;max-width:220px}.faction-control{flex:1 1 100%;flex-wrap:wrap;gap:7px 10px}.faction-control>label{flex:1 1 100%;justify-content:space-between}.filters select{flex:1;min-width:0;max-width:72%}.custom{flex:1 1 100%;max-width:100%;padding:6px 0 0;border-left:0;border-top:1px solid rgba(216,185,111,.16)}.brand-meta{font-size:11px}th,td{padding:10px 12px}th:nth-child(2),td:nth-child(2),tfoot td:nth-child(2){width:172px;min-width:172px;max-width:172px;left:40px}th:nth-child(1),td:nth-child(1),tfoot td:nth-child(1){left:0;width:40px;min-width:40px}.pager{gap:8px;flex-wrap:wrap}.pager button{min-width:78px;padding:8px}#info{order:-1;flex-basis:100%;min-width:0}}
+@media(max-width:760px){header,main{width:calc(100% - 28px)}header{padding:26px 0 22px}.brand{min-width:0;padding-left:15px}h1{font-size:clamp(34px,9vw,47px)}.sub{font-size:14px;max-width:460px}.links{gap:6px}.links a{min-height:35px;padding:7px 9px;font-size:11px}.links svg{width:14px;height:14px}.website-teaser{min-width:160px;margin:0 14px 4px 0;padding:7px 12px}.website-label{font-size:18px}main{padding-top:18px}.toolbar{padding:12px;border-radius:11px}.tabs{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.tabs button{padding:9px 12px;font-size:15px}.filters{align-items:stretch;gap:10px}.filters>label{flex:1 1 100%;justify-content:space-between}.page-size-control{flex:1 1 100%;margin-left:0;justify-content:space-between}.page-size-control select{width:72%;max-width:220px}.faction-control{flex:1 1 100%;flex-wrap:wrap;gap:7px 10px}.faction-control>label{flex:1 1 100%;justify-content:space-between}.filters select{flex:1;min-width:0;max-width:72%}.custom{flex:1 1 100%;max-width:100%;padding:6px 0 0;border-left:0;border-top:1px solid rgba(216,185,111,.16)}.brand-meta{font-size:11px}th,td{padding:10px 12px}th:nth-child(2),td:nth-child(2),tfoot td:nth-child(2){width:172px;min-width:172px;max-width:172px;left:40px}th:nth-child(1),td:nth-child(1),tfoot td:nth-child(1){left:0;width:40px;min-width:40px}.pager{gap:8px;flex-wrap:wrap}.pager button{min-width:78px;padding:8px}#info{order:-1;flex-basis:100%;min-width:0}}
 @media(max-width:420px){.links a{gap:5px}.brand-meta{align-items:flex-start;gap:4px 10px}.brand-meta #meta::before{margin-left:0}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
 
@@ -681,9 +681,9 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 /* Requested refinements: identity columns remain fixed; statistic columns share available space. */
 body::before{opacity:.08}
 #stats-table col.rank-column{width:42px}
-#stats-table col.player-column{width:220px}
+#stats-table col.player-column{width:215px}
 #stats-table th:first-child,#stats-table tbody td:first-child,#stats-table tfoot td:first-child{width:42px;min-width:42px;max-width:42px}
-#stats-table th:nth-child(2),#stats-table tbody td:nth-child(2),#stats-table tfoot td:nth-child(2),#stats-table thead th.player-sort{width:220px;min-width:220px;max-width:220px}
+#stats-table th:nth-child(2),#stats-table tbody td:nth-child(2),#stats-table tfoot td:nth-child(2),#stats-table thead th.player-sort{width:215px;min-width:215px;max-width:215px}
 #stats-table thead th[data-key]:not(.player-sort),#stats-table tbody td[class*="col-"],#stats-table tfoot td.total-value{width:auto;min-width:0;max-width:none}
 #stats-table tbody td:nth-child(2){
   background:linear-gradient(115deg,#343727 0%,#292b20 54%,#202218 100%)!important;
@@ -704,9 +704,9 @@ body::before{opacity:.08}
 #body tr[data-id]:focus-visible{outline:none}
 @media(max-width:760px){
   #stats-table col.rank-column{width:40px}
-  #stats-table col.player-column{width:180px}
+  #stats-table col.player-column{width:178px}
   #stats-table th:first-child,#stats-table tbody td:first-child,#stats-table tfoot td:first-child{width:40px;min-width:40px;max-width:40px}
-  #stats-table th:nth-child(2),#stats-table tbody td:nth-child(2),#stats-table tfoot td:nth-child(2),#stats-table thead th.player-sort{width:180px;min-width:180px;max-width:180px}
+  #stats-table th:nth-child(2),#stats-table tbody td:nth-child(2),#stats-table tfoot td:nth-child(2),#stats-table thead th.player-sort{width:178px;min-width:178px;max-width:178px}
   .player-name-cell{padding:0 12px!important}
   .player-link{padding:10px 0}
 }
@@ -763,9 +763,9 @@ body::before{opacity:.08}
 @media(max-width:760px){
   .sticky-tabs-proxy{left:8px!important;width:calc(100vw - 16px)!important;}
   .sticky-tabs-proxy .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}
-  .pm{padding:0;align-items:stretch;}
-  .pm-dialog{width:100%;max-height:100vh;min-height:100%;padding:18px 13px;border-radius:0;margin:0;}
-  .pm-primary{grid-template-columns:1fr;}
+  .pm{padding:3vh 10px;align-items:center;}
+  .pm-dialog{width:min(100%,680px);max-height:92vh;min-height:0;padding:18px 13px;border-radius:14px;margin:auto 0;}
+  .pm-grid.pm-primary{grid-template-columns:1fr;}
   .pm-fav{grid-template-columns:1fr;}
   .pm-grid{grid-template-columns:1fr;}
   .pm-cards{grid-template-columns:repeat(2,minmax(0,1fr));}
@@ -848,7 +848,7 @@ const TABS = {
     ['finals','End bosses','End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
     ['chests','Leg Chests','Legendary chests opened'],
     ['silver','Wizard Buffs','Allies buffed by Silver and Necro wizards'],
-    ['crowd','Crowd Kills','Kills earned in larger games with more than 20 players online and during events'],
+    ['crowd','Crowd Kills','Kills earned with more players online (over 20 players) and during events'],
     ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
   ]},
   weapons:{label:'Weapons',start:'kills',columns:[
@@ -967,32 +967,49 @@ function syncColumnWidths(columns,rows,totalRows){
   const box = table.closest('.box');
   const mobile = window.matchMedia('(max-width:760px)').matches;
   const rankWidth = mobile ? 40 : 42;
-  const playerWidth = mobile ? 180 : 220;
-  const padding = mobile ? 24 : 30;
-  const minimumWidth = mobile ? 64 : 72;
+  // Keep the identity columns fixed; Player is only slightly wider than before.
+  const playerWidth = mobile ? 178 : 215;
+  const horizontalPadding = mobile ? 24 : 30;
+  const minimumWidth = mobile ? 56 : 64;
   const needed = columns.map(([key,label]) => {
-    let content = textWidth(label.toUpperCase(),'700 11px ' + FONT_FAMILY,0.72) + 16;
-    for(const row of rows) content = Math.max(content,textWidth(fmt(row[key]),'700 14px ' + FONT_FAMILY,0));
-    const total = totalRows.reduce((sum,row) => sum + (Number(row[key]) || 0),0);
-    content = Math.max(content,textWidth(fmtCompact(total),'700 12px ' + FONT_FAMILY,0));
-    return content + padding + 2;
-  });
-  const widths = new Array(columns.length).fill(minimumWidth);
-  let free = columns.map((column,index) => index);
-  let space = Math.max(0,box.clientWidth - rankWidth - playerWidth);
-  while(free.length){
-    const equal = space / free.length;
-    const grown = free.filter(index => needed[index] > equal);
-    if(!grown.length){
-      free.forEach(index => widths[index] = Math.max(equal,minimumWidth));
-      break;
+    let content = textWidth(label.toUpperCase(),'700 11px ' + FONT_FAMILY,0.72) + horizontalPadding + 2;
+    for(const row of rows){
+      content = Math.max(content,textWidth(fmt(row[key]),'700 14px ' + FONT_FAMILY,0) + horizontalPadding + 2);
     }
-    grown.forEach(index => {
-      widths[index] = needed[index];
-      space -= needed[index];
-    });
-    free = free.filter(index => !grown.includes(index));
+    const total = totalRows.reduce((sum,row) => sum + (Number(row[key]) || 0),0);
+    content = Math.max(content,textWidth(fmtCompact(total),'700 12px ' + FONT_FAMILY,0) + horizontalPadding + 2);
+    return Math.max(minimumWidth,content);
+  });
+
+  // Start with equal-sized stat columns. If one column genuinely needs more room,
+  // give it the required width and split the remaining width equally between all others.
+  // When even the minimum readable widths cannot fit, allow horizontal scrolling instead
+  // of silently compressing columns until their headings or values become unreadable.
+  let available = Math.max(box.clientWidth - rankWidth - playerWidth, columns.length * minimumWidth);
+  const indexes = columns.map((column,index) => index);
+  let widths = new Array(columns.length).fill(0);
+  for(let pass = 0; pass <= columns.length + 1; pass++){
+    widths = new Array(columns.length).fill(0);
+    let free = indexes.slice();
+    let remaining = available;
+    while(free.length){
+      const equal = remaining / free.length;
+      const grown = free.filter(index => needed[index] > equal);
+      if(!grown.length){
+        free.forEach(index => widths[index] = equal);
+        break;
+      }
+      grown.forEach(index => {
+        widths[index] = needed[index];
+        remaining -= needed[index];
+      });
+      free = free.filter(index => !grown.includes(index));
+    }
+    const used = widths.reduce((sum,width) => sum + width,0);
+    if(used <= available + 0.01) break;
+    available = used;
   }
+
   $('column-layout').innerHTML = '<col class="rank-column" style="width:' + rankWidth + 'px">' +
     '<col class="player-column" style="width:' + playerWidth + 'px">' +
     columns.map(([key],index) => '<col class="col-' + key + '" style="width:' + widths[index].toFixed(3) + 'px">').join('');
@@ -1017,7 +1034,7 @@ function render(){
   page = Math.min(page,pages - 1);
   const visible = shown.slice(page * effectivePageSize,page * effectivePageSize + effectivePageSize);
 
-  syncColumnWidths(columns,visible,shown);
+  syncColumnWidths(columns,shown,shown);
   renderTotals(shown,columns);
   $('head').innerHTML = '<tr><th scope="col">#</th><th scope="col" tabindex="0" data-key="name" class="player-sort ' + (sortKey === 'name' ? (ascending ? 'on asc' : 'on') : '') + '"><span>Player</span></th>' +
     columns.map(([key,label,description]) => '<th scope="col" tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + esc(label) + '</span></th>').join('') + '</tr>';
@@ -1067,7 +1084,10 @@ function syncStickyOverlays(){
   const boxRect = box.getBoundingClientRect();
   const tabsShouldStick = tabsRect.top < 0 && boxRect.bottom > 0 && boxRect.top < window.innerHeight;
   if(tabsShouldStick){
-    if(tabProxy.innerHTML !== sourceTabs.innerHTML) tabProxy.innerHTML = sourceTabs.innerHTML;
+    const proxyTabs = tabProxy.querySelector('.tabs');
+    if(!proxyTabs || proxyTabs.innerHTML !== sourceTabs.innerHTML){
+      tabProxy.innerHTML = '<div class="tabs">' + sourceTabs.innerHTML + '</div>';
+    }
     tabProxy.style.display = 'block';
     tabProxy.style.left = Math.max(8,tabsRect.left) + 'px';
     tabProxy.style.width = Math.min(tabsRect.width,window.innerWidth - Math.max(8,tabsRect.left) - 8) + 'px';
@@ -1189,13 +1209,20 @@ $('head').addEventListener('keydown',event => {
     if(again) again.focus();
   }
 });
+$('sticky-head').addEventListener('keydown',event => {
+  const header = event.target.closest('th[data-key]');
+  if(header && (event.key === 'Enter' || event.key === ' ')){
+    event.preventDefault();
+    sortBy(header.dataset.key);
+  }
+});
 modeSelect.addEventListener('change',() => fadeTo(() => {fillFactions();page=0;render();}));
 factionSelect.addEventListener('change',() => fadeTo(() => {page=0;render();}));
 $('search').addEventListener('input',event => {query=event.target.value;page=0;render();});
 $('page-size').addEventListener('change',event => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();});
 $('prev').addEventListener('click',() => {page--;render();});
 $('next').addEventListener('click',() => {page++;render();});
-window.addEventListener('resize',() => {render();updateTabSelection(tab,true);syncStickyOverlays();});
+window.addEventListener('resize',() => {render();updateTabSelection(tab);syncStickyOverlays();});
 window.addEventListener('scroll',syncStickyOverlays,{passive:true});
 $('sticky-head').addEventListener('scroll',hideTip);
 $('stats-table').closest('.box').addEventListener('scroll',syncStickyOverlays,{passive:true});
@@ -1343,18 +1370,63 @@ function periodStart(name, now = new Date()){
     start.setDate(start.getDate() - daysSinceMonday);
   }else if(name === 'month'){
     start.setDate(1);
+  }else if(name === 'quarter'){
+    start.setMonth(start.getMonth() - 3);
+  }else if(name === 'half'){
+    start.setMonth(start.getMonth() - 6);
   }else if(name === 'year'){
     start.setMonth(0,1);
   }
   return start.getTime();
 }
+function getTrackingStart(){
+  const reported = timestampMs(current.since);
+  if(reported) return reported;
+  // stats.json may not carry `since`; use the start date already shown in the subtitle.
+  const subtitle = document.querySelector('.sub')?.textContent || '';
+  const match = subtitle.match(/starting from\s+(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/i);
+  if(!match) return 0;
+  const date = new Date(Number(match[3]),Number(match[2])-1,Number(match[1]));
+  return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+}
 function applyRange(){
   const baseline = baselines[range];
-  const trackingStart = timestampMs(current.since);
+  const trackingStart = getTrackingStart();
 
   if(range === 'all'){
     data = {players:current.players};
     $('range-note').textContent = '';
+    return;
+  }
+
+  // Last 3/6 months are rolling windows, not calendar quarter/half-year periods.
+  // Cumulative counters only support an exact difference when a snapshot is available
+  // within the chosen window. When tracking started inside the window, the current
+  // counters themselves are the valid period-to-date data.
+  if(range === 'quarter' || range === 'half'){
+    const windowStart = periodStart(range);
+    if(trackingStart && trackingStart >= windowStart){
+      data = {players:current.players};
+      $('range-note').textContent = 'Available stats since ' + dayStamp(trackingStart);
+      return;
+    }
+    if(baseline && Array.isArray(baseline.players)){
+      const baselineStart = timestampMs(baseline.start);
+      if(baselineStart && baselineStart >= windowStart){
+        const before = new Map(baseline.players.map(player => [String(player.id),player]));
+        data = {
+          players:current.players
+            .map(player => diffPlayer(player,before.get(String(player.id))))
+            .filter(player => ALL_KEYS.some(key => player[key] > 0))
+        };
+        const since = Math.max(baselineStart,trackingStart || baselineStart);
+        $('range-note').textContent = 'Available stats since ' + dayStamp(since);
+        return;
+      }
+    }
+    data = {players:current.players};
+    $('range-note').textContent = 'Exact rolling period unavailable; showing available data' +
+      (trackingStart ? ' since ' + dayStamp(trackingStart) : ' from the available stats file');
     return;
   }
 
@@ -1372,10 +1444,8 @@ function applyRange(){
   }
 
   /*
-   * Without a saved start-of-period snapshot, lifetime counters cannot be split
-   * into a true weekly/monthly/yearly delta. If tracking itself began during the
-   * selected period, all available stats are valid period-to-date stats. Otherwise
-   * keep the option usable, show recorded data, and make the fallback explicit.
+   * Without a saved start-of-period snapshot, cumulative counters cannot be split
+   * into an exact weekly/monthly/yearly delta. Keep the existing fallback behaviour.
    */
   data = {players:current.players};
   $('range-note').textContent = '';
