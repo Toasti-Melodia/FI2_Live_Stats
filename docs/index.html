@@ -1570,7 +1570,7 @@ function openPlayer(id){
     return '<div class="pm-bar"><span title="' + shareText + '">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + shareText + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + shareText + '">' + fmtCompact(value(key)) + '</b></div>';
   }).join('');
   const countLine = (key,label,rankKey) => line(label,value(key),rankKey);
-  const activity = line('Joined the server',value('joined')) + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Boxes opened','boxes') + countLine('slain','Players slain','slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
+  const activity = line('Joined the server',value('joined')) + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Lootboxes opened','boxes') + countLine('slain','Players slain','slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
   openedPlayerId = player.id;
   const fav = player.fav || {};
   $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats</span></div>' +
