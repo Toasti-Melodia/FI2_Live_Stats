@@ -1001,6 +1001,26 @@ body::before{opacity:.08}
   .box,.box.is-switching,.sticky-head,.sticky-head.is-switching,.tabs .tab-indicator{transition-duration:.12s!important;}
 }
 
+
+#tip.rank{max-width:340px;min-width:230px;padding:10px 12px;pointer-events:none}
+#tip.rank strong{display:block;margin-bottom:6px;color:#f0d58e;font-size:14px}
+#tip.rank .rk{display:grid;grid-template-columns:34px 1fr auto;gap:8px;padding:2px 0;font-size:12.5px;color:rgba(240,240,231,.82)}
+#tip.rank .rk i{font-style:normal;color:#9aa08c}
+#tip.rank .rk b{font-weight:600;font-variant-numeric:tabular-nums;color:#fff5d7}
+#tip.rank .rk.me{color:#f0d58e}
+#tip.rank .rk.me i{color:#d8b96f}
+#tip.rank .rk-gap{padding:1px 0 1px 42px;color:#9aa08c}
+@media(min-width:761px){
+  .toolbar{padding:9px 14px!important;margin-bottom:12px!important}
+  .toolbar-top{padding-bottom:8px!important}
+  .tabs{padding:3px!important;gap:4px!important}
+  .tabs button{padding:5px 20px!important;font-size:15px!important}
+  .search-wrap{gap:3px!important}
+  .search-field input{min-height:32px!important;padding:5px 12px 5px 34px!important}
+  .filters{padding-top:8px!important;gap:6px 18px!important}
+  .filters select,.page-size-control select{padding-top:5px!important;padding-bottom:5px!important}
+  #stats-table thead th,.sticky-head th{height:34px!important;padding:6px 10px!important}
+}
 </style>
 </head>
 <body>
@@ -1053,6 +1073,7 @@ const fmt = n => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d)
 const fmtCompact = n => {
   const value = Number(n) || 0;
   const abs = Math.abs(value);
+  if(abs >= 1e12) return (value / 1e12).toFixed(abs >= 1e13 ? 0 : 1).replace(/\.0$/, '') + 't';
   if(abs >= 1e9) return (value / 1e9).toFixed(abs >= 1e10 ? 0 : 1).replace(/\.0$/, '') + 'b';
   if(abs >= 1e6) return (value / 1e6).toFixed(abs >= 1e7 ? 0 : 1).replace(/\.0$/, '') + 'm';
   if(abs >= 1e4) return Math.round(value / 1e3) + 'k';
@@ -1065,7 +1086,7 @@ const DEFENDER_FACTIONS = {22:'Ancient',23:'Arcane',24:'Calradia',25:'Crusaders'
 const INVADER_FACTIONS = {29:'Ancient',30:'Blackmarch',31:'Calradia',32:'Chaos',33:'Crusaders',34:'Free Peoples',35:'Full Invasion',36:'Isengard',37:'Mordor',38:'Saracens',99:'Custom Invasions'};
 const TABS = {
   overview:{label:'Overview',start:'score',columns:[
-    ['score','Score','Points for every bot killed. Worth more with harder polls, game modes and during events. Extra points are also awarded for slaying bosses'],
+    ['score','Score','Points for every bot killed, a little more on harder polls and game modes (from 1 up to 2.4 per kill). Slaying bosses awards extra points'],
     ['kills','Kills','Enemy bots killed'],
     ['deaths','Deaths','Number of player death\n\nDoes not include traitor games, PvP, friendly fire, after-party deaths, or certain special events'],
     ['points','Top Points','After each boss, the top 5 players by kills are displayed in chat and receive points.\n\nAt least 5 players must be online. If more than 20 ppl are online points are doubled. If more than 40 ppl are present points are tripled'],
@@ -1075,7 +1096,7 @@ const TABS = {
     ['finals','End bosses','End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
     ['chests','Leg Chests','Legendary chests opened'],
     ['silver','Wizard Buffs','Allies buffed by Silver and Necro wizards'],
-    ['crowd','Crowd Kills','Kills earned with more players online (over 20 players) and during events'],
+    ['crowd','Crowd Kills','Kills made while 20 or more players are online'],
     ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
   ]},
   weapons:{label:'Weapons',start:'kills',columns:[
@@ -1385,47 +1406,17 @@ function showTip(header){
   tip.style.top = (box.bottom + 8) + 'px';
   tip.style.opacity = '1';
 }
-function hideTip(){tip.style.opacity='0';}
+function hideTip(){tip.style.opacity='0';tip.classList.remove('rank');tip.style.zIndex='';}
 
-let tableFadeTimer = null;
-const pendingTableUpdates = [];
 let pendingTab = null;
 function fadeTo(update){
-  const box = document.querySelector('.box');
-  const stickyHead = $('sticky-head');
-
-  if(!box){
-    if(tableFadeTimer !== null) window.clearTimeout(tableFadeTimer);
-    tableFadeTimer = null;
-    const updates = pendingTableUpdates.splice(0);
-    updates.push(update);
-    updates.forEach(callback => callback());
-    if(box) box.classList.remove('is-switching');
-    if(stickyHead) stickyHead.classList.remove('is-switching');
-    return;
-  }
-
-  pendingTableUpdates.push(update);
-  if(tableFadeTimer !== null) window.clearTimeout(tableFadeTimer);
-  // Fade both the visible table and its floating header before replacing the contents.
-  box.classList.add('is-switching');
-  if(stickyHead && getComputedStyle(stickyHead).display !== 'none') stickyHead.classList.add('is-switching');
-  tableFadeTimer = window.setTimeout(() => {
-    const updates = pendingTableUpdates.splice(0);
-    tableFadeTimer = null;
-    updates.forEach(callback => callback());
-    box.getBoundingClientRect();
-    if(stickyHead) stickyHead.getBoundingClientRect();
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        if(tableFadeTimer === null && pendingTableUpdates.length === 0){
-          box.classList.remove('is-switching');
-          if(stickyHead) stickyHead.classList.remove('is-switching');
-          syncStickyOverlays();
-        }
-      });
-    });
-  }, 155);
+  update();
+  syncStickyOverlays();
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  ['head','body','foot'].forEach(id => {
+    const element = $(id);
+    if(element && element.animate) element.animate([{opacity:.3},{opacity:1}],{duration:170,easing:'cubic-bezier(.2,.7,.25,1)'});
+  });
 }
 function switchTab(nextTab){
   if(!nextTab || nextTab === (pendingTab || tab)) return;
@@ -1513,59 +1504,30 @@ function factionRows(player,mode,names){
   const keys = ['kills','deaths','waves','wins','score'];
   const source = (player.fac && player.fac[mode]) || {};
   const list = Object.entries(source)
-    .map(([id,stat]) => ({name:names[id] || 'Faction ' + id,stat}))
+    .map(([id,stat]) => ({name:Number(id) === 99 ? 'Custom' : (names[id] || 'Faction ' + id),stat}))
     .filter(({stat}) => keys.some(key => Number(stat[key]) > 0))
     .sort((a,b) => (Number(b.stat.kills) || 0) - (Number(a.stat.kills) || 0));
   if(!list.length) return '<p class="pm-empty">No data yet</p>';
   return '<div class="pm-faction-table"><div class="pm-frow pm-fhead"><span>Faction</span><span>Kills</span><span>Deaths</span><span>Waves</span><span>Wins</span><span>Score</span></div>' +
     list.map(({name,stat}) => '<div class="pm-frow"><span title="' + esc(name) + '">' + esc(name) + '</span>' + keys.map(key => '<span title="' + esc(fmt(stat[key])) + '">' + fmtCompact(stat[key]) + '</span>').join('') + '</div>').join('') + '</div>';
 }
-function joinedText(raw){
-  const number = Number(raw) || 0;
-  if(!number) return 'unknown';
-  let date = null;
-  if(number >= 1e9 && number < 1e11) date = new Date(number * 1000);
-  else if(number >= 1e11 && number < 1e14) date = new Date(number);
-  else if(number >= 20000101 && number <= 21001231) date = new Date(Math.floor(number / 10000),Math.floor(number / 100) % 100 - 1,number % 100);
-  return date && !Number.isNaN(date.getTime()) ? dayStamp(date.getTime()) : String(number);
-}
-function favoriteDisplayName(item,kind){
-  let name = item && (item.name ?? item.troopName ?? item.troop_name ?? item.displayName ?? item.id);
-  if(kind === 'hero'){
-    const rawId = Number(item && (item.troopId ?? item.troop_id ?? item.id ?? (typeof name === 'number' || /^\d+$/.test(String(name ?? '')) ? name : NaN)));
-    if(Number.isInteger(rawId) && rawId >= 1079 && rawId <= 1790){
-      const correctedId = rawId - 1;
-      const dictionaries = [current.troopNames,current.troop_names,current.troops,current.units];
-      for(const dictionary of dictionaries){
-        if(!dictionary) continue;
-        const entry = Array.isArray(dictionary) ? dictionary[correctedId] : dictionary[correctedId] ?? dictionary[String(correctedId)];
-        if(typeof entry === 'string' && entry) return entry;
-        if(entry && typeof entry === 'object'){
-          const resolved = entry.name ?? entry.troopName ?? entry.troop_name ?? entry.displayName;
-          if(resolved) return String(resolved);
-        }
-      }
-      // Keep an existing named entry intact; only numeric IDs need the corrected lookup fallback.
-      if(name == null || /^\d+$/.test(String(name))) return 'Troop ' + correctedId;
-    }
-  }
-  return String(name ?? 'Unknown');
-}
-function favoriteRows(list,emptyText,kind){
+function favoriteRows(list,emptyText){
   if(!list || !list.length) return '<p class="pm-empty">' + esc(emptyText) + '</p>';
   const top = Math.max(1,...list.map(item => Number(item.count) || 0));
   return list.map(item => {
-    const name = favoriteDisplayName(item,kind);
+    const name = String(item.name ?? 'Unknown');
     const count = Number(item.count) || 0;
     return '<div class="pm-bar"><span title="' + esc(name) + '">' + esc(name) + '</span><div class="pm-track"><i style="width:' + (count / top * 100).toFixed(1) + '%"></i></div><b>' + fmt(count) + '</b></div>';
   }).join('');
 }
+let openedPlayerId = null;
+let rankTipTimer = null;
 function openPlayer(id){
   const player = current.players.find(item => String(item.id) === String(id));
   if(!player) return;
   playUiSound('open');
   const value = key => Number(player[key]) || 0;
-  const line = (label,text,zero) => '<div class="pm-line' + (zero ? ' zero' : '') + '"><span>' + esc(label) + '</span><b>' + esc(text) + '</b></div>';
+  const line = (label,text,zero,rankKey) => '<div class="pm-line' + (zero ? ' zero' : '') + '"' + (rankKey ? ' data-rank="' + rankKey + '"' : '') + '><span>' + esc(label) + '</span><b>' + esc(text) + '</b></div>';
   const cards = ['score','kills','deaths','points','waves','wins'].map(key => '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span><strong>' + fmt(value(key)) + '</strong></div>').join('');
   const details = ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],fmt(value(key)),value(key) === 0)).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
@@ -1573,12 +1535,14 @@ function openPlayer(id){
     const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
     return '<div class="pm-bar"><span title="' + share.toFixed(1) + '% of total kills">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + share.toFixed(1) + '% of total kills"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + share.toFixed(1) + '% of total kills">' + fmt(value(key)) + '</b></div>';
   }).join('');
-  const activity = line('Joined the server',joinedText(player.joined),!player.joined) + [['commands','Commands used'],['anvils','Anvils used'],['refills','Refills used'],['wardrobes','Wardrobes used']].map(([key,label]) => line(label,fmt(value(key)),value(key) === 0)).join('');
+  const countLine = (key,label,rankKey) => line(label,fmt(value(key)),value(key) === 0,rankKey);
+  const activity = line('Joined the server',fmt(value('joined')) + ' ' + plural(value('joined'),'time','times'),value('joined') === 0) + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Boxes opened','boxes') + countLine('slain','Players slain','slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
+  openedPlayerId = player.id;
   const fav = player.fav || {};
   $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats</span></div>' +
     '<div class="pm-cards">' + cards + '</div>' +
     '<div class="pm-grid pm-primary"><section class="pm-section"><h3>Overview</h3>' + details + '</section><section class="pm-section"><h3>Kills by weapon</h3>' + weapons + '</section><section class="pm-section"><h3>Activity</h3>' + activity + '</section></div>' +
-    '<div class="pm-grid pm-fav"><section class="pm-section"><h3>Favourite heroes</h3>' + favoriteRows(fav.h,'No spawns recorded yet','hero') + '</section><section class="pm-section"><h3>Favourite units</h3>' + favoriteRows(fav.n,'No spawns recorded yet','unit') + '</section><section class="pm-section"><h3>Most played maps</h3>' + favoriteRows(player.maps,'No maps recorded yet','map') + '</section></div>' +
+    '<div class="pm-grid pm-fav"><section class="pm-section"><h3>Favourite heroes</h3>' + favoriteRows(fav.h,'No spawns recorded yet') + '</section><section class="pm-section"><h3>Favourite units</h3>' + favoriteRows(fav.n,'No spawns recorded yet') + '</section><section class="pm-section"><h3>Most played maps</h3>' + favoriteRows(player.maps,'No maps recorded yet') + '</section></div>' +
     '<div class="pm-grid"><section class="pm-section"><h3>As defenders</h3>' + factionRows(player,'as',DEFENDER_FACTIONS) + '</section><section class="pm-section"><h3>Against invaders</h3>' + factionRows(player,'vs',INVADER_FACTIONS) + '</section></div>';
   modalReturnFocus = document.activeElement;
   modal.classList.add('open');
@@ -1590,6 +1554,8 @@ function openPlayer(id){
 }
 function closePlayer(){
   if(!modal.classList.contains('open')) return;
+  window.clearTimeout(rankTipTimer);
+  hideTip();
   playUiSound('close');
   modal.classList.remove('open');
   modal.setAttribute('aria-hidden','true');
@@ -1602,6 +1568,41 @@ $('body').addEventListener('click',event => {
 });
 $('pm-close').addEventListener('click',closePlayer);
 modal.addEventListener('click',event => {if(event.target === modal) closePlayer();});
+function rankTipHtml(key){
+  const ranked = current.players.filter(item => Number(item[key]) > 0).sort((a,b) => (Number(b[key]) || 0) - (Number(a[key]) || 0));
+  const position = ranked.findIndex(item => String(item.id) === String(openedPlayerId)) + 1;
+  const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + fmt(item[key]) + '</b></div>';
+  const title = position ? '#' + position + ' of ' + fmt(ranked.length) + ' ' + plural(ranked.length,'player','players') : 'Not ranked yet';
+  return '<strong>' + title + '</strong>' + ranked.slice(0,10).map(row).join('') + (position > 10 ? '<div class="rk-gap">…</div>' + row(ranked[position - 1],position - 1) : '');
+}
+function showRankTip(line){
+  tip.innerHTML = rankTipHtml(line.dataset.rank);
+  tip.classList.add('rank');
+  tip.style.zIndex = '40';
+  const box = line.getBoundingClientRect();
+  const left = Math.min(Math.max(8,box.left + box.width / 2 - tip.offsetWidth / 2),innerWidth - tip.offsetWidth - 8);
+  const below = box.bottom + 8;
+  tip.style.left = left + 'px';
+  tip.style.top = (below + tip.offsetHeight > innerHeight - 8 ? Math.max(8,box.top - tip.offsetHeight - 8) : below) + 'px';
+  tip.style.opacity = '1';
+}
+modal.addEventListener('mouseover',event => {
+  const line = event.target.closest('.pm-line[data-rank]');
+  if(!line || line.contains(event.relatedTarget)) return;
+  window.clearTimeout(rankTipTimer);
+  rankTipTimer = window.setTimeout(() => showRankTip(line),450);
+});
+modal.addEventListener('mouseout',event => {
+  const line = event.target.closest('.pm-line[data-rank]');
+  if(!line || line.contains(event.relatedTarget)) return;
+  window.clearTimeout(rankTipTimer);
+  hideTip();
+});
+modal.addEventListener('click',event => {
+  const line = event.target.closest('.pm-line[data-rank]');
+  if(line) showRankTip(line);
+  else hideTip();
+});
 document.addEventListener('keydown',event => {if(event.key === 'Escape') closePlayer();});
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => render());
 const stamp = milliseconds => new Date(milliseconds).toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
