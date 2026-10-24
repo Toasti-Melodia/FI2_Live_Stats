@@ -1021,6 +1021,19 @@ body::before{opacity:.08}
   .filters select,.page-size-control select{padding-top:5px!important;padding-bottom:5px!important}
   #stats-table thead th,.sticky-head th{height:34px!important;padding:6px 10px!important}
 }
+
+@keyframes cell-in{from{opacity:.25;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes head-in{from{opacity:.35}to{opacity:1}}
+#body.enter td{animation:cell-in .5s cubic-bezier(.22,.8,.28,1) backwards;animation-delay:calc(var(--r,0) * 16ms)}
+#head.enter th{animation:head-in .45s ease backwards}
+#foot.enter td{animation:head-in .5s ease backwards;animation-delay:.2s}
+@media(prefers-reduced-motion:reduce){
+  #body.enter td{animation-name:head-in;animation-duration:.25s;animation-delay:0s}
+  #head.enter th,#foot.enter td{animation-duration:.25s;animation-delay:0s}
+}
+.pm-fav .pm-bar span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25}
+#tip.rank{z-index:100}
+@media(prefers-reduced-motion:no-preference){.tabs .tab-indicator{transition:left .5s cubic-bezier(.22,.8,.25,1),width .5s cubic-bezier(.22,.8,.25,1),opacity .12s ease!important}}
 </style>
 </head>
 <body>
@@ -1093,10 +1106,10 @@ const TABS = {
     ['waves','Waves','Total Waves cleared'],
     ['wins','Wins','Games won - cleared dev waves'],
     ['bosses','Bosses','Bosses slain by player. Credit goes to the one who dealt the most damage'],
-    ['finals','End bosses','End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
+    ['finals','End-bosses','End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
     ['chests','Leg Chests','Legendary chests opened'],
-    ['silver','Wizard Buffs','Allies buffed by you while playing a Necromancer or Silver Wizard'],
-    ['crowd','Crowd Kills','Kills made during events or bigger games (20 or more players are online)'],
+    ['silver','Wizard','Allies buffed by you while playing a Necromancer or Silver Wizard'],
+    ['crowd','Crowd','Kills made during events or bigger games (20 or more players are online)'],
     ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
   ]},
   weapons:{label:'Weapons',start:'kills',columns:[
@@ -1265,6 +1278,7 @@ function syncColumnWidths(columns,rows,totalRows){
   table.style.width = (rankWidth + playerWidth + widths.reduce((sum,width) => sum + width,0)).toFixed(3) + 'px';
 }
 function render(){
+  clearTableEnter();
   $('stats-table').className = tab === 'weapons' ? 'view-weapons' : 'view-overview';
   const definition = TABS[tab];
   const columns = definition.columns;
@@ -1289,7 +1303,7 @@ function render(){
     columns.map(([key,label,description]) => '<th scope="col" tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + esc(label) + '</span></th>').join('') + '</tr>';
 
   if(visible.length){
-    $('body').innerHTML = visible.map(row => '<tr class="' + (row.rank <= 3 ? 'r' + row.rank : '') + '" data-id="' + esc(row.id) + '"><td>' + row.rank + '</td><td class="player-name-cell" title="' + esc(row.name) + '"><button class="player-link" type="button" data-player-id="' + esc(row.id) + '">' + esc(row.name) + '</button></td>' +
+    $('body').innerHTML = visible.map((row,index) => '<tr style="--r:' + Math.min(index,18) + '" class="' + (row.rank <= 3 ? 'r' + row.rank : '') + '" data-id="' + esc(row.id) + '"><td>' + row.rank + '</td><td class="player-name-cell" title="' + esc(row.name) + '"><button class="player-link" type="button" data-player-id="' + esc(row.id) + '">' + esc(row.name) + '</button></td>' +
       columns.map(([key]) => '<td class="col-' + key + ' ' + (key === sortKey ? 's ' : '') + ((Number(row[key]) || 0) === 0 ? 'z' : '') + '">' + fmt(row[key]) + '</td>').join('') + '</tr>').join('');
   }else{
     const message = rows.length ? 'No players found' : 'No stats available for this selection';
@@ -1396,6 +1410,7 @@ function sortBy(key){
   }
   page = 0;
   render();
+  playTableEnter();
 }
 function showTip(header){
   if(!header || !header.dataset.tip) return hideTip();
@@ -1409,14 +1424,22 @@ function showTip(header){
 function hideTip(){tip.style.opacity='0';tip.classList.remove('rank');tip.style.zIndex='';}
 
 let pendingTab = null;
+let enterTimer = 0;
+const ENTER_PARTS = ['head','body','foot'];
+function clearTableEnter(){
+  window.clearTimeout(enterTimer);
+  ENTER_PARTS.forEach(id => $(id).classList.remove('enter'));
+}
+function playTableEnter(){
+  clearTableEnter();
+  void $('stats-table').offsetWidth;
+  ENTER_PARTS.forEach(id => $(id).classList.add('enter'));
+  enterTimer = window.setTimeout(clearTableEnter,1300);
+}
 function fadeTo(update){
   update();
   syncStickyOverlays();
-  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  ['head','body','foot'].forEach(id => {
-    const element = $(id);
-    if(element && element.animate) element.animate([{opacity:.3},{opacity:1}],{duration:170,easing:'cubic-bezier(.2,.7,.25,1)'});
-  });
+  playTableEnter();
 }
 function switchTab(nextTab){
   if(!nextTab || nextTab === (pendingTab || tab)) return;
@@ -1469,15 +1492,23 @@ $('sticky-head').addEventListener('keydown',event => {
 modeSelect.addEventListener('change',() => fadeTo(() => {fillFactions();page=0;render();}));
 factionSelect.addEventListener('change',() => fadeTo(() => {page=0;render();}));
 $('search').addEventListener('input',event => {query=event.target.value;page=0;render();});
-$('page-size').addEventListener('change',event => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();});
-$('prev').addEventListener('click',() => {page--;render();});
-$('next').addEventListener('click',() => {page++;render();});
+$('page-size').addEventListener('change',event => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();playTableEnter();});
+$('prev').addEventListener('click',() => {page--;render();playTableEnter();});
+$('next').addEventListener('click',() => {page++;render();playTableEnter();});
 window.addEventListener('resize',() => {render();updateTabSelection(tab);syncStickyOverlays();});
 window.addEventListener('scroll',syncStickyOverlays,{passive:true});
 $('sticky-head').addEventListener('scroll',hideTip);
 $('stats-table').closest('.box').addEventListener('scroll',syncStickyOverlays,{passive:true});
-document.addEventListener('mouseover',event => {const header=event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
-document.addEventListener('focusin',event => {const header=event.target.closest && event.target.closest('th[data-tip]');if(header) showTip(header);else hideTip();});
+document.addEventListener('mouseover',event => {
+  if(event.target.closest && event.target.closest('#player-modal')) return;
+  const header=event.target.closest('th[data-tip]');
+  if(header) showTip(header);else hideTip();
+});
+document.addEventListener('focusin',event => {
+  if(event.target.closest && event.target.closest('#player-modal')) return;
+  const header=event.target.closest && event.target.closest('th[data-tip]');
+  if(header) showTip(header);else hideTip();
+});
 document.addEventListener('scroll',hideTip,true);
 document.documentElement.addEventListener('mouseleave',hideTip);
 const WEAPON_KEYS = ['w1h','w2h','pole','spear','bow','xbow','throw','firearm','magic','other'];
@@ -1500,6 +1531,8 @@ function playUiSound(kind){
     if(playback && typeof playback.catch === 'function') playback.catch(() => {});
   }catch(error){ /* Audio files are optional; the UI must keep working if one is missing. */ }
 }
+const numberTitle = number => Math.abs(number) >= 1000 ? ' title="' + esc(fmt(number)) + '"' : '';
+const compactHtml = (tag,number) => '<' + tag + numberTitle(number) + '>' + fmtCompact(number) + '</' + tag + '>';
 function factionRows(player,mode,names){
   const keys = ['kills','deaths','waves','wins','score'];
   const source = (player.fac && player.fac[mode]) || {};
@@ -1509,7 +1542,7 @@ function factionRows(player,mode,names){
     .sort((a,b) => (Number(b.stat.kills) || 0) - (Number(a.stat.kills) || 0));
   if(!list.length) return '<p class="pm-empty">No data yet</p>';
   return '<div class="pm-faction-table"><div class="pm-frow pm-fhead"><span>Faction</span><span>Kills</span><span>Deaths</span><span>Waves</span><span>Wins</span><span>Score</span></div>' +
-    list.map(({name,stat}) => '<div class="pm-frow"><span title="' + esc(name) + '">' + esc(name) + '</span>' + keys.map(key => '<span title="' + esc(fmt(stat[key])) + '">' + fmtCompact(stat[key]) + '</span>').join('') + '</div>').join('') + '</div>';
+    list.map(({name,stat}) => '<div class="pm-frow"><span>' + esc(name) + '</span>' + keys.map(key => compactHtml('span',Number(stat[key]) || 0)).join('') + '</div>').join('') + '</div>';
 }
 function favoriteRows(list,emptyText){
   if(!list || !list.length) return '<p class="pm-empty">' + esc(emptyText) + '</p>';
@@ -1517,7 +1550,7 @@ function favoriteRows(list,emptyText){
   return list.map(item => {
     const name = String(item.name ?? 'Unknown');
     const count = Number(item.count) || 0;
-    return '<div class="pm-bar"><span title="' + esc(name) + '">' + esc(name) + '</span><div class="pm-track"><i style="width:' + (count / top * 100).toFixed(1) + '%"></i></div><b>' + fmt(count) + '</b></div>';
+    return '<div class="pm-bar"><span>' + esc(name) + '</span><div class="pm-track"><i style="width:' + (count / top * 100).toFixed(1) + '%"></i></div>' + compactHtml('b',count) + '</div>';
   }).join('');
 }
 let openedPlayerId = null;
@@ -1527,16 +1560,17 @@ function openPlayer(id){
   if(!player) return;
   playUiSound('open');
   const value = key => Number(player[key]) || 0;
-  const line = (label,text,zero,rankKey) => '<div class="pm-line' + (zero ? ' zero' : '') + '"' + (rankKey ? ' data-rank="' + rankKey + '"' : '') + '><span>' + esc(label) + '</span><b>' + esc(text) + '</b></div>';
-  const cards = ['score','kills','deaths','points','waves','wins'].map(key => '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span><strong>' + fmt(value(key)) + '</strong></div>').join('');
-  const details = ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],fmt(value(key)),value(key) === 0)).join('');
+  const line = (label,number,rankKey) => '<div class="pm-line' + (number === 0 ? ' zero' : '') + '"' + (rankKey ? ' data-rank="' + rankKey + '"' : '') + '><span>' + esc(label) + '</span>' + compactHtml('b',number) + '</div>';
+  const cards = ['score','kills','deaths','points','waves','wins'].map(key => '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span>' + compactHtml('strong',value(key)) + '</div>').join('');
+  const details = ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],value(key))).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
   const weapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a)).map(key => {
     const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
-    return '<div class="pm-bar"><span title="' + share.toFixed(1) + '% of total kills">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + share.toFixed(1) + '% of total kills"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + share.toFixed(1) + '% of total kills">' + fmt(value(key)) + '</b></div>';
+    const shareText = share.toFixed(1) + '% of total kills' + (value(key) >= 1000 ? ' (' + fmt(value(key)) + ')' : '');
+    return '<div class="pm-bar"><span title="' + shareText + '">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + shareText + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + shareText + '">' + fmtCompact(value(key)) + '</b></div>';
   }).join('');
-  const countLine = (key,label,rankKey) => line(label,fmt(value(key)),value(key) === 0,rankKey);
-  const activity = line('Joined the server',fmt(value('joined')),value('joined') === 0) + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Boxes opened','boxes') + countLine('slain','Players slain','slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
+  const countLine = (key,label,rankKey) => line(label,value(key),rankKey);
+  const activity = line('Joined the server',value('joined')) + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Boxes opened','boxes') + countLine('slain','Players slain','slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
   openedPlayerId = player.id;
   const fav = player.fav || {};
   $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats</span></div>' +
@@ -1572,13 +1606,13 @@ function rankTipHtml(key){
   const ranked = current.players.filter(item => Number(item[key]) > 0).sort((a,b) => (Number(b[key]) || 0) - (Number(a[key]) || 0));
   const position = ranked.findIndex(item => String(item.id) === String(openedPlayerId)) + 1;
   const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + fmt(item[key]) + '</b></div>';
-  const title = position ? '#' + position + ' of ' + fmt(ranked.length) + ' ' + plural(ranked.length,'player','players') : 'Not ranked yet';
+  const title = !ranked.length ? 'Nobody is ranked yet' : position ? '#' + position + ' of ' + fmt(ranked.length) + ' ' + plural(ranked.length,'player','players') : 'Not ranked yet';
   return '<strong>' + title + '</strong>' + ranked.slice(0,10).map(row).join('') + (position > 10 ? '<div class="rk-gap">…</div>' + row(ranked[position - 1],position - 1) : '');
 }
 function showRankTip(line){
   tip.innerHTML = rankTipHtml(line.dataset.rank);
   tip.classList.add('rank');
-  tip.style.zIndex = '40';
+  tip.style.zIndex = '100';
   const box = line.getBoundingClientRect();
   const left = Math.min(Math.max(8,box.left + box.width / 2 - tip.offsetWidth / 2),innerWidth - tip.offsetWidth - 8);
   const below = box.bottom + 8;
