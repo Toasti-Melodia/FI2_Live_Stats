@@ -2,7 +2,6 @@ const SftpClient = require('ssh2-sftp-client');
 const fs = require('fs');
 const NAMES = {'1354331': 'Melodia-Patty', '2829101': 'Maykelus'};
 const NAME_FIELDS = [5003];
-const JOINED_FIELD = 5013;
 const WEAPON_KILLS_BASE = 7000;
 const FIELD_OFFSET = 5000;
 const FACTION_STEP = 10000;
@@ -14,16 +13,23 @@ const SPAWN_RANGE = 1000000;
 const MAP_PLAYED_BASE = 3000000;
 const MAP_NAME_BASE = 3500000;
 const MAP_RANGE = 500000;
-const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023, crowd: 5024, headshots: 5025, shielding: 5026, silver: 5019, commands: 5029, anvils: 5030, refills: 5031, wardrobes: 5032};
+const HERO_NAME_SHIFT_FIRST = 1079;
+const HERO_NAME_SHIFT_LAST = 1790;
+const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023, crowd: 5024, headshots: 5025, shielding: 5026, silver: 5019, joined: 5013, commands: 5029, anvils: 5030, refills: 5031, wardrobes: 5032, boxes: 5033, slain: 5034, animations: 5035};
 const WEAPONS = {w1h: 5004, w2h: 5005, pole: 5006, bow: 5007, xbow: 5008, throw: 5009, firearm: 5010, magic: 5011, other: 5012, spear: 5028};
-const AWARD_KEYS = ['score', 'kills', 'points', 'waves', 'wins', 'bosses', 'finals', 'chests', 'crowd', 'recruits', 'w1h', 'w2h', 'pole', 'spear', 'bow', 'xbow', 'throw', 'firearm', 'magic', 'other', 'headshots', 'shielding'];
+const SCALES = {score: 10};
 const FIELD_LABELS = {};
 for (const [label, field] of Object.entries(FIELDS)) FIELD_LABELS[field] = label;
 for (const [label, category] of Object.entries(WEAPONS)) FIELD_LABELS[WEAPON_KILLS_BASE + category] = label;
 let TROOPS = {};
+const MAPS = (() => { try { return JSON.parse(fs.readFileSync('maps.json', 'utf8')); } catch (error) { return {}; } })();
 try { TROOPS = JSON.parse(fs.readFileSync('troops.json', 'utf8')); } catch (error) { console.log('troops.json not found, unit names will be ids'); }
 function readJson(file) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch (error) { return null; }
+}
+function troopName(troop, isHero) {
+  const lookupId = isHero && troop >= HERO_NAME_SHIFT_FIRST && troop <= HERO_NAME_SHIFT_LAST ? troop - 1 : troop;
+  return TROOPS[lookupId] || 'Troop #' + troop;
 }
 async function loadServer(prefix) {
   const host = process.env[prefix + '_HOST'];
@@ -45,45 +51,11 @@ async function loadServer(prefix) {
     await sftp.end().catch(() => {});
   }
 }
-function awardWeek(finishedWeek, rows, top10) {
-  const weekKey = String(finishedWeek.start);
-  if (top10.weeks[weekKey]) return;
-  const before = new Map((finishedWeek.players || []).map(player => [String(player.id), player]));
-  const awarded = {};
-  for (const column of AWARD_KEYS) {
-    const ranking = rows
-      .map(row => ({id: row.id, value: (Number(row[column]) || 0) - (Number((before.get(row.id) || {})[column]) || 0)}))
-      .filter(entry => entry.value > 0)
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 10);
-    ranking.forEach((entry, index) => {
-      if (!awarded[entry.id]) awarded[entry.id] = {points: 0, places: 0, firsts: 0};
-      awarded[entry.id].points += 10 - index;
-      awarded[entry.id].places += 1;
-      if (index === 0) awarded[entry.id].firsts += 1;
-    });
-  }
-  top10.weeks[weekKey] = awarded;
-  console.log('top10 awarded for week ' + weekKey + ': ' + Object.keys(awarded).length + ' players');
-}
-function top10Totals(top10) {
-  const totals = {};
-  for (const awarded of Object.values(top10.weeks)) {
-    for (const [id, entry] of Object.entries(awarded)) {
-      if (!totals[id]) totals[id] = {points: 0, places: 0, firsts: 0};
-      totals[id].points += entry.points;
-      totals[id].places += entry.places;
-      totals[id].firsts += entry.firsts;
-    }
-  }
-  return totals;
-}
 (async () => {
   const dumps = [await loadServer('S1'), await loadServer('S2')].filter(Boolean);
   if (dumps.length === 0) process.exit(1);
   const numbers = {};
   const nicknames = {};
-  const joined = {};
   const spawns = {};
   const maps = {};
   const mapNames = {};
@@ -102,10 +74,6 @@ function top10Totals(top10) {
         continue;
       }
       const amount = Number(value);
-      if (field === JOINED_FIELD) {
-        if (amount > 0 && (!joined[id] || amount < joined[id])) joined[id] = amount;
-        continue;
-      }
       if (field >= MAP_PLAYED_BASE && field < MAP_NAME_BASE) {
         const scene = field - MAP_PLAYED_BASE;
         if (!maps[id]) maps[id] = {};
@@ -136,23 +104,22 @@ function top10Totals(top10) {
     if (!label) continue;
     if (!factionStats[id]) factionStats[id] = {as: {}, vs: {}};
     if (!factionStats[id][mode][factionId]) factionStats[id][mode][factionId] = {};
-    factionStats[id][mode][factionId][label] = value;
+    factionStats[id][mode][factionId][label] = Math.floor(value / (SCALES[label] || 1));
   }
-  const favorites = group => Object.entries(group || {})
+  const favorites = (group, isHero) => Object.entries(group || {})
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3)
-    .map(([troop, count]) => ({id: Number(troop), name: TROOPS[troop] || 'Troop #' + troop, count}));
+    .map(([troop, count]) => ({id: Number(troop), name: troopName(Number(troop), isHero), count}));
   const topMaps = group => Object.entries(group || {})
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
-    .map(([scene, count]) => ({id: Number(scene), name: mapNames[scene] || 'Map #' + scene, count}));
+    .map(([scene, count]) => ({id: Number(scene), name: MAPS[scene] || mapNames[scene] || 'Map #' + scene, count}));
   const ids = new Set([...Object.keys(numbers).map(key => key.split('_')[0]), ...Object.keys(nicknames)]);
   const rows = [...ids].map(id => {
     const row = {id, name: NAMES[id] || nicknames[id] || id};
-    for (const [label, field] of Object.entries(FIELDS)) row[label] = numbers[id + '_' + field] || 0;
+    for (const [label, field] of Object.entries(FIELDS)) row[label] = Math.floor((numbers[id + '_' + field] || 0) / (SCALES[label] || 1));
     for (const [label, category] of Object.entries(WEAPONS)) row[label] = numbers[id + '_' + (WEAPON_KILLS_BASE + category)] || 0;
-    row.joined = joined[id] || 0;
-    row.fav = {h: favorites((spawns[id] || {}).h), n: favorites((spawns[id] || {}).n)};
+    row.fav = {h: favorites((spawns[id] || {}).h, true), n: favorites((spawns[id] || {}).n, false)};
     row.maps = topMaps(maps[id]);
     row.fac = factionStats[id] || {as: {}, vs: {}};
     return row;
@@ -174,24 +141,12 @@ function top10Totals(top10) {
     half: Date.UTC(today.getUTCFullYear(), today.getUTCMonth() < 6 ? 0 : 6, 1),
     year: Date.UTC(today.getUTCFullYear(), 0, 1)
   };
-  const top10 = readJson('docs/top10.json') || {weeks: {}};
-  if (!top10.weeks) top10.weeks = {};
-  const existingWeek = readJson('docs/week.json');
-  if (existingWeek && existingWeek.start !== starts.week) awardWeek(existingWeek, rows, top10);
-  const totals = top10Totals(top10);
-  for (const row of rows) {
-    const entry = totals[row.id] || {points: 0, places: 0, firsts: 0};
-    row.t10 = entry.points;
-    row.t10n = entry.places;
-    row.t10first = entry.firsts;
-  }
-  fs.writeFileSync('docs/top10.json', JSON.stringify(top10));
   fs.writeFileSync('docs/stats.json', JSON.stringify({updated, since, players: rows}));
   for (const [name, start] of Object.entries(starts)) {
     const file = 'docs/' + name + '.json';
     const existing = readJson(file);
     if (existing && existing.start === start) continue;
-    const players = !existing && since >= start ? [] : rows.map(({fav, maps: mostPlayed, joined: joinedAt, ...numeric}) => numeric);
+    const players = !existing && since >= start ? [] : rows.map(({fav, maps: mostPlayed, ...numeric}) => numeric);
     fs.writeFileSync(file, JSON.stringify({start, updated, players}));
   }
 })();
