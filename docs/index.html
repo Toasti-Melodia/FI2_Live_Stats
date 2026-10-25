@@ -1004,8 +1004,8 @@ body::before{opacity:.08}
 #tip.rank .rk{display:grid;grid-template-columns:34px 1fr auto;gap:8px;padding:2px 0;font-size:12.5px;color:rgba(240,240,231,.82)}
 #tip.rank .rk i{font-style:normal;color:#9aa08c}
 #tip.rank .rk b{font-weight:600;font-variant-numeric:tabular-nums;color:#fff5d7}
-#tip.rank .rk.me{color:#f0d58e}
-#tip.rank .rk.me i{color:#d8b96f}
+#tip.rank .rk.me{color:#fff0b8;background:linear-gradient(90deg,rgba(216,185,111,.17),rgba(216,185,111,.055));border-left:2px solid #d8b96f;border-radius:3px;padding:3px 5px}
+#tip.rank .rk.me i,#tip.rank .rk.me b{color:#f0d58e}
 #tip.rank .rk-gap{padding:1px 0 1px 42px;color:#9aa08c}
 @media(min-width:761px){
   .toolbar{padding:9px 14px!important;margin-bottom:12px!important}
@@ -1058,11 +1058,11 @@ body::before{opacity:.08}
   top:0;
   left:0;
   right:0;
-  height:44vh;
+  height:56vh;
   z-index:1;
   pointer-events:none;
   background:
-    radial-gradient(ellipse 56% 85% at 0% 0%,rgba(0,0,0,.96) 0%,rgba(0,0,0,.78) 24%,rgba(0,0,0,.26) 58%,rgba(0,0,0,0) 78%),
+    radial-gradient(ellipse 56% 112% at 0% 0%,rgba(0,0,0,.96) 0%,rgba(0,0,0,.80) 24%,rgba(0,0,0,.30) 58%,rgba(0,0,0,0) 84%),
     radial-gradient(ellipse 45% 78% at 100% 0%,rgba(0,0,0,.62) 0%,rgba(0,0,0,.38) 28%,rgba(0,0,0,.08) 58%,rgba(0,0,0,0) 76%),
     linear-gradient(180deg,rgba(0,0,0,.20) 0%,rgba(0,0,0,.10) 35%,rgba(0,0,0,0) 100%);
 }
@@ -1094,8 +1094,8 @@ body::before{opacity:.08}
 #tip.rank .rk{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:2px 0;font-size:12.5px;color:rgba(240,240,231,.82)}
 #tip.rank .rk i{font-style:normal;color:#9aa08c}
 #tip.rank .rk b{font-weight:600;font-variant-numeric:tabular-nums;color:#fff5d7}
-#tip.rank .rk.me{color:#f0d58e}
-#tip.rank .rk.me i{color:#d8b96f}
+#tip.rank .rk.me{color:#fff0b8;background:linear-gradient(90deg,rgba(216,185,111,.17),rgba(216,185,111,.055));border-left:2px solid #d8b96f;border-radius:3px;padding:3px 5px}
+#tip.rank .rk.me i,#tip.rank .rk.me b{color:#f0d58e}
 #tip.rank .rk-gap{padding:1px 0 1px 42px;color:#9aa08c}
 #tip.rank .rk-empty{color:var(--dim);font-size:12px}
 
@@ -1660,9 +1660,8 @@ function rankedPlayersFor(key){
 function rankTriggerHtml(key,label,hoverTitle,share){
   const category = WEAPON_KEYS.includes(key) ? label + ' kills' : label;
   const accessibleLabel = 'Open top 10 players for ' + category;
-  const title = 'Click to open TOP 10 · ' + category + (hoverTitle ? ' · ' + hoverTitle : '');
   const shareAttribute = share === undefined ? '' : ' data-share="' + esc(share) + '"';
-  return '<span class="pm-rank-trigger" role="button" tabindex="0" data-rank="' + esc(key) + '" data-rank-label="' + esc(category) + '"' + shareAttribute + ' title="' + esc(title) + '" aria-label="' + esc(accessibleLabel) + '">' + esc(label) + '</span>';
+  return '<span class="pm-rank-trigger" role="button" tabindex="0" data-rank="' + esc(key) + '" data-rank-label="' + esc(category) + '"' + shareAttribute + ' aria-label="' + esc(accessibleLabel) + '">' + esc(label) + '</span>';
 }
 function openPlayer(id){
   const player = current.players.find(item => String(item.id) === String(id));
@@ -1673,7 +1672,7 @@ function openPlayer(id){
   const cards = ['score','kills','deaths','points','waves','wins'].map(key =>
     '<div class="pm-card">' + rankTriggerHtml(key,LABELS[key]) + compactHtml('strong',value(key)) + '</div>'
   ).join('');
-  const details = line(LABELS.streak,value('streak'),'streak') + ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],value(key),key)).join('');
+  const details = line(LABELS.streak,value('streak'),'streak') + ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(key === 'bosses' ? 'Bosses Slain' : LABELS[key],value(key),key)).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
   const weapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a)).map(key => {
     const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
@@ -1720,14 +1719,14 @@ function rankTipHtml(key,share,categoryLabel){
   const category = categoryLabel || (WEAPON_KEYS.includes(key) ? (LABELS[key] || key) + ' kills' : (LABELS[key] || key));
   const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + fmt(item[key]) + '</b></div>';
   const positionMarkup = position
-    ? '<div class="rk-position"><span class="rk-position-label">Your position</span><strong class="rk-position-number">#' + fmt(position) + '</strong><span class="rk-position-total">of ' + fmt(totalPlayers) + ' ' + plural(totalPlayers,'player','players') + '</span></div>'
-    : '<div class="rk-position"><span class="rk-position-label">Your position</span><strong class="rk-position-number">—</strong><span class="rk-position-total">Unavailable</span></div>';
+    ? '<div class="rk-position"><span class="rk-position-label">Position</span><strong class="rk-position-number">#' + fmt(position) + '</strong><span class="rk-position-total">of ' + fmt(totalPlayers) + ' ' + plural(totalPlayers,'player','players') + '</span></div>'
+    : '<div class="rk-position"><span class="rk-position-label">Position</span><strong class="rk-position-number">—</strong><span class="rk-position-total">Unavailable</span></div>';
   const subtitle = 'TOP 10 PLAYERS · ' + category;
   const shareValue = Number(share);
-  const shareNote = WEAPON_KEYS.includes(key) && share !== undefined && Number.isFinite(shareValue) ? '<div class="rk-note">This weapon accounts for ' + shareValue.toFixed(1) + '% of your kills.</div>' : '';
+  const shareNote = WEAPON_KEYS.includes(key) && share !== undefined && Number.isFinite(shareValue) ? '<div class="rk-note">Share of total kills: ' + shareValue.toFixed(1) + '%</div>' : '';
   const topRows = ranked.slice(0,10).map(row).join('');
   const extraPlayer = position > 10 ? '<div class="rk-gap">…</div>' + row(ranked[positionIndex],positionIndex) : '';
-  return positionMarkup + '<div class="rk-heading">' + esc(subtitle) + '</div>' + shareNote + (topRows || '<div class="rk-empty">No player data available</div>') + extraPlayer;
+  return positionMarkup + shareNote + '<div class="rk-heading">' + esc(subtitle) + '</div>' + (topRows || '<div class="rk-empty">No player data available</div>') + extraPlayer;
 }
 function showRankTip(trigger){
   tip.innerHTML = rankTipHtml(trigger.dataset.rank,trigger.dataset.share,trigger.dataset.rankLabel);
