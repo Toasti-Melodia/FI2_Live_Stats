@@ -1611,7 +1611,7 @@ const uiSounds = {
   close: new Audio('sfx3.mp3'),
   rank: new Audio('click2.mp3'),
   rankClose: new Audio('click5.mp3'),
-  table: new Audio('table.mp3')
+  table: new Audio('click2.mp3')
 };
 Object.values(uiSounds).forEach(sound => { sound.preload = 'auto'; sound.volume = 0.55; });
 function playUiSound(kind){
@@ -1689,7 +1689,7 @@ function openPlayer(id){
   openedPlayerId = player.id;
   const fav = player.fav || {};
   const isMelodiaPatty = String(player.name || '').trim().toLowerCase() === 'melodia-patty';
-  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats' + (isMelodiaPatty ? '<span class="pm-cat" aria-label="black cat">🐈‍⬛</span>' : '') + '</span></div>' +
+  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats' + (isMelodiaPatty ? '<span class="pm-cat" aria-label="cat">🐈</span>' : '') + '</span></div>' +
     '<div class="pm-cards">' + cards + '</div>' +
     '<div class="pm-grid pm-primary"><section class="pm-section"><h3>Overview</h3>' + details + '</section><section class="pm-section"><h3>Kills by weapon</h3>' + weapons + '</section><section class="pm-section"><h3>Activity</h3>' + activity + '</section></div>' +
     '<div class="pm-grid pm-fav"><section class="pm-section"><h3>Favourite heroes</h3>' + favoriteRows(fav.h,'No spawns recorded yet') + '</section><section class="pm-section"><h3>Favourite units</h3>' + favoriteRows(fav.n,'No spawns recorded yet') + '</section><section class="pm-section"><h3>Most played maps</h3>' + favoriteRows(player.maps,'No maps recorded yet') + '</section></div>' +
