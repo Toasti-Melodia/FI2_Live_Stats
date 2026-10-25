@@ -603,6 +603,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 .pm-name{margin:0;font:700 clamp(26px,4vw,38px)/1.05 var(--display);color:#fffdf5;overflow-wrap:anywhere}
 .pm-meta{color:var(--dim);font-size:13px}
 .pm-meta b{color:var(--accent-bright);font-weight:600}
+.pm-cat{display:inline-block;margin-left:4px;font-size:12px;line-height:1;vertical-align:middle}
 .pm-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:22px}
 .pm-card{padding:12px 14px;background:rgba(0,0,0,.22);border:1px solid rgba(216,185,111,.16);border-radius:10px}
 .pm-card span{display:block;color:var(--dim);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
@@ -1004,7 +1005,8 @@ body::before{opacity:.08}
 #tip.rank .rk{display:grid;grid-template-columns:34px 1fr auto;gap:8px;padding:2px 0;font-size:12.5px;color:rgba(240,240,231,.82)}
 #tip.rank .rk i{font-style:normal;color:#9aa08c}
 #tip.rank .rk b{font-weight:600;font-variant-numeric:tabular-nums;color:#fff5d7}
-#tip.rank .rk.me{color:#fff0b8;background:linear-gradient(90deg,rgba(216,185,111,.17),rgba(216,185,111,.055));border-left:2px solid #d8b96f;border-radius:3px;padding:3px 5px}
+#tip.rank .rk.me{position:relative;color:#fff0b8;background:linear-gradient(90deg,rgba(216,185,111,.17),rgba(216,185,111,.055));border-left:0;border-radius:3px;padding:2px 0;box-shadow:none}
+#tip.rank .rk.me::before{content:"";position:absolute;left:-5px;top:2px;bottom:2px;width:2px;border-radius:2px;background:#d8b96f}
 #tip.rank .rk.me i,#tip.rank .rk.me b{color:#f0d58e}
 #tip.rank .rk-gap{padding:1px 0 1px 42px;color:#9aa08c}
 @media(min-width:761px){
@@ -1043,8 +1045,8 @@ body::before{opacity:.08}
 .box-wrap .box.ghost.out{opacity:0!important}
 .box-wrap .box.fade-in{animation:box-lift .34s cubic-bezier(.2,.7,.25,1)}
 @keyframes box-lift{from{transform:translateY(8px)}to{transform:translateY(0)}}
-.box-wrap .box.blur-in{animation:table-switch .48s cubic-bezier(.2,.7,.25,1)}
-@keyframes table-switch{0%{opacity:.7;transform:translateY(5px)}55%{opacity:.92;transform:translateY(2px)}100%{opacity:1;transform:translateY(0)}}
+.box-wrap .box.blur-in{animation:table-switch .34s cubic-bezier(.2,.72,.25,1)}
+@keyframes table-switch{0%{opacity:.72;transform:translateY(4px)}48%{opacity:.94;transform:translateY(1px)}100%{opacity:1;transform:translateY(0)}}
 
 #player-modal{
   background:rgba(3,4,3,.38)!important;
@@ -1094,7 +1096,8 @@ body::before{opacity:.08}
 #tip.rank .rk{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:2px 0;font-size:12.5px;color:rgba(240,240,231,.82)}
 #tip.rank .rk i{font-style:normal;color:#9aa08c}
 #tip.rank .rk b{font-weight:600;font-variant-numeric:tabular-nums;color:#fff5d7}
-#tip.rank .rk.me{color:#fff0b8;background:linear-gradient(90deg,rgba(216,185,111,.17),rgba(216,185,111,.055));border-left:2px solid #d8b96f;border-radius:3px;padding:3px 5px}
+#tip.rank .rk.me{position:relative;color:#fff0b8;background:linear-gradient(90deg,rgba(216,185,111,.17),rgba(216,185,111,.055));border-left:0;border-radius:3px;padding:2px 0;box-shadow:none}
+#tip.rank .rk.me::before{content:"";position:absolute;left:-5px;top:2px;bottom:2px;width:2px;border-radius:2px;background:#d8b96f}
 #tip.rank .rk.me i,#tip.rank .rk.me b{color:#f0d58e}
 #tip.rank .rk-gap{padding:1px 0 1px 42px;color:#9aa08c}
 #tip.rank .rk-empty{color:var(--dim);font-size:12px}
@@ -1528,6 +1531,7 @@ function fadeTo(update){
 }
 function switchTab(nextTab){
   if(!nextTab || nextTab === (pendingTab || tab)) return;
+  playUiSound('table');
   pendingTab = nextTab;
   updateTabSelection(nextTab);
   fadeTo(() => {
@@ -1606,7 +1610,8 @@ const uiSounds = {
   open: new Audio('click.mp3'),
   close: new Audio('sfx3.mp3'),
   rank: new Audio('click2.mp3'),
-  rankClose: new Audio('click5.mp3')
+  rankClose: new Audio('click5.mp3'),
+  table: new Audio('table.mp3')
 };
 Object.values(uiSounds).forEach(sound => { sound.preload = 'auto'; sound.volume = 0.55; });
 function playUiSound(kind){
@@ -1683,7 +1688,8 @@ function openPlayer(id){
   const activity = countLine('quests','Quests completed') + countLine('joined','Joined the server','joined') + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Lootboxes opened') + countLine('slain','Players slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
   openedPlayerId = player.id;
   const fav = player.fav || {};
-  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats</span></div>' +
+  const isMelodiaPatty = String(player.name || '').trim().toLowerCase() === 'melodia-patty';
+  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats' + (isMelodiaPatty ? '<span class="pm-cat" aria-label="black cat">🐈‍⬛</span>' : '') + '</span></div>' +
     '<div class="pm-cards">' + cards + '</div>' +
     '<div class="pm-grid pm-primary"><section class="pm-section"><h3>Overview</h3>' + details + '</section><section class="pm-section"><h3>Kills by weapon</h3>' + weapons + '</section><section class="pm-section"><h3>Activity</h3>' + activity + '</section></div>' +
     '<div class="pm-grid pm-fav"><section class="pm-section"><h3>Favourite heroes</h3>' + favoriteRows(fav.h,'No spawns recorded yet') + '</section><section class="pm-section"><h3>Favourite units</h3>' + favoriteRows(fav.n,'No spawns recorded yet') + '</section><section class="pm-section"><h3>Most played maps</h3>' + favoriteRows(player.maps,'No maps recorded yet') + '</section></div>' +
