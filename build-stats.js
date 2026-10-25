@@ -13,6 +13,7 @@ const SPAWN_RANGE = 1000000;
 const MAP_PLAYED_BASE = 3000000;
 const MAP_NAME_BASE = 3500000;
 const MAP_RANGE = 500000;
+const QUEST_BASE = 6000000;
 const HERO_NAME_SHIFT_FIRST = 1079;
 const HERO_NAME_SHIFT_LAST = 1790;
 const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023, crowd: 5024, headshots: 5025, shielding: 5026, streak: 5036, quests: 5037, silver: 5019, joined: 5013, commands: 5029, anvils: 5030, refills: 5031, wardrobes: 5032, boxes: 5033, slain: 5034, animations: 5035};
@@ -71,6 +72,7 @@ async function loadServer(prefix) {
         mapNames[field - MAP_NAME_BASE] = String(value);
         continue;
       }
+      if (field >= QUEST_BASE) continue;
       const isName = NAME_FIELDS.includes(field) || Number.isNaN(Number(value));
       if (isName) {
         if (!nicknames[id]) nicknames[id] = String(value);
