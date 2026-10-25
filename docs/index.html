@@ -1034,6 +1034,14 @@ body::before{opacity:.08}
 .pm-fav .pm-bar span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25}
 #tip.rank{z-index:100}
 @media(prefers-reduced-motion:no-preference){.tabs .tab-indicator{transition:left .5s cubic-bezier(.22,.8,.25,1),width .5s cubic-bezier(.22,.8,.25,1),opacity .12s ease!important}}
+
+#stats-table thead th[data-key]:not(.player-sort),.sticky-head th[data-key]:not(.player-sort){white-space:normal!important;overflow-wrap:normal;line-height:1.15;font-size:10px!important;letter-spacing:.04em!important;padding-left:5px!important;padding-right:5px!important}
+#stats-table thead th[data-key].on::after,.sticky-head th[data-key].on::after{white-space:nowrap}
+@keyframes box-in{from{opacity:0}to{opacity:1}}
+.box.fade-in{animation:box-in .34s ease}
+.box.ghost{overflow:hidden!important;transition:opacity .34s ease!important}
+.box.ghost.out{opacity:0}
+@media(prefers-reduced-motion:reduce){.box.fade-in{animation:none}.box.ghost{transition:none!important}}
 </style>
 </head>
 <body>
@@ -1065,7 +1073,7 @@ body::before{opacity:.08}
       </div>
     </div>
     <div class="filters">
-      <div class="faction-control range-control"><label>Period<select id="range"><option value="all">All time</option><option value="week">This week</option><option value="month">This month</option><option value="quarter">Last 3 months</option><option value="half">Last 6 months</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
+      <div class="faction-control range-control"><label>Period<select id="range"><option value="all">All time</option><option value="today">Today</option><option value="week">This week</option><option value="month">This month</option><option value="quarter">Last 3 months</option><option value="half">Last 6 months</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
       <label>View stats<select id="mode"><option value="all">All</option><option value="as">As Defenders</option><option value="vs">Against Invaders</option></select></label>
       <div class="faction-control"><label>Faction<select id="faction"></select></label><span class="custom" id="custom"></span></div>
       <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
@@ -1110,7 +1118,8 @@ const TABS = {
     ['chests','Leg Chests','Legendary chests opened'],
     ['silver','Wizard Buffs','Allies buffed by you while playing a Necromancer or Silver Wizard'],
     ['crowd','Crowd Kills','Kills made during events or bigger games (20 or more players are online)'],
-    ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
+    ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units'],
+    ['quests','Quests','Quests completed. Every completed quest awards 20 score']
   ]},
   weapons:{label:'Weapons',start:'kills',columns:[
     ['kills','Kills','All enemy bots killed, whatever the weapon'],
@@ -1234,7 +1243,7 @@ function syncColumnWidths(columns,rows,totalRows){
   const horizontalPadding = mobile ? 24 : 30;
   const minimumWidth = mobile ? 56 : 64;
   const needed = columns.map(([key,label]) => {
-    let content = textWidth(label.toUpperCase(),'700 11px ' + FONT_FAMILY,0.72) + horizontalPadding + 2;
+    let content = Math.max(...label.toUpperCase().split(/[\s-]+/).map(word => textWidth(word,'700 10px ' + FONT_FAMILY,0.4))) + 20;
     for(const row of rows){
       content = Math.max(content,textWidth(fmt(row[key]),'700 14px ' + FONT_FAMILY,0) + horizontalPadding + 2);
     }
@@ -1403,14 +1412,15 @@ function syncStickyOverlays(){
   stickyHead.style.display = 'block';
 }
 function sortBy(key){
-  if(key === sortKey) ascending = !ascending;
-  else{
-    sortKey = key;
-    ascending = key === 'name';
-  }
-  page = 0;
-  render();
-  playTableEnter();
+  fadeTo(() => {
+    if(key === sortKey) ascending = !ascending;
+    else{
+      sortKey = key;
+      ascending = key === 'name';
+    }
+    page = 0;
+    render();
+  });
 }
 function showTip(header){
   if(!header || !header.dataset.tip) return hideTip();
@@ -1436,10 +1446,38 @@ function playTableEnter(){
   ENTER_PARTS.forEach(id => $(id).classList.add('enter'));
   enterTimer = window.setTimeout(clearTableEnter,1300);
 }
+let ghostTimer = 0;
+function clearGhost(){
+  window.clearTimeout(ghostTimer);
+  document.querySelectorAll('.box.ghost').forEach(node => node.remove());
+  const live = $('stats-table').closest('.box');
+  live.classList.remove('fade-in');
+}
 function fadeTo(update){
+  const live = $('stats-table').closest('.box');
+  const wrap = live.parentElement;
+  clearGhost();
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let ghost = null;
+  if(!reduceMotion && live.offsetHeight && live.querySelectorAll('tbody tr').length <= 300){
+    ghost = live.cloneNode(true);
+    ghost.classList.add('ghost');
+    ghost.style.width = live.offsetWidth + 'px';
+    ghost.style.height = live.offsetHeight + 'px';
+    ghost.style.top = live.offsetTop + 'px';
+    ghost.style.left = live.offsetLeft + 'px';
+    wrap.appendChild(ghost);
+    ghost.scrollLeft = live.scrollLeft;
+    ghost.scrollTop = live.scrollTop;
+  }
   update();
   syncStickyOverlays();
-  playTableEnter();
+  if(ghost){
+    void live.offsetWidth;
+    live.classList.add('fade-in');
+    ghost.classList.add('out');
+    ghostTimer = window.setTimeout(clearGhost,400);
+  }
 }
 function switchTab(nextTab){
   if(!nextTab || nextTab === (pendingTab || tab)) return;
@@ -1492,9 +1530,9 @@ $('sticky-head').addEventListener('keydown',event => {
 modeSelect.addEventListener('change',() => fadeTo(() => {fillFactions();page=0;render();}));
 factionSelect.addEventListener('change',() => fadeTo(() => {page=0;render();}));
 $('search').addEventListener('input',event => {query=event.target.value;page=0;render();});
-$('page-size').addEventListener('change',event => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();playTableEnter();});
-$('prev').addEventListener('click',() => {page--;render();playTableEnter();});
-$('next').addEventListener('click',() => {page++;render();playTableEnter();});
+$('page-size').addEventListener('change',event => fadeTo(() => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();}));
+$('prev').addEventListener('click',() => fadeTo(() => {page--;render();}));
+$('next').addEventListener('click',() => fadeTo(() => {page++;render();}));
 window.addEventListener('resize',() => {render();updateTabSelection(tab);syncStickyOverlays();});
 window.addEventListener('scroll',syncStickyOverlays,{passive:true});
 $('sticky-head').addEventListener('scroll',hideTip);
@@ -1512,7 +1550,7 @@ document.addEventListener('focusin',event => {
 document.addEventListener('scroll',hideTip,true);
 document.documentElement.addEventListener('mouseleave',hideTip);
 const WEAPON_KEYS = ['w1h','w2h','pole','spear','bow','xbow','throw','firearm','magic','other'];
-const LABELS = {silver:'Wizard buffs'};
+const LABELS = {silver:'Wizard buffs',streak:'Most kills without dying'};
 Object.values(TABS).forEach(definition => definition.columns.forEach(column => {LABELS[column[0]] = column[1];}));
 const modal = $('player-modal');
 let modalReturnFocus = null;
@@ -1562,7 +1600,7 @@ function openPlayer(id){
   const value = key => Number(player[key]) || 0;
   const line = (label,number,rankKey) => '<div class="pm-line' + (number === 0 ? ' zero' : '') + '"' + (rankKey ? ' data-rank="' + rankKey + '"' : '') + '><span>' + esc(label) + '</span>' + compactHtml('b',number) + '</div>';
   const cards = ['score','kills','deaths','points','waves','wins'].map(key => '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span>' + compactHtml('strong',value(key)) + '</div>').join('');
-  const details = ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],value(key))).join('');
+  const details = ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],value(key))).join('') + line(LABELS.streak,value('streak'),'streak');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
   const weapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a)).map(key => {
     const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
@@ -1570,7 +1608,7 @@ function openPlayer(id){
     return '<div class="pm-bar"><span title="' + shareText + '">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + shareText + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + shareText + '">' + fmtCompact(value(key)) + '</b></div>';
   }).join('');
   const countLine = (key,label,rankKey) => line(label,value(key),rankKey);
-  const activity = line('Joined the server',value('joined')) + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Lootboxes opened','boxes') + countLine('slain','Players slain','slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
+  const activity = line('Joined the server',value('joined')) + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('quests','Quests completed') + countLine('boxes','Lootboxes opened','boxes') + countLine('slain','Players slain','slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
   openedPlayerId = player.id;
   const fav = player.fav || {};
   $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats</span></div>' +
@@ -1769,11 +1807,11 @@ Promise.all([
     if(!response.ok) throw new Error('Could not load stats.json');
     return response.json();
   }),
-  loadBaseline('week'),loadBaseline('month'),loadBaseline('quarter'),loadBaseline('half'),loadBaseline('year')
-]).then(([loaded,week,month,quarter,half,year]) => {
+  loadBaseline('today'),loadBaseline('week'),loadBaseline('month'),loadBaseline('quarter'),loadBaseline('half'),loadBaseline('year')
+]).then(([loaded,today,week,month,quarter,half,year]) => {
   if(!loaded || !Array.isArray(loaded.players)) throw new Error('Invalid stats.json format');
   current = loaded;
-  Object.entries({week,month,quarter,half,year}).forEach(([name,baseline]) => {
+  Object.entries({today,week,month,quarter,half,year}).forEach(([name,baseline]) => {
     if(baseline && Array.isArray(baseline.players)) baselines[name] = baseline;
   });
   applyRange();
