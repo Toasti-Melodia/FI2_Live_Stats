@@ -879,8 +879,20 @@ body::before{opacity:.08}
   backdrop-filter: blur(1.1px) brightness(.985) !important;
   transition: opacity .24s ease, visibility .24s ease, background-color .24s ease !important;
 }
+#player-modal::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40vh;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,.94) 0%, rgba(0,0,0,.76) 30%, rgba(0,0,0,.38) 66%, rgba(0,0,0,0) 100%);
+}
 #player-modal .pm-dialog {
   position: relative;
+  z-index: 2;
   isolation: isolate;
   transition: transform .26s cubic-bezier(.2,.75,.25,1), opacity .26s ease !important;
 }
@@ -1047,46 +1059,23 @@ body::before{opacity:.08}
 @keyframes box-blur{from{filter:blur(7px)}60%{filter:blur(2px)}to{filter:blur(0)}}
 
 
-#player-modal::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:0;
-  background:rgba(0,0,0,.30);
-  pointer-events:none;
-}
-#player-modal .pm-dialog{z-index:1;}
-
-
 .pm-line-value{display:flex;align-items:center;justify-content:flex-end;gap:7px;white-space:nowrap;}
-.pm-rank-button{
-  display:inline-flex;align-items:center;justify-content:center;
-  min-width:27px;padding:1px 5px;
-  border:1px solid rgba(216,185,111,.24);border-radius:5px;
-  background:rgba(0,0,0,.18);color:#c8ad69;
-  font:600 10px/1.4 "Source Sans 3",system-ui,sans-serif;
-  white-space:nowrap;cursor:pointer;
-  transition:color .12s ease,border-color .12s ease,background-color .12s ease;
-}
-.pm-rank-button:hover,.pm-rank-button:focus-visible{
-  color:#fff0c5;border-color:rgba(240,213,142,.55);background:rgba(216,185,111,.09);
-}
-.pm-card .pm-rank-button{display:flex;width:max-content;margin-top:5px;}
+.pm-rank-trigger{cursor:pointer;transition:color .12s ease;text-decoration:none;}
+.pm-rank-trigger:hover,.pm-rank-trigger:focus-visible{color:var(--accent-bright);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;outline:none;}
+.pm-rank-text{color:#b8a46e;font-size:10px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.pm-card .pm-rank-text{display:block;margin-top:4px;}
 .pm-weapon-row{grid-template-columns:78px minmax(24px,1fr) 48px;}
 .pm-weapon-row b{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px;line-height:1.05;}
 .pm-weapon-count{color:#fff5d7;font-size:inherit;font-weight:600;}
 .pm-weapon-rank{color:#b8a46e;font-size:9px;font-weight:500;font-style:normal;white-space:nowrap;}
-@media(max-width:760px){
-  .pm-weapon-row{grid-template-columns:100px minmax(24px,1fr) 54px;}
-  .pm-card .pm-rank-button{font-size:10px;}
-}
+@media(max-width:760px){.pm-weapon-row{grid-template-columns:100px minmax(24px,1fr) 58px;}}
 
 
-.box-wrap .box.blur-in{animation:box-blur .22s cubic-bezier(.2,.7,.25,1);}
-@keyframes box-blur{
-  from{filter:blur(1.2px) brightness(.995)}
-  35%{filter:blur(.35px) brightness(1.025)}
-  to{filter:blur(0) brightness(1)}
+.box-wrap .box.blur-in{animation:table-switch .28s cubic-bezier(.2,.7,.25,1);}
+@keyframes table-switch{
+  0%{opacity:.48;transform:translateY(4px);filter:blur(1.5px) brightness(.94)}
+  42%{opacity:.92;filter:blur(.35px) brightness(1.055)}
+  100%{opacity:1;transform:translateY(0);filter:blur(0) brightness(1)}
 }
 
 </style>
@@ -1195,7 +1184,6 @@ let query = '';
 const modeSelect = $('mode');
 const factionSelect = $('faction');
 const tip = $('tip');
-let pinnedRankButton = null;
 const rangeSelect = $('range');
 let range = 'all';
 let current = {players:[]};
@@ -1470,7 +1458,7 @@ function showTip(header){
   tip.style.top = (box.bottom + 8) + 'px';
   tip.style.opacity = '1';
 }
-function hideTip(){tip.style.opacity='0';tip.classList.remove('rank');tip.style.zIndex='';pinnedRankButton=null;}
+function hideTip(){tip.style.opacity='0';tip.classList.remove('rank');tip.style.zIndex='';}
 
 let pendingTab = null;
 let enterTimer = 0;
@@ -1615,7 +1603,6 @@ function favoriteRows(list,emptyText){
   }).join('');
 }
 let openedPlayerId = null;
-let rankTipTimer = null;
 const rankingCache = new Map();
 function rankedPlayersFor(key){
   if(!rankingCache.has(key)){
@@ -1636,15 +1623,13 @@ function playerRank(key,id){
   const position = rankedPlayersFor(key).findIndex(item => String(item.id) === String(id));
   return position < 0 ? null : position + 1;
 }
-function rankButtonHtml(key,id,label){
+function rankTriggerHtml(key,label){
+  const accessibleLabel = 'Click to view the top 10 for ' + label;
+  return '<span class="pm-rank-trigger" role="button" tabindex="0" data-rank="' + esc(key) + '" title="' + esc(accessibleLabel) + '" aria-label="' + esc(accessibleLabel) + '">' + esc(label) + '</span>';
+}
+function rankTextHtml(key,id){
   const position = playerRank(key,id);
-  const accessibleLabel = position
-    ? 'Rank ' + position + ' for ' + label + '. Click to view the top 10.'
-    : 'No rank recorded for ' + label + '. Click to view the top 10.';
-  const title = position
-    ? 'Rank #' + position + ' among all players · Click to view top 10'
-    : 'No recorded rank · Click to view top 10';
-  return '<button type="button" class="pm-rank-button" data-rank="' + esc(key) + '" title="' + esc(title) + '" aria-label="' + esc(accessibleLabel) + '">' + (position ? '#' + position : '—') + '</button>';
+  return '<span class="pm-rank-text">Rank: ' + (position ? fmt(position) : '—') + '/' + fmt(current.players.length) + '</span>';
 }
 function openPlayer(id){
   const player = current.players.find(item => String(item.id) === String(id));
@@ -1652,11 +1637,12 @@ function openPlayer(id){
   playUiSound('open');
   const value = key => Number(player[key]) || 0;
   const line = (label,number,rankKey) => {
-    const rank = rankKey ? rankButtonHtml(rankKey,player.id,label) : '';
-    return '<div class="pm-line' + (number === 0 ? ' zero' : '') + '"><span>' + esc(label) + '</span><span class="pm-line-value">' + compactHtml('b',number) + rank + '</span></div>';
+    const labelHtml = rankKey ? rankTriggerHtml(rankKey,label) : esc(label);
+    const rank = rankKey ? rankTextHtml(rankKey,player.id) : '';
+    return '<div class="pm-line' + (number === 0 ? ' zero' : '') + '"><span>' + labelHtml + '</span><span class="pm-line-value">' + compactHtml('b',number) + rank + '</span></div>';
   };
   const cards = ['score','kills','deaths','points','waves','wins'].map(key =>
-    '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span>' + compactHtml('strong',value(key)) + rankButtonHtml(key,player.id,LABELS[key]) + '</div>'
+    '<div class="pm-card">' + rankTriggerHtml(key,LABELS[key]) + compactHtml('strong',value(key)) + rankTextHtml(key,player.id) + '</div>'
   ).join('');
   const details = line(LABELS.streak,value('streak'),'streak') + ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],value(key),key)).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
@@ -1664,8 +1650,8 @@ function openPlayer(id){
     const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
     const shareText = share.toFixed(1) + '% of players kills' + (value(key) >= 1000 ? ' (' + fmt(value(key)) + ')' : '');
     const rank = playerRank(key,player.id);
-    const rankText = rank ? '#' + rank : '—';
-    const rankTitle = rank ? 'Rank #' + rank + ' among all players' : 'No recorded kills for this weapon';
+    const rankText = 'Rank: ' + (rank ? fmt(rank) : '—') + '/' + fmt(current.players.length);
+    const rankTitle = rank ? 'Rank ' + rank + ' among all players' : 'No recorded kills for this weapon';
     return '<div class="pm-bar pm-weapon-row"><span title="' + shareText + '">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + shareText + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + shareText + '"><span class="pm-weapon-count">' + fmtCompact(value(key)) + '</span><small class="pm-weapon-rank" title="' + esc(rankTitle) + '">' + rankText + '</small></b></div>';
   }).join('');
   const countLine = (key,label,rankKey=key) => line(label,value(key),rankKey);
@@ -1687,7 +1673,6 @@ function openPlayer(id){
 }
 function closePlayer(){
   if(!modal.classList.contains('open')) return;
-  window.clearTimeout(rankTipTimer);
   hideTip();
   playUiSound('close');
   modal.classList.remove('open');
@@ -1707,42 +1692,34 @@ function rankTipHtml(key){
   const position = positionIndex < 0 ? 0 : positionIndex + 1;
   const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + fmt(item[key]) + '</b></div>';
   const totalPlayers = current.players.length;
-  const title = !ranked.length ? 'Nobody is ranked yet' : position ? '#' + position + ' of ' + fmt(totalPlayers) + ' ' + plural(totalPlayers,'player','players') : 'Not ranked yet';
+  const title = 'Rank: ' + (position ? fmt(position) : '—') + '/' + fmt(totalPlayers);
   return '<strong>' + title + '</strong>' + ranked.slice(0,10).map(row).join('') + (position > 10 ? '<div class="rk-gap">…</div>' + row(ranked[position - 1],position - 1) : '');
 }
-function showRankTip(button){
-  tip.innerHTML = rankTipHtml(button.dataset.rank);
+function showRankTip(trigger){
+  tip.innerHTML = rankTipHtml(trigger.dataset.rank);
   tip.classList.add('rank');
   tip.style.zIndex = '100';
-  const box = button.getBoundingClientRect();
+  const box = trigger.getBoundingClientRect();
   const left = Math.min(Math.max(8,box.left + box.width / 2 - tip.offsetWidth / 2),innerWidth - tip.offsetWidth - 8);
   const below = box.bottom + 8;
   tip.style.left = left + 'px';
   tip.style.top = (below + tip.offsetHeight > innerHeight - 8 ? Math.max(8,box.top - tip.offsetHeight - 8) : below) + 'px';
   tip.style.opacity = '1';
 }
-modal.addEventListener('mouseover',event => {
-  if(pinnedRankButton) return;
-  const button = event.target.closest('.pm-rank-button[data-rank]');
-  if(!button || button.contains(event.relatedTarget)) return;
-  window.clearTimeout(rankTipTimer);
-  rankTipTimer = window.setTimeout(() => showRankTip(button),450);
-});
-modal.addEventListener('mouseout',event => {
-  if(pinnedRankButton) return;
-  const button = event.target.closest('.pm-rank-button[data-rank]');
-  if(!button || button.contains(event.relatedTarget)) return;
-  window.clearTimeout(rankTipTimer);
-  hideTip();
-});
 modal.addEventListener('click',event => {
-  const button = event.target.closest('.pm-rank-button[data-rank]');
-  if(button){
-    window.clearTimeout(rankTipTimer);
-    pinnedRankButton = button;
-    showRankTip(button);
+  const trigger = event.target.closest('.pm-rank-trigger[data-rank]');
+  if(trigger){
+    showRankTip(trigger);
     playUiSound('rank');
   }else hideTip();
+});
+modal.addEventListener('keydown',event => {
+  if(event.key !== 'Enter' && event.key !== ' ') return;
+  const trigger = event.target.closest('.pm-rank-trigger[data-rank]');
+  if(!trigger) return;
+  event.preventDefault();
+  showRankTip(trigger);
+  playUiSound('rank');
 });
 document.addEventListener('keydown',event => {if(event.key === 'Escape') closePlayer();});
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => render());
