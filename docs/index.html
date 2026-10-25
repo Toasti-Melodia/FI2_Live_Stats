@@ -879,20 +879,8 @@ body::before{opacity:.08}
   backdrop-filter: blur(1.1px) brightness(.985) !important;
   transition: opacity .24s ease, visibility .24s ease, background-color .24s ease !important;
 }
-#player-modal::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40vh;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(0,0,0,.94) 0%, rgba(0,0,0,.76) 30%, rgba(0,0,0,.38) 66%, rgba(0,0,0,0) 100%);
-}
 #player-modal .pm-dialog {
   position: relative;
-  z-index: 2;
   isolation: isolate;
   transition: transform .26s cubic-bezier(.2,.75,.25,1), opacity .26s ease !important;
 }
@@ -1055,28 +1043,54 @@ body::before{opacity:.08}
 .box-wrap .box.ghost.out{opacity:0!important}
 .box-wrap .box.fade-in{animation:box-lift .34s cubic-bezier(.2,.7,.25,1)}
 @keyframes box-lift{from{transform:translateY(8px)}to{transform:translateY(0)}}
-.box-wrap .box.blur-in{animation:box-blur .36s cubic-bezier(.2,.7,.25,1)}
-@keyframes box-blur{from{filter:blur(7px)}60%{filter:blur(2px)}to{filter:blur(0)}}
+.box-wrap .box.blur-in{animation:table-switch .42s cubic-bezier(.2,.7,.25,1)}
+@keyframes table-switch{0%{opacity:.48;transform:translateY(7px);filter:blur(1.8px)}48%{opacity:.88;transform:translateY(2px);filter:blur(.55px)}100%{opacity:1;transform:translateY(0);filter:blur(0)}}
 
-
-.pm-line-value{display:flex;align-items:center;justify-content:flex-end;gap:7px;white-space:nowrap;}
-.pm-rank-trigger{cursor:pointer;transition:color .12s ease;text-decoration:none;}
-.pm-rank-trigger:hover,.pm-rank-trigger:focus-visible{color:var(--accent-bright);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;outline:none;}
-.pm-rank-text{color:#b8a46e;font-size:10px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;}
-.pm-card .pm-rank-text{display:block;margin-top:4px;}
-.pm-weapon-row{grid-template-columns:78px minmax(24px,1fr) 48px;}
-.pm-weapon-row b{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px;line-height:1.05;}
-.pm-weapon-count{color:#fff5d7;font-size:inherit;font-weight:600;}
-.pm-weapon-rank{color:#b8a46e;font-size:9px;font-weight:500;font-style:normal;white-space:nowrap;}
-@media(max-width:760px){.pm-weapon-row{grid-template-columns:100px minmax(24px,1fr) 58px;}}
-
-
-.box-wrap .box.blur-in{animation:table-switch .28s cubic-bezier(.2,.7,.25,1);}
-@keyframes table-switch{
-  0%{opacity:.48;transform:translateY(4px);filter:blur(1.5px) brightness(.94)}
-  42%{opacity:.92;filter:blur(.35px) brightness(1.055)}
-  100%{opacity:1;transform:translateY(0);filter:blur(0) brightness(1)}
+#player-modal{
+  background:rgba(3,4,3,.38)!important;
+  -webkit-backdrop-filter:blur(1.1px) brightness(.985)!important;
+  backdrop-filter:blur(1.1px) brightness(.985)!important;
+  transition:opacity .24s ease,visibility .24s ease,background-color .24s ease!important;
 }
+#player-modal::before{
+  content:"";
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:40vh;
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.94) 0%,rgba(0,0,0,.76) 30%,rgba(0,0,0,.38) 66%,rgba(0,0,0,0) 100%);
+}
+#player-modal .pm-dialog{z-index:2}
+.pm-rank-trigger{
+  display:inline-block;
+  width:max-content;
+  max-width:100%;
+  justify-self:start;
+  cursor:pointer;
+  text-decoration:none;
+  transition:color .12s ease;
+}
+.pm-card .pm-rank-trigger{display:inline-block}
+.pm-rank-trigger:hover,.pm-rank-trigger:focus-visible{
+  color:var(--accent-bright);
+  text-decoration:underline;
+  text-decoration-style:dotted;
+  text-underline-offset:3px;
+}
+#tip.rank{max-width:340px;min-width:230px;padding:10px 12px;pointer-events:none}
+#tip.rank strong{display:block;margin-bottom:7px;color:#f0d58e;font-size:14px;line-height:1.35}
+#tip.rank .rk-heading{display:block;margin:0 0 7px;color:var(--dim);font-size:10px;font-weight:700;letter-spacing:.075em;text-transform:uppercase}
+#tip.rank .rk-note{margin:0 0 7px;color:#cfc5a8;font-size:12px;line-height:1.4}
+#tip.rank .rk{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:2px 0;font-size:12.5px;color:rgba(240,240,231,.82)}
+#tip.rank .rk i{font-style:normal;color:#9aa08c}
+#tip.rank .rk b{font-weight:600;font-variant-numeric:tabular-nums;color:#fff5d7}
+#tip.rank .rk.me{color:#f0d58e}
+#tip.rank .rk.me i{color:#d8b96f}
+#tip.rank .rk-gap{padding:1px 0 1px 42px;color:#9aa08c}
+#tip.rank .rk-empty{color:var(--dim);font-size:12px}
 
 </style>
 </head>
@@ -1241,6 +1255,7 @@ function compare(a,b){
   }
   if(difference) return ascending ? difference : -difference;
 
+   
   if(sortKey !== 'score'){
     difference = (Number(b.score) || 0) - (Number(a.score) || 0);
     if(difference) return difference;
@@ -1273,6 +1288,7 @@ function syncColumnWidths(columns,rows,totalRows){
   const box = table.closest('.box');
   const mobile = window.matchMedia('(max-width:760px)').matches;
   const rankWidth = mobile ? 40 : 42;
+   
   const playerWidth = mobile ? 178 : 215;
   const horizontalPadding = mobile ? 24 : 30;
   const minimumWidth = mobile ? 56 : 64;
@@ -1286,6 +1302,10 @@ function syncColumnWidths(columns,rows,totalRows){
     return Math.max(minimumWidth,content);
   });
 
+   
+   
+   
+   
   let available = Math.max(box.clientWidth - rankWidth - playerWidth, columns.length * minimumWidth);
   const indexes = columns.map((column,index) => index);
   let widths = new Array(columns.length).fill(0);
@@ -1367,6 +1387,7 @@ function positionTabIndicator(container){
     indicator.style.left = left + 'px';
     indicator.style.width = width + 'px';
     container.classList.add('indicator-ready');
+     
     indicator.getBoundingClientRect();
     window.requestAnimationFrame(() => { indicator.style.removeProperty('transition'); });
   }else{
@@ -1412,6 +1433,8 @@ function syncStickyOverlays(){
   const stickyTableHead = stickyTable.querySelector('thead');
   const stickyColgroup = stickyTable.querySelector('colgroup');
 
+   
+   
   const toolbarPinned = toolbarRect.top <= 1;
   const headerBehindToolbar = headRect.top < toolbarRect.bottom - 1;
   const tableStillVisible = boxRect.bottom > toolbarRect.bottom + headerHeight &&
@@ -1564,6 +1587,7 @@ const LABELS = {silver:'Wizard buffs',streak:'Max Kill Streak'};
 Object.values(TABS).forEach(definition => definition.columns.forEach(column => {LABELS[column[0]] = column[1];}));
 const modal = $('player-modal');
 let modalReturnFocus = null;
+let openedPlayerId = null;
 const uiSounds = {
   open: new Audio('click.mp3'),
   close: new Audio('sfx3.mp3'),
@@ -1574,11 +1598,17 @@ function playUiSound(kind){
   const sound = uiSounds[kind];
   if(!sound) return;
   try{
-    sound.pause();
-    sound.currentTime = 0;
-    const playback = sound.play();
+    const playbackSound = kind === 'rank' ? sound.cloneNode() : sound;
+    playbackSound.volume = sound.volume;
+    if(playbackSound === sound){
+      playbackSound.pause();
+      playbackSound.currentTime = 0;
+    }else{
+      playbackSound.preload = 'auto';
+    }
+    const playback = playbackSound.play();
     if(playback && typeof playback.catch === 'function') playback.catch(() => {});
-  }catch(error){  }
+  }catch(error){}
 }
 const numberTitle = number => Math.abs(number) >= 1000 ? ' title="' + esc(fmt(number)) + '"' : '';
 const compactHtml = (tag,number) => '<' + tag + numberTitle(number) + '>' + fmtCompact(number) + '</' + tag + '>';
@@ -1602,57 +1632,36 @@ function favoriteRows(list,emptyText){
     return '<div class="pm-bar"><span>' + esc(name) + '</span><div class="pm-track"><i style="width:' + (count / top * 100).toFixed(1) + '%"></i></div>' + compactHtml('b',count) + '</div>';
   }).join('');
 }
-let openedPlayerId = null;
-const rankingCache = new Map();
 function rankedPlayersFor(key){
-  if(!rankingCache.has(key)){
-    const ranked = current.players
-      .filter(item => Number(item[key]) > 0)
-      .slice()
-      .sort((a,b) => {
-        const difference = (Number(b[key]) || 0) - (Number(a[key]) || 0);
-        if(difference) return difference;
-        const nameDifference = String(a.name || 'Unknown').localeCompare(String(b.name || 'Unknown'),undefined,{sensitivity:'base'});
-        return nameDifference || String(a.id).localeCompare(String(b.id),undefined,{numeric:true});
-      });
-    rankingCache.set(key,ranked);
-  }
-  return rankingCache.get(key);
+  return current.players.slice().sort((a,b) => {
+    const difference = (Number(b[key]) || 0) - (Number(a[key]) || 0);
+    if(difference) return difference;
+    const nameDifference = String(a.name || 'Unknown').localeCompare(String(b.name || 'Unknown'),undefined,{sensitivity:'base'});
+    return nameDifference || String(a.id).localeCompare(String(b.id),undefined,{numeric:true});
+  });
 }
-function playerRank(key,id){
-  const position = rankedPlayersFor(key).findIndex(item => String(item.id) === String(id));
-  return position < 0 ? null : position + 1;
-}
-function rankTriggerHtml(key,label){
-  const accessibleLabel = 'Click to view the top 10 for ' + label;
-  return '<span class="pm-rank-trigger" role="button" tabindex="0" data-rank="' + esc(key) + '" title="' + esc(accessibleLabel) + '" aria-label="' + esc(accessibleLabel) + '">' + esc(label) + '</span>';
-}
-function rankTextHtml(key,id){
-  const position = playerRank(key,id);
-  return '<span class="pm-rank-text">Rank: ' + (position ? fmt(position) : '—') + '/' + fmt(current.players.length) + '</span>';
+function rankTriggerHtml(key,label,hoverTitle,share){
+  const category = WEAPON_KEYS.includes(key) ? label + ' kills' : label;
+  const accessibleLabel = 'Open top 10 players for ' + category;
+  const title = hoverTitle || accessibleLabel;
+  const shareAttribute = share === undefined ? '' : ' data-share="' + esc(share) + '"';
+  return '<span class="pm-rank-trigger" role="button" tabindex="0" data-rank="' + esc(key) + '" data-rank-label="' + esc(category) + '"' + shareAttribute + ' title="' + esc(title) + '" aria-label="' + esc(accessibleLabel) + '">' + esc(label) + '</span>';
 }
 function openPlayer(id){
   const player = current.players.find(item => String(item.id) === String(id));
   if(!player) return;
   playUiSound('open');
   const value = key => Number(player[key]) || 0;
-  const line = (label,number,rankKey) => {
-    const labelHtml = rankKey ? rankTriggerHtml(rankKey,label) : esc(label);
-    const rank = rankKey ? rankTextHtml(rankKey,player.id) : '';
-    return '<div class="pm-line' + (number === 0 ? ' zero' : '') + '"><span>' + labelHtml + '</span><span class="pm-line-value">' + compactHtml('b',number) + rank + '</span></div>';
-  };
+  const line = (label,number,rankKey) => '<div class="pm-line' + (number === 0 ? ' zero' : '') + '">' + (rankKey ? rankTriggerHtml(rankKey,label) : '<span>' + esc(label) + '</span>') + compactHtml('b',number) + '</div>';
   const cards = ['score','kills','deaths','points','waves','wins'].map(key =>
-    '<div class="pm-card">' + rankTriggerHtml(key,LABELS[key]) + compactHtml('strong',value(key)) + rankTextHtml(key,player.id) + '</div>'
+    '<div class="pm-card">' + rankTriggerHtml(key,LABELS[key]) + compactHtml('strong',value(key)) + '</div>'
   ).join('');
   const details = line(LABELS.streak,value('streak'),'streak') + ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],value(key),key)).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
   const weapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a)).map(key => {
     const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
     const shareText = share.toFixed(1) + '% of players kills' + (value(key) >= 1000 ? ' (' + fmt(value(key)) + ')' : '');
-    const rank = playerRank(key,player.id);
-    const rankText = 'Rank: ' + (rank ? fmt(rank) : '—') + '/' + fmt(current.players.length);
-    const rankTitle = rank ? 'Rank ' + rank + ' among all players' : 'No recorded kills for this weapon';
-    return '<div class="pm-bar pm-weapon-row"><span title="' + shareText + '">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + shareText + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + shareText + '"><span class="pm-weapon-count">' + fmtCompact(value(key)) + '</span><small class="pm-weapon-rank" title="' + esc(rankTitle) + '">' + rankText + '</small></b></div>';
+    return '<div class="pm-bar">' + rankTriggerHtml(key,LABELS[key],shareText,share.toFixed(1)) + '<div class="pm-track" role="img" aria-label="' + esc(shareText) + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + esc(shareText) + '">' + fmtCompact(value(key)) + '</b></div>';
   }).join('');
   const countLine = (key,label,rankKey=key) => line(label,value(key),rankKey);
   const activity = countLine('joined','Joined the server','joined') + countLine('quests','Quests completed') + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Lootboxes opened') + countLine('slain','Players slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
@@ -1686,17 +1695,23 @@ $('body').addEventListener('click',event => {
 });
 $('pm-close').addEventListener('click',closePlayer);
 modal.addEventListener('click',event => {if(event.target === modal) closePlayer();});
-function rankTipHtml(key){
+function rankTipHtml(key,share,categoryLabel){
   const ranked = rankedPlayersFor(key);
   const positionIndex = ranked.findIndex(item => String(item.id) === String(openedPlayerId));
   const position = positionIndex < 0 ? 0 : positionIndex + 1;
+  const totalPlayers = ranked.length;
+  const category = categoryLabel || (WEAPON_KEYS.includes(key) ? (LABELS[key] || key) + ' kills' : (LABELS[key] || key));
   const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + fmt(item[key]) + '</b></div>';
-  const totalPlayers = current.players.length;
-  const title = 'Rank: ' + (position ? fmt(position) : '—') + '/' + fmt(totalPlayers);
-  return '<strong>' + title + '</strong>' + ranked.slice(0,10).map(row).join('') + (position > 10 ? '<div class="rk-gap">…</div>' + row(ranked[position - 1],position - 1) : '');
+  const title = position ? 'Your position: #' + fmt(position) + ' of ' + fmt(totalPlayers) + ' ' + plural(totalPlayers,'player','players') : 'Your position is unavailable';
+  const subtitle = 'TOP 10 PLAYERS · ' + category;
+  const shareValue = Number(share);
+  const shareNote = WEAPON_KEYS.includes(key) && share !== undefined && Number.isFinite(shareValue) ? '<div class="rk-note">This weapon accounts for ' + shareValue.toFixed(1) + '% of your kills.</div>' : '';
+  const topRows = ranked.slice(0,10).map(row).join('');
+  const extraPlayer = position > 10 ? '<div class="rk-gap">…</div>' + row(ranked[positionIndex],positionIndex) : '';
+  return '<strong>' + title + '</strong><div class="rk-heading">' + esc(subtitle) + '</div>' + shareNote + (topRows || '<div class="rk-empty">No player data available</div>') + extraPlayer;
 }
 function showRankTip(trigger){
-  tip.innerHTML = rankTipHtml(trigger.dataset.rank);
+  tip.innerHTML = rankTipHtml(trigger.dataset.rank,trigger.dataset.share,trigger.dataset.rankLabel);
   tip.classList.add('rank');
   tip.style.zIndex = '100';
   const box = trigger.getBoundingClientRect();
@@ -1706,12 +1721,14 @@ function showRankTip(trigger){
   tip.style.top = (below + tip.offsetHeight > innerHeight - 8 ? Math.max(8,box.top - tip.offsetHeight - 8) : below) + 'px';
   tip.style.opacity = '1';
 }
+document.addEventListener('pointerdown',event => {
+  const trigger = event.target.closest && event.target.closest('.pm-rank-trigger[data-rank]');
+  if(trigger && modal.contains(trigger)) playUiSound('rank');
+},true);
 modal.addEventListener('click',event => {
   const trigger = event.target.closest('.pm-rank-trigger[data-rank]');
-  if(trigger){
-    showRankTip(trigger);
-    playUiSound('rank');
-  }else hideTip();
+  if(trigger && modal.contains(trigger)) showRankTip(trigger);
+  else hideTip();
 });
 modal.addEventListener('keydown',event => {
   if(event.key !== 'Enter' && event.key !== ' ') return;
@@ -1776,6 +1793,7 @@ function periodStart(name, now = new Date()){
 function getTrackingStart(){
   const reported = timestampMs(current.since);
   if(reported) return reported;
+   
   const subtitle = document.querySelector('.sub')?.textContent || '';
   const match = subtitle.match(/starting from\s+(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/i);
   if(!match) return 0;
@@ -1792,6 +1810,10 @@ function applyRange(){
     return;
   }
 
+   
+   
+   
+   
   if(range === 'quarter' || range === 'half'){
     const windowStart = periodStart(range);
     if(trackingStart && trackingStart >= windowStart){
@@ -1832,7 +1854,7 @@ function applyRange(){
     return;
   }
 
-  
+   
   data = {players:current.players};
   $('range-note').textContent = '';
 }
