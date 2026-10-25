@@ -15,9 +15,12 @@ const MAP_NAME_BASE = 3500000;
 const MAP_RANGE = 500000;
 const HERO_NAME_SHIFT_FIRST = 1079;
 const HERO_NAME_SHIFT_LAST = 1790;
-const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023, crowd: 5024, headshots: 5025, shielding: 5026, silver: 5019, joined: 5013, commands: 5029, anvils: 5030, refills: 5031, wardrobes: 5032, boxes: 5033, slain: 5034, animations: 5035};
+const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023, crowd: 5024, headshots: 5025, shielding: 5026, streak: 5036, quests: 5037, silver: 5019, joined: 5013, commands: 5029, anvils: 5030, refills: 5031, wardrobes: 5032, boxes: 5033, slain: 5034, animations: 5035};
 const WEAPONS = {w1h: 5004, w2h: 5005, pole: 5006, bow: 5007, xbow: 5008, throw: 5009, firearm: 5010, magic: 5011, other: 5012, spear: 5028};
 const SCALES = {score: 10};
+const MAX_FIELDS = new Set([FIELDS.streak]);
+const EXCLUDED_SCENES = new Set([167, 186]);
+const FAVORITES_LIMIT = 5;
 const FIELD_LABELS = {};
 for (const [label, field] of Object.entries(FIELDS)) FIELD_LABELS[field] = label;
 for (const [label, category] of Object.entries(WEAPONS)) FIELD_LABELS[WEAPON_KILLS_BASE + category] = label;
@@ -76,6 +79,7 @@ async function loadServer(prefix) {
       const amount = Number(value);
       if (field >= MAP_PLAYED_BASE && field < MAP_NAME_BASE) {
         const scene = field - MAP_PLAYED_BASE;
+        if (EXCLUDED_SCENES.has(scene)) continue;
         if (!maps[id]) maps[id] = {};
         maps[id][scene] = (maps[id][scene] || 0) + amount;
         continue;
@@ -89,7 +93,7 @@ async function loadServer(prefix) {
         continue;
       }
       const key = id + '_' + field;
-      numbers[key] = (numbers[key] || 0) + amount;
+      numbers[key] = MAX_FIELDS.has(field) ? Math.max(numbers[key] || 0, amount) : (numbers[key] || 0) + amount;
     }
   }
   const factionStats = {};
@@ -108,11 +112,12 @@ async function loadServer(prefix) {
   }
   const favorites = (group, isHero) => Object.entries(group || {})
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 3)
+    .slice(0, FAVORITES_LIMIT)
     .map(([troop, count]) => ({id: Number(troop), name: troopName(Number(troop), isHero), count}));
   const topMaps = group => Object.entries(group || {})
+    .filter(([scene]) => !EXCLUDED_SCENES.has(Number(scene)))
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
+    .slice(0, FAVORITES_LIMIT)
     .map(([scene, count]) => ({id: Number(scene), name: MAPS[scene] || mapNames[scene] || 'Map #' + scene, count}));
   const ids = new Set([...Object.keys(numbers).map(key => key.split('_')[0]), ...Object.keys(nicknames)]);
   const rows = [...ids].map(id => {
@@ -135,6 +140,7 @@ async function loadServer(prefix) {
   const today = new Date(updated);
   const dayStart = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
   const starts = {
+    today: dayStart,
     week: dayStart - ((today.getUTCDay() + 6) % 7) * 86400000,
     month: Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1),
     quarter: Date.UTC(today.getUTCFullYear(), Math.floor(today.getUTCMonth() / 3) * 3, 1),
