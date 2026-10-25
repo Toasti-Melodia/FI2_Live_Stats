@@ -94,7 +94,7 @@ select:hover:not(:disabled),.pager button:hover:not(:disabled),input:hover{borde
 .brand-meta .credit{color:#d8bd77;font-weight:700;white-space:nowrap}
 .brand-meta #meta{color:#b5a36f;white-space:nowrap}
 .brand-meta #meta::before{content:"";display:inline-block;width:4px;height:4px;margin:0 8px 2px 0;border-radius:50%;background:var(--accent);opacity:.85}
-/* One clean frame around the scrolling table. No artificial right-hand gutter. */
+
 .box{background:#282c20;border:1px solid #292f27;border-radius:12px;overflow:auto;padding:0;box-shadow:0 18px 45px rgba(0,0,0,.17);scrollbar-color:#444a3a #101410;overscroll-behavior-x:contain}
 table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums;margin:0}
 th,td{padding:12px 15px;text-align:center;white-space:nowrap;border-bottom:1px solid rgba(75,83,68,.52)}
@@ -109,7 +109,7 @@ th[data-key].on{color:var(--accent-bright);background:linear-gradient(180deg,#28
 th[data-key].on span{border-bottom:0}
 th[data-key].on::after{content:" \25BC";font-size:9px;opacity:.9;color:var(--accent-bright)}
 th[data-key].on.asc::after{content:" \25B2"}
-/* Rank and player stay fixed while the stats scroll horizontally. */
+
 th:nth-child(1),td:nth-child(1){position:sticky;left:0;z-index:2;width:42px;min-width:42px}
 th:nth-child(2),td:nth-child(2){position:sticky;left:42px;z-index:2;width:205px;min-width:205px;max-width:205px;text-align:left;overflow:hidden;text-overflow:ellipsis;box-shadow:1px 0 0 rgba(216,185,111,.13)}
 th:nth-child(-n+2){cursor:default}
@@ -119,7 +119,7 @@ th:nth-child(2){z-index:6;background:linear-gradient(110deg,#282c20 0%,#1b261c 5
 th:last-child{border-top-right-radius:11px}
 td:nth-child(1){font:600 15px var(--display);background:linear-gradient(180deg,#151c13,#101610);color:#aeb99a;border-right:1px solid rgba(126,145,102,.19)}
 td:nth-child(2){background:linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);color:#fff5d7;font-weight:600;border-right:1px solid rgba(216,185,111,.2)}
-/* Readable, distinct alternating stat columns. */
+
 tbody td:nth-child(n+3):nth-child(odd){background-color:rgba(255,255,255,.012)}
 tbody td:nth-child(n+3):nth-child(even){background-color:rgba(0,0,0,.05)}
 td.s{color:var(--accent-bright);font-weight:700}
@@ -127,7 +127,7 @@ td.s{color:var(--accent-bright);font-weight:700}
 td.z{color:#626a5e;font-weight:400}
 .box tbody tr td.s.z{color:rgba(240,213,142,.43)}
 .box tbody tr{transition:color .12s}
-/* IMPORTANT: the hover treatment changes only paint, never position. This preserves sticky cells. */
+
 .box tbody tr:hover td{color:#fff}
 .box tbody tr:hover td:nth-child(1){background-image:linear-gradient(rgba(255,255,255,.045),rgba(255,255,255,.045)),linear-gradient(180deg,#151c13,#101610)}
 .box tbody tr:hover td:nth-child(2){background-image:linear-gradient(rgba(255,255,255,.045),rgba(255,255,255,.045)),linear-gradient(110deg,#29392a 0%,#1d2a1f 52%,#141b15 100%);color:#fff9e8}
@@ -156,7 +156,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
 
 
-/* Final palette refinement: near-black charcoal surfaces with restrained antique-gold accents. */
+
 :root {
   --table-frame: #0e0f0e;
   --table-head: #201f1a;
@@ -166,7 +166,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   --table-line: rgba(151, 147, 126, .22);
 }
 
-/* Category tabs: dark charcoal rather than green-tinted panels. */
+
 .tabs {
   background: #080908;
   border-color: #292821;
@@ -187,7 +187,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   box-shadow: inset 0 1px rgba(255,255,255,.035), 0 1px 5px rgba(0,0,0,.22);
 }
 
-/* Table frame and header are darker than the data area, with no olive-green cast. */
+
 .box,
 .box.edge-active {
   background: var(--table-frame);
@@ -223,7 +223,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   color: #d8d3c2;
 }
 
-/* Neutral charcoal body rows, with a noticeable but elegant alternating column rhythm. */
+
 .box tbody td:nth-child(1) {
   background: linear-gradient(180deg, #191a17 0%, #111210 100%);
   color: #aaa99d;
@@ -271,7 +271,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   color: rgba(240,213,142,.48);
 }
 
-/* Bottom all-statistics summary: its own dark, warm-charcoal strip with a fine gold divider. */
+
 .box tfoot td,
 .box tfoot td.total-value,
 .box tfoot td.total-value:nth-child(n+4):nth-child(even) {
@@ -298,14 +298,14 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   box-shadow: inset 1px 0 rgba(216,185,111,.3), inset -1px 0 rgba(216,185,111,.3), inset 0 -1px rgba(216,185,111,.2);
 }
 
-/* Match tooltip and scroll-area details to the same neutral charcoal palette. */
+
 #tip {
   background: rgba(20,20,18,.98);
   border-color: rgba(216,185,111,.22);
 }
 
 
-/* Consistent identity-column sizing in both Overview and Weapons. */
+
 #stats-table th:first-child,
 #stats-table tbody td:first-child,
 #stats-table tfoot td:first-child {
@@ -320,14 +320,14 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   min-width: 205px;
   max-width: 205px;
 }
-/* The Player header also has data-key, so explicitly prevent generic stat sizing from shrinking it. */
+
 #stats-table thead th.player-sort {
   width: 205px;
   min-width: 205px;
   max-width: 205px;
 }
 
-/* All stat columns use the same default width. Overview gets extra room only for Score and Kills. */
+
 #stats-table thead th[data-key]:not(.player-sort),
 #stats-table tbody td[class*="col-"],
 #stats-table tfoot td.total-value {
@@ -345,7 +345,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   min-width: 112px;
   max-width: 112px;
 }
-/* Deaths intentionally stays at the regular stat-column width (90px). */
+
 
 @media(max-width:760px) {
   #stats-table th:first-child,
@@ -367,7 +367,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 
 
 
-/* Final refinement: keep the cinematic charcoal look, with a little of the original olive-gold warmth. */
+
 :root {
   --table-frame: #15170f;
   --table-row-odd: #1d2018;
@@ -471,7 +471,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   border-color: rgba(216,185,111,.26);
 }
 
-/* The Player header is sortable too; show the hand cursor and a matching hover state. */
+
 #stats-table thead th.player-sort { cursor: pointer !important; }
 #stats-table thead th.player-sort:hover {
   background: linear-gradient(110deg, #353727 0%, #26291d 58%, #1d2017 100%);
@@ -479,8 +479,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   box-shadow: inset 0 0 0 1px rgba(216,185,111,.36);
 }
 
-/* Fixed layout plus a generated colgroup prevents long names or tab-specific columns
-   from changing the # and Player widths between Overview and Weapons. */
+
 #stats-table {
   table-layout: fixed;
   width: max-content;
@@ -506,7 +505,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 }
 
 
-/* Animated gold pill: the active frame glides between Overview and Weapons. */
+
 .tabs {
   position: relative;
   isolation: isolate;
@@ -548,7 +547,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 
 
 
-/* Final interaction polish: the gold pill slides between tabs; the table dissolves softly. */
+
 .tabs { position:relative; isolation:isolate; }
 .tabs .tab-indicator {
   left:0;
@@ -568,7 +567,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   transform:none !important;
   pointer-events:none;
 }
-/* Keep the Period dropdown the same compact width as View stats. */
+
 #range,
 #mode {
   width:160px;
@@ -628,7 +627,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 @media(prefers-reduced-motion:reduce){.pm,.pm-dialog,.box.ghost{transition:none!important}}
 
 
-/* Reliable cross-browser tab switching: no sliding gold overlay or cloned table. */
+
 .tabs .tab-indicator { display: none !important; }
 .tabs button,
 .tabs button:hover,
@@ -652,7 +651,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   background: rgba(216,185,111,.045) !important;
   border-color: rgba(216,185,111,.34) !important;
 }
-/* Animate the table frame itself. Opacity is broadly supported and avoids Firefox filter/clone glitches. */
+
 .box {
   opacity: 1;
   transition: opacity .16s ease !important;
@@ -664,7 +663,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
   transform: none !important;
   pointer-events: none !important;
 }
-/* Do not combine the frame fade with the older table blur/fade rules. */
+
 #stats-table,
 .box.is-switching #stats-table {
   opacity: 1 !important;
@@ -678,7 +677,7 @@ tfoot td.total-value.s{background:#282c20!important;color:#f0d58e;box-shadow:ins
 }
 
 
-/* Requested refinements: identity columns remain fixed; statistic columns share available space. */
+
 body::before{opacity:.08}
 #stats-table col.rank-column{width:42px}
 #stats-table col.player-column{width:215px}
@@ -710,7 +709,7 @@ body::before{opacity:.08}
   .player-name-cell{padding:0 12px!important}
   .player-link{padding:10px 0}
 }
-/* Floating category tabs appear only after their original position scrolls off-screen. */
+
 .sticky-tabs-proxy{
   display:none;position:fixed;top:0;z-index:30;padding:4px;background:rgba(10,12,9,.97);
   border:1px solid rgba(216,185,111,.32);border-top:0;border-radius:0 0 11px 11px;
@@ -729,7 +728,7 @@ body::before{opacity:.08}
 .sticky-head th[data-key].on{background:linear-gradient(180deg,#302f21 0%,#222318 100%)!important;color:#f0d58e;box-shadow:inset 1px 0 rgba(216,185,111,.34),inset -1px 0 rgba(216,185,111,.34),inset 0 1px rgba(216,185,111,.33),inset 0 -1px rgba(216,185,111,.22);}
 .sticky-head th:nth-child(1){background:linear-gradient(180deg,#292b1f 0%,#1e2017 100%);color:#d0ceb2;}
 .sticky-head th:nth-child(2){background:linear-gradient(110deg,#303224 0%,#22251a 58%,#1b1e16 100%);color:#fff0c5;}
-/* Compact, balanced player profile. */
+
 .pm{padding:3vh 14px;align-items:center;}
 .pm{z-index:50}
 .pm-dialog{
@@ -776,7 +775,7 @@ body::before{opacity:.08}
 
 
 
-/* Final interaction pass: a real sliding gold tab, polished sticky table rail and compact profile grid. */
+
 .tabs{position:relative;isolation:isolate;overflow:hidden;}
 .tabs .tab-indicator{
   display:block!important;position:absolute;z-index:0;top:4px;bottom:4px;left:0;width:0;
@@ -794,11 +793,11 @@ body::before{opacity:.08}
 .tabs button{transition:color .2s ease;}
 .tabs button.on,.tabs button.on:hover{color:#fff5d8!important;}
 .tabs button:not(.on):hover{color:var(--accent-bright)!important;}
-/* Cross-browser fade uses only opacity on the actual table frame. */
+
 .box{transition:opacity .18s ease!important;will-change:opacity;}
 .box.is-switching{opacity:0!important;filter:none!important;transform:none!important;pointer-events:none!important;}
 #stats-table,.box.is-switching #stats-table{opacity:1!important;filter:none!important;transform:none!important;transition:none!important;}
-/* One cohesive full-width sticky rail; the column headings sit directly under it. */
+
 .sticky-tabs-proxy{
   box-sizing:border-box;padding:5px 8px;width:auto;min-height:43px;
   background:rgba(10,12,9,.985);border:1px solid rgba(216,185,111,.28);border-top:0;
@@ -810,7 +809,7 @@ body::before{opacity:.08}
 .sticky-head{border:1px solid rgba(216,185,111,.26);border-top:0;border-radius:0 0 8px 8px;box-shadow:0 7px 18px rgba(0,0,0,.3);opacity:1;transition:opacity .18s ease;}
 .sticky-head.is-switching{opacity:0!important;}
 .sticky-head th{height:41px;padding:9px 12px;}
-/* Darken and soften the page only while the player panel is open. */
+
 .pm{
   background:rgba(3,4,3,.83);
   -webkit-backdrop-filter:blur(2px) brightness(.94);
@@ -852,8 +851,7 @@ body::before{opacity:.08}
 
 
 
-/* Final requested motion and player-panel alignment. These explicit transitions remain active
-   even when the operating system requests reduced motion, because the site navigation relies on them. */
+
 .tabs .tab-indicator {
   transition: left .38s cubic-bezier(.22,.8,.25,1), width .38s cubic-bezier(.22,.8,.25,1), opacity .14s ease !important;
   will-change: left, width, opacity;
@@ -874,7 +872,7 @@ body::before{opacity:.08}
 }
 .sticky-head.is-switching { opacity: 0 !important; }
 
-/* The overlay is deliberately subtle: content remains visible behind the player profile. */
+
 #player-modal {
   background: rgba(3,4,3,.38) !important;
   -webkit-backdrop-filter: blur(1.1px) brightness(.985) !important;
@@ -904,7 +902,7 @@ body::before{opacity:.08}
   z-index: 3;
 }
 
-/* The Kills and Waves summary cards sit directly above a matching-width Weapons panel. */
+
 #player-modal .pm-cards,
 #player-modal .pm-primary {
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -917,7 +915,7 @@ body::before{opacity:.08}
   height: 100%;
   box-sizing: border-box;
 }
-/* Faction numbers align under their own headings instead of looking pinned to the right edge. */
+
 #player-modal .pm-frow span:not(:first-child) {
   text-align: center !important;
 }
@@ -931,7 +929,7 @@ body::before{opacity:.08}
 
 
 
-/* Final requested pass: keep all controls visible while scrolling and make table transitions lively but quick. */
+
 .toolbar{
   position:sticky!important;
   top:0!important;
@@ -941,7 +939,7 @@ body::before{opacity:.08}
   backdrop-filter:blur(8px);
   box-shadow:0 10px 24px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.02)!important;
 }
-/* The tab rail is already inside the sticky toolbar, so the old floating duplicate stays off. */
+
 #sticky-tabs-proxy{display:none!important;}
 .box{
   opacity:1!important;
@@ -962,7 +960,7 @@ body::before{opacity:.08}
 }
 .sticky-head.is-switching{opacity:0!important;transform:translateY(5px)!important;}
 @media(max-width:760px){
-  /* Keep the full set of controls accessible without a tall, stacked mobile toolbar. */
+  
   .toolbar{padding:8px!important;border-radius:0 0 10px 10px!important;margin-bottom:12px!important;}
   .toolbar-top{
     display:grid!important;grid-template-columns:minmax(0,.95fr) minmax(0,1.2fr)!important;
@@ -996,8 +994,7 @@ body::before{opacity:.08}
   .page-size-control select{flex:0 1 43%!important;width:43%!important;min-width:0!important;max-width:43%!important;padding:6px 20px 6px 7px!important;font-size:11px!important;}
 }
 @media(prefers-reduced-motion:reduce){
-  /* Keep the short interface transitions requested for category switching, even if the OS
-     suppresses decorative motion. They use opacity and translate only, without filters. */
+  
   .box,.box.is-switching,.sticky-head,.sticky-head.is-switching,.tabs .tab-indicator{transition-duration:.12s!important;}
 }
 
@@ -1048,13 +1045,57 @@ body::before{opacity:.08}
 @keyframes box-lift{from{transform:translateY(8px)}to{transform:translateY(0)}}
 .box-wrap .box.blur-in{animation:box-blur .36s cubic-bezier(.2,.7,.25,1)}
 @keyframes box-blur{from{filter:blur(7px)}60%{filter:blur(2px)}to{filter:blur(0)}}
+
+
+#player-modal::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background:rgba(0,0,0,.30);
+  pointer-events:none;
+}
+#player-modal .pm-dialog{z-index:1;}
+
+
+.pm-line-value{display:flex;align-items:center;justify-content:flex-end;gap:7px;white-space:nowrap;}
+.pm-rank-button{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:27px;padding:1px 5px;
+  border:1px solid rgba(216,185,111,.24);border-radius:5px;
+  background:rgba(0,0,0,.18);color:#c8ad69;
+  font:600 10px/1.4 "Source Sans 3",system-ui,sans-serif;
+  white-space:nowrap;cursor:pointer;
+  transition:color .12s ease,border-color .12s ease,background-color .12s ease;
+}
+.pm-rank-button:hover,.pm-rank-button:focus-visible{
+  color:#fff0c5;border-color:rgba(240,213,142,.55);background:rgba(216,185,111,.09);
+}
+.pm-card .pm-rank-button{display:flex;width:max-content;margin-top:5px;}
+.pm-weapon-row{grid-template-columns:78px minmax(24px,1fr) 48px;}
+.pm-weapon-row b{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px;line-height:1.05;}
+.pm-weapon-count{color:#fff5d7;font-size:inherit;font-weight:600;}
+.pm-weapon-rank{color:#b8a46e;font-size:9px;font-weight:500;font-style:normal;white-space:nowrap;}
+@media(max-width:760px){
+  .pm-weapon-row{grid-template-columns:100px minmax(24px,1fr) 54px;}
+  .pm-card .pm-rank-button{font-size:10px;}
+}
+
+
+.box-wrap .box.blur-in{animation:box-blur .22s cubic-bezier(.2,.7,.25,1);}
+@keyframes box-blur{
+  from{filter:blur(1.2px) brightness(.995)}
+  35%{filter:blur(.35px) brightness(1.025)}
+  to{filter:blur(0) brightness(1)}
+}
+
 </style>
 </head>
 <body>
 <header>
   <div class="brand">
     <h1>Full Invasion <span>2</span></h1>
-    <p class="sub">Lifetime stats (starting from 22.10.2026) - Gondolin Osiris servers</p>
+    <p class="sub">Lifetime stats (starting from 26.10.2026) - Gondolin Osiris servers</p>
     <div class="brand-meta"><span class="credit">By Melodia-Patty</span><span id="meta">Last update: -</span></div>
   </div>
   <nav class="links" aria-label="Links">
@@ -1113,17 +1154,17 @@ const DEFENDER_FACTIONS = {22:'Ancient',23:'Arcane',24:'Calradia',25:'Crusaders'
 const INVADER_FACTIONS = {29:'Ancient',30:'Blackmarch',31:'Calradia',32:'Chaos',33:'Crusaders',34:'Free Peoples',35:'Full Invasion',36:'Isengard',37:'Mordor',38:'Saracens',99:'Custom Invasions'};
 const TABS = {
   overview:{label:'Overview',start:'score',columns:[
-    ['score','Score','Points for every bot slayed, a little more on harder polls, game modes and during events. Slaying bosses and doing quests awards extra points'],
+    ['score','Score','Points earned for every bot slain, with higher rewards for harder polls, game modes, and events. Completing quests and slaying bosses also grant extra points'],
     ['kills','Kills','Enemy bots killed'],
     ['deaths','Deaths','Number of player deaths\n\nDoes not include traitor games, PvP, friendly fire or certain special events'],
     ['points','Top Points','After each boss, the top 5 players by kills are displayed in chat and receive points.\n\nAt least 5 players must be online. If more than 20 ppl are online points are doubled. If more than 40 ppl are present points are tripled'],
-    ['quests','Quests','Weekly quests completed, check your progress in game with /quests command'],
-    ['waves','Waves','Total Waves cleared'],
+    ['quests','Quests','Weekly quests completed. Check your current progress in game with /quests command'],
+    ['waves','Waves','Total waves cleared'],
     ['wins','Wins','Games won - cleared dev waves'],
     ['bosses','Bosses','Bosses slain by player. Credit goes to the one who dealt the most damage'],
     ['finals','End bosses','End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
     ['chests','Leg Chests','Legendary chests opened'],
-    ['silver','Wizard Buffs','Allies buffed by you while playing a Necromancer or Silver Wizard'],
+    ['silver','Wizard Buffs','Allies you buff while playing as a Necromancer or Silver Wizard'],
     ['crowd','Crowd Kills','Kills made during events or bigger games (20 or more players)'],
     ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
   ]},
@@ -1139,7 +1180,7 @@ const TABS = {
     ['firearm','Firearms','Kills with pistols and muskets'],
     ['magic','Magic','Wands, special custom ammo, or other magical stuff'],
     ['other','Other','Kills from all other sources, such as explosions, punches, or kicks'],
-    ['headshots','Headshots','Head hits landed with ranged weapons'],
+    ['headshots','Headshots','Headshots with ranged weapons'],
     ['shielding','Shielding','Points for shielding']
   ]},
 };
@@ -1154,6 +1195,7 @@ let query = '';
 const modeSelect = $('mode');
 const factionSelect = $('faction');
 const tip = $('tip');
+let pinnedRankButton = null;
 const rangeSelect = $('range');
 let range = 'all';
 let current = {players:[]};
@@ -1211,7 +1253,6 @@ function compare(a,b){
   }
   if(difference) return ascending ? difference : -difference;
 
-  // Keep ties stable and useful regardless of the selected sort direction.
   if(sortKey !== 'score'){
     difference = (Number(b.score) || 0) - (Number(a.score) || 0);
     if(difference) return difference;
@@ -1244,7 +1285,6 @@ function syncColumnWidths(columns,rows,totalRows){
   const box = table.closest('.box');
   const mobile = window.matchMedia('(max-width:760px)').matches;
   const rankWidth = mobile ? 40 : 42;
-  // Keep the identity columns fixed; Player is only slightly wider than before.
   const playerWidth = mobile ? 178 : 215;
   const horizontalPadding = mobile ? 24 : 30;
   const minimumWidth = mobile ? 56 : 64;
@@ -1258,10 +1298,6 @@ function syncColumnWidths(columns,rows,totalRows){
     return Math.max(minimumWidth,content);
   });
 
-  // Start with equal-sized stat columns. If one column genuinely needs more room,
-  // give it the required width and split the remaining width equally between all others.
-  // When even the minimum readable widths cannot fit, allow horizontal scrolling instead
-  // of silently compressing columns until their headings or values become unreadable.
   let available = Math.max(box.clientWidth - rankWidth - playerWidth, columns.length * minimumWidth);
   const indexes = columns.map((column,index) => index);
   let widths = new Array(columns.length).fill(0);
@@ -1343,7 +1379,6 @@ function positionTabIndicator(container){
     indicator.style.left = left + 'px';
     indicator.style.width = width + 'px';
     container.classList.add('indicator-ready');
-    // Force the starting position to be committed before enabling the sliding transition.
     indicator.getBoundingClientRect();
     window.requestAnimationFrame(() => { indicator.style.removeProperty('transition'); });
   }else{
@@ -1389,8 +1424,6 @@ function syncStickyOverlays(){
   const stickyTableHead = stickyTable.querySelector('thead');
   const stickyColgroup = stickyTable.querySelector('colgroup');
 
-  // The toolbar itself remains at the top while scrolling. Mirror the table's column
-  // headings only after their original position passes behind the sticky toolbar.
   const toolbarPinned = toolbarRect.top <= 1;
   const headerBehindToolbar = headRect.top < toolbarRect.bottom - 1;
   const tableStillVisible = boxRect.bottom > toolbarRect.bottom + headerHeight &&
@@ -1437,7 +1470,7 @@ function showTip(header){
   tip.style.top = (box.bottom + 8) + 'px';
   tip.style.opacity = '1';
 }
-function hideTip(){tip.style.opacity='0';tip.classList.remove('rank');tip.style.zIndex='';}
+function hideTip(){tip.style.opacity='0';tip.classList.remove('rank');tip.style.zIndex='';pinnedRankButton=null;}
 
 let pendingTab = null;
 let enterTimer = 0;
@@ -1539,13 +1572,14 @@ document.addEventListener('focusin',event => {
 document.addEventListener('scroll',hideTip,true);
 document.documentElement.addEventListener('mouseleave',hideTip);
 const WEAPON_KEYS = ['w1h','w2h','pole','spear','bow','xbow','throw','firearm','magic','other'];
-const LABELS = {silver:'Wizard buffs',streak:'Kill Streak (most without dying)'};
+const LABELS = {silver:'Wizard buffs',streak:'Max Kill Streak'};
 Object.values(TABS).forEach(definition => definition.columns.forEach(column => {LABELS[column[0]] = column[1];}));
 const modal = $('player-modal');
 let modalReturnFocus = null;
 const uiSounds = {
   open: new Audio('click.mp3'),
-  close: new Audio('sfx3.mp3')
+  close: new Audio('sfx3.mp3'),
+  rank: new Audio('click2.mp3')
 };
 Object.values(uiSounds).forEach(sound => { sound.preload = 'auto'; sound.volume = 0.55; });
 function playUiSound(kind){
@@ -1556,7 +1590,7 @@ function playUiSound(kind){
     sound.currentTime = 0;
     const playback = sound.play();
     if(playback && typeof playback.catch === 'function') playback.catch(() => {});
-  }catch(error){ /* Audio files are optional; the UI must keep working if one is missing. */ }
+  }catch(error){  }
 }
 const numberTitle = number => Math.abs(number) >= 1000 ? ' title="' + esc(fmt(number)) + '"' : '';
 const compactHtml = (tag,number) => '<' + tag + numberTitle(number) + '>' + fmtCompact(number) + '</' + tag + '>';
@@ -1582,22 +1616,60 @@ function favoriteRows(list,emptyText){
 }
 let openedPlayerId = null;
 let rankTipTimer = null;
+const rankingCache = new Map();
+function rankedPlayersFor(key){
+  if(!rankingCache.has(key)){
+    const ranked = current.players
+      .filter(item => Number(item[key]) > 0)
+      .slice()
+      .sort((a,b) => {
+        const difference = (Number(b[key]) || 0) - (Number(a[key]) || 0);
+        if(difference) return difference;
+        const nameDifference = String(a.name || 'Unknown').localeCompare(String(b.name || 'Unknown'),undefined,{sensitivity:'base'});
+        return nameDifference || String(a.id).localeCompare(String(b.id),undefined,{numeric:true});
+      });
+    rankingCache.set(key,ranked);
+  }
+  return rankingCache.get(key);
+}
+function playerRank(key,id){
+  const position = rankedPlayersFor(key).findIndex(item => String(item.id) === String(id));
+  return position < 0 ? null : position + 1;
+}
+function rankButtonHtml(key,id,label){
+  const position = playerRank(key,id);
+  const accessibleLabel = position
+    ? 'Rank ' + position + ' for ' + label + '. Click to view the top 10.'
+    : 'No rank recorded for ' + label + '. Click to view the top 10.';
+  const title = position
+    ? 'Rank #' + position + ' among all players · Click to view top 10'
+    : 'No recorded rank · Click to view top 10';
+  return '<button type="button" class="pm-rank-button" data-rank="' + esc(key) + '" title="' + esc(title) + '" aria-label="' + esc(accessibleLabel) + '">' + (position ? '#' + position : '—') + '</button>';
+}
 function openPlayer(id){
   const player = current.players.find(item => String(item.id) === String(id));
   if(!player) return;
   playUiSound('open');
   const value = key => Number(player[key]) || 0;
-  const line = (label,number,rankKey) => '<div class="pm-line' + (number === 0 ? ' zero' : '') + '"' + (rankKey ? ' data-rank="' + rankKey + '"' : '') + '><span>' + esc(label) + '</span>' + compactHtml('b',number) + '</div>';
-  const cards = ['score','kills','deaths','points','waves','wins'].map(key => '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span>' + compactHtml('strong',value(key)) + '</div>').join('');
-  const details = line(LABELS.streak,value('streak'),'streak') + ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],value(key))).join('');
+  const line = (label,number,rankKey) => {
+    const rank = rankKey ? rankButtonHtml(rankKey,player.id,label) : '';
+    return '<div class="pm-line' + (number === 0 ? ' zero' : '') + '"><span>' + esc(label) + '</span><span class="pm-line-value">' + compactHtml('b',number) + rank + '</span></div>';
+  };
+  const cards = ['score','kills','deaths','points','waves','wins'].map(key =>
+    '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span>' + compactHtml('strong',value(key)) + rankButtonHtml(key,player.id,LABELS[key]) + '</div>'
+  ).join('');
+  const details = line(LABELS.streak,value('streak'),'streak') + ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],value(key),key)).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
   const weapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a)).map(key => {
     const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
-    const shareText = share.toFixed(1) + '% of total kills' + (value(key) >= 1000 ? ' (' + fmt(value(key)) + ')' : '');
-    return '<div class="pm-bar"><span title="' + shareText + '">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + shareText + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + shareText + '">' + fmtCompact(value(key)) + '</b></div>';
+    const shareText = share.toFixed(1) + '% of players kills' + (value(key) >= 1000 ? ' (' + fmt(value(key)) + ')' : '');
+    const rank = playerRank(key,player.id);
+    const rankText = rank ? '#' + rank : '—';
+    const rankTitle = rank ? 'Rank #' + rank + ' among all players' : 'No recorded kills for this weapon';
+    return '<div class="pm-bar pm-weapon-row"><span title="' + shareText + '">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + shareText + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + shareText + '"><span class="pm-weapon-count">' + fmtCompact(value(key)) + '</span><small class="pm-weapon-rank" title="' + esc(rankTitle) + '">' + rankText + '</small></b></div>';
   }).join('');
-  const countLine = (key,label,rankKey) => line(label,value(key),rankKey);
-  const activity = line('Joined the server',value('joined')) + countLine('quests','Quests completed') + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Lootboxes opened','boxes') + countLine('slain','Players slain','slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
+  const countLine = (key,label,rankKey=key) => line(label,value(key),rankKey);
+  const activity = countLine('joined','Joined the server','joined') + countLine('quests','Quests completed') + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Lootboxes opened') + countLine('slain','Players slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
   openedPlayerId = player.id;
   const fav = player.fav || {};
   $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats</span></div>' +
@@ -1630,17 +1702,19 @@ $('body').addEventListener('click',event => {
 $('pm-close').addEventListener('click',closePlayer);
 modal.addEventListener('click',event => {if(event.target === modal) closePlayer();});
 function rankTipHtml(key){
-  const ranked = current.players.filter(item => Number(item[key]) > 0).sort((a,b) => (Number(b[key]) || 0) - (Number(a[key]) || 0));
-  const position = ranked.findIndex(item => String(item.id) === String(openedPlayerId)) + 1;
+  const ranked = rankedPlayersFor(key);
+  const positionIndex = ranked.findIndex(item => String(item.id) === String(openedPlayerId));
+  const position = positionIndex < 0 ? 0 : positionIndex + 1;
   const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + fmt(item[key]) + '</b></div>';
-  const title = !ranked.length ? 'Nobody is ranked yet' : position ? '#' + position + ' of ' + fmt(ranked.length) + ' ' + plural(ranked.length,'player','players') : 'Not ranked yet';
+  const totalPlayers = current.players.length;
+  const title = !ranked.length ? 'Nobody is ranked yet' : position ? '#' + position + ' of ' + fmt(totalPlayers) + ' ' + plural(totalPlayers,'player','players') : 'Not ranked yet';
   return '<strong>' + title + '</strong>' + ranked.slice(0,10).map(row).join('') + (position > 10 ? '<div class="rk-gap">…</div>' + row(ranked[position - 1],position - 1) : '');
 }
-function showRankTip(line){
-  tip.innerHTML = rankTipHtml(line.dataset.rank);
+function showRankTip(button){
+  tip.innerHTML = rankTipHtml(button.dataset.rank);
   tip.classList.add('rank');
   tip.style.zIndex = '100';
-  const box = line.getBoundingClientRect();
+  const box = button.getBoundingClientRect();
   const left = Math.min(Math.max(8,box.left + box.width / 2 - tip.offsetWidth / 2),innerWidth - tip.offsetWidth - 8);
   const below = box.bottom + 8;
   tip.style.left = left + 'px';
@@ -1648,21 +1722,27 @@ function showRankTip(line){
   tip.style.opacity = '1';
 }
 modal.addEventListener('mouseover',event => {
-  const line = event.target.closest('.pm-line[data-rank]');
-  if(!line || line.contains(event.relatedTarget)) return;
+  if(pinnedRankButton) return;
+  const button = event.target.closest('.pm-rank-button[data-rank]');
+  if(!button || button.contains(event.relatedTarget)) return;
   window.clearTimeout(rankTipTimer);
-  rankTipTimer = window.setTimeout(() => showRankTip(line),450);
+  rankTipTimer = window.setTimeout(() => showRankTip(button),450);
 });
 modal.addEventListener('mouseout',event => {
-  const line = event.target.closest('.pm-line[data-rank]');
-  if(!line || line.contains(event.relatedTarget)) return;
+  if(pinnedRankButton) return;
+  const button = event.target.closest('.pm-rank-button[data-rank]');
+  if(!button || button.contains(event.relatedTarget)) return;
   window.clearTimeout(rankTipTimer);
   hideTip();
 });
 modal.addEventListener('click',event => {
-  const line = event.target.closest('.pm-line[data-rank]');
-  if(line) showRankTip(line);
-  else hideTip();
+  const button = event.target.closest('.pm-rank-button[data-rank]');
+  if(button){
+    window.clearTimeout(rankTipTimer);
+    pinnedRankButton = button;
+    showRankTip(button);
+    playUiSound('rank');
+  }else hideTip();
 });
 document.addEventListener('keydown',event => {if(event.key === 'Escape') closePlayer();});
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => render());
@@ -1719,7 +1799,6 @@ function periodStart(name, now = new Date()){
 function getTrackingStart(){
   const reported = timestampMs(current.since);
   if(reported) return reported;
-  // stats.json may not carry `since`; use the start date already shown in the subtitle.
   const subtitle = document.querySelector('.sub')?.textContent || '';
   const match = subtitle.match(/starting from\s+(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})/i);
   if(!match) return 0;
@@ -1736,10 +1815,6 @@ function applyRange(){
     return;
   }
 
-  // Last 3/6 months are rolling windows, not calendar quarter/half-year periods.
-  // Cumulative counters only support an exact difference when a snapshot is available
-  // within the chosen window. When tracking started inside the window, the current
-  // counters themselves are the valid period-to-date data.
   if(range === 'quarter' || range === 'half'){
     const windowStart = periodStart(range);
     if(trackingStart && trackingStart >= windowStart){
@@ -1780,10 +1855,7 @@ function applyRange(){
     return;
   }
 
-  /*
-   * Without a saved start-of-period snapshot, cumulative counters cannot be split
-   * into an exact weekly/monthly/yearly delta. Keep the existing fallback behaviour.
-   */
+  
   data = {players:current.players};
   $('range-note').textContent = '';
 }
