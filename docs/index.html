@@ -1042,6 +1042,12 @@ body::before{opacity:.08}
 .box.ghost{overflow:hidden!important;transition:opacity .34s ease!important}
 .box.ghost.out{opacity:0}
 @media(prefers-reduced-motion:reduce){.box.fade-in{animation:none}.box.ghost{transition:none!important}}
+.box-wrap .box.ghost{opacity:1!important;overflow:hidden!important;transition:opacity .34s ease!important}
+.box-wrap .box.ghost.out{opacity:0!important}
+.box-wrap .box.fade-in{animation:box-lift .34s cubic-bezier(.2,.7,.25,1)}
+@keyframes box-lift{from{transform:translateY(8px)}to{transform:translateY(0)}}
+.box-wrap .box.blur-in{animation:box-blur .36s cubic-bezier(.2,.7,.25,1)}
+@keyframes box-blur{from{filter:blur(7px)}60%{filter:blur(2px)}to{filter:blur(0)}}
 </style>
 </head>
 <body>
@@ -1107,19 +1113,19 @@ const DEFENDER_FACTIONS = {22:'Ancient',23:'Arcane',24:'Calradia',25:'Crusaders'
 const INVADER_FACTIONS = {29:'Ancient',30:'Blackmarch',31:'Calradia',32:'Chaos',33:'Crusaders',34:'Free Peoples',35:'Full Invasion',36:'Isengard',37:'Mordor',38:'Saracens',99:'Custom Invasions'};
 const TABS = {
   overview:{label:'Overview',start:'score',columns:[
-    ['score','Score','Points for every bot slayed, a little more on harder polls, game modes and during events. Slaying bosses awards extra points'],
+    ['score','Score','Points for every bot slayed, a little more on harder polls, game modes and during events. Slaying bosses and doing quests awards extra points'],
     ['kills','Kills','Enemy bots killed'],
     ['deaths','Deaths','Number of player deaths\n\nDoes not include traitor games, PvP, friendly fire or certain special events'],
     ['points','Top Points','After each boss, the top 5 players by kills are displayed in chat and receive points.\n\nAt least 5 players must be online. If more than 20 ppl are online points are doubled. If more than 40 ppl are present points are tripled'],
+    ['quests','Quests','Weekly quests completed, check your progress in game with /quests command'],
     ['waves','Waves','Total Waves cleared'],
     ['wins','Wins','Games won - cleared dev waves'],
     ['bosses','Bosses','Bosses slain by player. Credit goes to the one who dealt the most damage'],
     ['finals','End bosses','End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
     ['chests','Leg Chests','Legendary chests opened'],
     ['silver','Wizard Buffs','Allies buffed by you while playing a Necromancer or Silver Wizard'],
-    ['crowd','Crowd Kills','Kills made during events or bigger games (20 or more players are online)'],
-    ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units'],
-    ['quests','Quests','Quests completed. Every completed quest awards 20 score']
+    ['crowd','Crowd Kills','Kills made during events or bigger games (20 or more players)'],
+    ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
   ]},
   weapons:{label:'Weapons',start:'kills',columns:[
     ['kills','Kills','All enemy bots killed, whatever the weapon'],
@@ -1245,7 +1251,7 @@ function syncColumnWidths(columns,rows,totalRows){
   const needed = columns.map(([key,label]) => {
     let content = Math.max(...label.toUpperCase().split(/[\s-]+/).map(word => textWidth(word,'700 10px ' + FONT_FAMILY,0.4))) + 20;
     for(const row of rows){
-      content = Math.max(content,textWidth(fmt(row[key]),'700 14px ' + FONT_FAMILY,0) + horizontalPadding + 2);
+      content = Math.max(content,textWidth(fmtCompact(row[key]),'700 14px ' + FONT_FAMILY,0) + horizontalPadding + 2);
     }
     const total = totalRows.reduce((sum,row) => sum + (Number(row[key]) || 0),0);
     content = Math.max(content,textWidth(fmtCompact(total),'700 12px ' + FONT_FAMILY,0) + horizontalPadding + 2);
@@ -1307,13 +1313,13 @@ function render(){
   const visible = shown.slice(page * effectivePageSize,page * effectivePageSize + effectivePageSize);
 
   syncColumnWidths(columns,shown,shown);
-  renderTotals(visible,columns,visible.length);
+  renderTotals(shown.length > 1 ? visible : [],columns,visible.length);
   $('head').innerHTML = '<tr><th scope="col">#</th><th scope="col" tabindex="0" data-key="name" class="player-sort ' + (sortKey === 'name' ? (ascending ? 'on asc' : 'on') : '') + '"><span>Player</span></th>' +
     columns.map(([key,label,description]) => '<th scope="col" tabindex="0" data-key="' + key + '" data-tip="' + esc(description) + '" class="col-' + key + ' ' + (key === sortKey ? (ascending ? 'on asc' : 'on') : '') + '"><span>' + esc(label) + '</span></th>').join('') + '</tr>';
 
   if(visible.length){
     $('body').innerHTML = visible.map((row,index) => '<tr style="--r:' + Math.min(index,18) + '" class="' + (row.rank <= 3 ? 'r' + row.rank : '') + '" data-id="' + esc(row.id) + '"><td>' + row.rank + '</td><td class="player-name-cell" title="' + esc(row.name) + '"><button class="player-link" type="button" data-player-id="' + esc(row.id) + '">' + esc(row.name) + '</button></td>' +
-      columns.map(([key]) => '<td class="col-' + key + ' ' + (key === sortKey ? 's ' : '') + ((Number(row[key]) || 0) === 0 ? 'z' : '') + '">' + fmt(row[key]) + '</td>').join('') + '</tr>').join('');
+      columns.map(([key]) => '<td class="col-' + key + ' ' + (key === sortKey ? 's ' : '') + ((Number(row[key]) || 0) === 0 ? 'z' : '') + '"' + (Math.abs(Number(row[key]) || 0) >= 1000 ? ' title="' + fmt(row[key]) + '"' : '') + '>' + fmtCompact(row[key]) + '</td>').join('') + '</tr>').join('');
   }else{
     const message = rows.length ? 'No players found' : 'No stats available for this selection';
     $('body').innerHTML = '<tr><td class="empty" colspan="' + (columns.length + 2) + '">' + message + '</td></tr>';
@@ -1451,33 +1457,16 @@ function clearGhost(){
   window.clearTimeout(ghostTimer);
   document.querySelectorAll('.box.ghost').forEach(node => node.remove());
   const live = $('stats-table').closest('.box');
-  live.classList.remove('fade-in');
+  live.classList.remove('fade-in','blur-in');
 }
 function fadeTo(update){
   const live = $('stats-table').closest('.box');
-  const wrap = live.parentElement;
   clearGhost();
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  let ghost = null;
-  if(!reduceMotion && live.offsetHeight && live.querySelectorAll('tbody tr').length <= 300){
-    ghost = live.cloneNode(true);
-    ghost.classList.add('ghost');
-    ghost.style.width = live.offsetWidth + 'px';
-    ghost.style.height = live.offsetHeight + 'px';
-    ghost.style.top = live.offsetTop + 'px';
-    ghost.style.left = live.offsetLeft + 'px';
-    wrap.appendChild(ghost);
-    ghost.scrollLeft = live.scrollLeft;
-    ghost.scrollTop = live.scrollTop;
-  }
   update();
   syncStickyOverlays();
-  if(ghost){
-    void live.offsetWidth;
-    live.classList.add('fade-in');
-    ghost.classList.add('out');
-    ghostTimer = window.setTimeout(clearGhost,400);
-  }
+  void live.offsetWidth;
+  live.classList.add('blur-in');
+  ghostTimer = window.setTimeout(() => live.classList.remove('blur-in'),420);
 }
 function switchTab(nextTab){
   if(!nextTab || nextTab === (pendingTab || tab)) return;
@@ -1550,7 +1539,7 @@ document.addEventListener('focusin',event => {
 document.addEventListener('scroll',hideTip,true);
 document.documentElement.addEventListener('mouseleave',hideTip);
 const WEAPON_KEYS = ['w1h','w2h','pole','spear','bow','xbow','throw','firearm','magic','other'];
-const LABELS = {silver:'Wizard buffs',streak:'Most kills without dying'};
+const LABELS = {silver:'Wizard buffs',streak:'Kill Streak (most without dying)'};
 Object.values(TABS).forEach(definition => definition.columns.forEach(column => {LABELS[column[0]] = column[1];}));
 const modal = $('player-modal');
 let modalReturnFocus = null;
@@ -1600,7 +1589,7 @@ function openPlayer(id){
   const value = key => Number(player[key]) || 0;
   const line = (label,number,rankKey) => '<div class="pm-line' + (number === 0 ? ' zero' : '') + '"' + (rankKey ? ' data-rank="' + rankKey + '"' : '') + '><span>' + esc(label) + '</span>' + compactHtml('b',number) + '</div>';
   const cards = ['score','kills','deaths','points','waves','wins'].map(key => '<div class="pm-card"><span>' + esc(LABELS[key]) + '</span>' + compactHtml('strong',value(key)) + '</div>').join('');
-  const details = ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],value(key))).join('') + line(LABELS.streak,value('streak'),'streak');
+  const details = line(LABELS.streak,value('streak'),'streak') + ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(LABELS[key],value(key))).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
   const weapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a)).map(key => {
     const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
@@ -1608,7 +1597,7 @@ function openPlayer(id){
     return '<div class="pm-bar"><span title="' + shareText + '">' + esc(LABELS[key]) + '</span><div class="pm-track" role="img" aria-label="' + shareText + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + shareText + '">' + fmtCompact(value(key)) + '</b></div>';
   }).join('');
   const countLine = (key,label,rankKey) => line(label,value(key),rankKey);
-  const activity = line('Joined the server',value('joined')) + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('quests','Quests completed') + countLine('boxes','Lootboxes opened','boxes') + countLine('slain','Players slain','slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
+  const activity = line('Joined the server',value('joined')) + countLine('quests','Quests completed') + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Lootboxes opened','boxes') + countLine('slain','Players slain','slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
   openedPlayerId = player.id;
   const fav = player.fav || {};
   $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats</span></div>' +
