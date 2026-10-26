@@ -9,9 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - run: npm install --no-save ssh2-sftp-client
       - run: node build-stats.js
         env:
@@ -29,4 +31,14 @@ jobs:
           git config user.name "stats-bot"
           git config user.email "stats-bot@users.noreply.github.com"
           git add docs/stats.json docs/today.json docs/week.json docs/month.json docs/quarter.json docs/half.json docs/year.json
-          git diff --cached --quiet || (git commit -m "update stats" && git push)
+          if ! git diff --cached --quiet; then
+            git commit -m "update stats"
+            git pull --rebase
+            git push
+          fi
+      - run: |
+          if [ "$(git rev-list --count HEAD)" -gt 300 ]; then
+            git checkout --orphan squashed
+            git commit -m "stats history squashed"
+            git push --force origin squashed:"$GITHUB_REF_NAME"
+          fi
