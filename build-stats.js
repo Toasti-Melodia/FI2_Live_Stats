@@ -35,25 +35,55 @@ function troopName(troop, isHero) {
   const lookupId = isHero && troop >= HERO_NAME_SHIFT_FIRST && troop <= HERO_NAME_SHIFT_LAST ? troop - 1 : troop;
   return TROOPS[lookupId] || 'Troop #' + troop;
 }
+const BACKUP_KEEP = 7;
+async function rotateBackup(sftp, remotePath, buffer) {
+  const slash = remotePath.lastIndexOf('/');
+  const directory = slash >= 0 ? remotePath.slice(0, slash) : '.';
+  const baseName = remotePath.slice(slash + 1);
+  const todayName = baseName + '.bak-' + new Date().toISOString().slice(0, 10);
+  const listing = await sftp.list(directory);
+  const backups = listing.map(item => item.name).filter(name => name.startsWith(baseName + '.bak-'));
+  if (!backups.includes(todayName)) {
+    await sftp.put(buffer, directory + '/' + todayName);
+    backups.push(todayName);
+  }
+  backups.sort();
+  for (const name of backups.slice(0, Math.max(0, backups.length - BACKUP_KEEP))) await sftp.delete(directory + '/' + name);
+}
 async function loadServer(prefix) {
   const host = process.env[prefix + '_HOST'];
   if (!host) {
     console.log(prefix + ' skipped: no host');
     return null;
   }
-  const sftp = new SftpClient();
-  try {
-    await sftp.connect({host, port: Number(process.env[prefix + '_PORT'] || 22), username: process.env[prefix + '_USER'], password: process.env[prefix + '_PASS']});
-    const buffer = await sftp.get(process.env[prefix + '_PATH']);
-    const data = JSON.parse(buffer.toString());
-    console.log(prefix + ' loaded: ' + buffer.length + ' bytes, ' + Object.keys(data).length + ' keys');
-    return data;
-  } catch (error) {
-    console.error(prefix + ' failed: ' + error.message);
-    return null;
-  } finally {
-    await sftp.end().catch(() => {});
+  const remotePath = process.env[prefix + '_PATH'];
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const sftp = new SftpClient();
+    try {
+      await sftp.connect({host, port: Number(process.env[prefix + '_PORT'] || 22), username: process.env[prefix + '_USER'], password: process.env[prefix + '_PASS'], readyTimeout: 20000});
+      let buffer;
+      try {
+        buffer = await sftp.get(remotePath);
+      } catch (error) {
+        if (/no such file/i.test(error.message)) {
+          console.log(prefix + ' has no stats file yet, skipped');
+          return null;
+        }
+        throw error;
+      }
+      const data = JSON.parse(buffer.toString());
+      console.log(prefix + ' loaded: ' + buffer.length + ' bytes, ' + Object.keys(data).length + ' keys');
+      if (Object.keys(data).length > 0) await rotateBackup(sftp, remotePath, buffer).catch(error => console.error(prefix + ' backup failed: ' + error.message));
+      return data;
+    } catch (error) {
+      console.error(prefix + ' attempt ' + attempt + ' failed: ' + error.message);
+    } finally {
+      await sftp.end().catch(() => {});
+    }
+    await new Promise(resolve => setTimeout(resolve, 5000));
   }
+  console.error(prefix + ' unreachable, aborting so incomplete data is not published');
+  process.exit(1);
 }
 (async () => {
   const dumps = [await loadServer('S1'), await loadServer('S2')].filter(Boolean);
@@ -154,7 +184,8 @@ async function loadServer(prefix) {
     const file = 'docs/' + name + '.json';
     const existing = readJson(file);
     if (existing && existing.start === start) continue;
-    const players = !existing && since >= start ? [] : rows.map(({fav, maps: mostPlayed, ...numeric}) => numeric);
+    const baselineRows = previous && Array.isArray(previous.players) && previous.updated < start ? previous.players : rows;
+    const players = !existing && since >= start ? [] : baselineRows.map(({fav, maps: mostPlayed, ...numeric}) => numeric);
     fs.writeFileSync(file, JSON.stringify({start, updated, players}));
   }
 })();
