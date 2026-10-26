@@ -1108,7 +1108,7 @@ body::before{opacity:.08}
 <header>
   <div class="brand">
     <h1>Full Invasion <span>2</span></h1>
-    <p class="sub">Lifetime stats (starting from 26.10.2026) - Gondolin Osiris servers</p>
+    <p class="sub">Lifetime stats (starting from 27.10.2026) - Gondolin Osiris servers</p>
     <div class="brand-meta"><span class="credit">By Melodia-Patty</span><span id="meta">Last update: -</span></div>
   </div>
   <nav class="links" aria-label="Links">
@@ -1156,7 +1156,7 @@ const fmtCompact = n => {
   const abs = Math.abs(value);
   if(abs >= 1e12) return (value / 1e12).toFixed(abs >= 1e13 ? 0 : 1).replace(/\.0$/, '') + 't';
   if(abs >= 1e9) return (value / 1e9).toFixed(abs >= 1e10 ? 0 : 1).replace(/\.0$/, '') + 'b';
-  if(abs >= 1e6) return (value / 1e6).toFixed(abs >= 1e7 ? 0 : 1).replace(/\.0$/, '') + 'm';
+  if(abs >= 999500) return (value / 1e6).toFixed(abs >= 1e7 ? 0 : 1).replace(/\.0$/, '') + 'm';
   if(abs >= 1e4) return Math.round(value / 1e3) + 'k';
   if(abs >= 1e3) return (value / 1e3).toFixed(1).replace(/\.0$/, '') + 'k';
   return fmt(value);
@@ -1167,7 +1167,7 @@ const DEFENDER_FACTIONS = {22:'Ancient',23:'Arcane',24:'Calradia',25:'Crusaders'
 const INVADER_FACTIONS = {29:'Ancient',30:'Blackmarch',31:'Calradia',32:'Chaos',33:'Crusaders',34:'Free Peoples',35:'Full Invasion',36:'Isengard',37:'Mordor',38:'Saracens',99:'Custom Invasions'};
 const TABS = {
   overview:{label:'Overview',start:'score',columns:[
-    ['score','Score','Points earned for every bot slain, with higher rewards for harder polls, game modes, and events. Completing quests and slaying bosses also grant extra points'],
+    ['score','Score','Points earned for every bot slain, with higher rewards for harder polls, game modes, and events. Completing quests, winning games and slaying bosses also grant extra points'],
     ['kills','Kills','Enemy bots killed'],
     ['deaths','Deaths','Number of player deaths\n\nDoes not include traitor games, PvP, friendly fire or certain special events'],
     ['points','Top Points','After each boss, the top 5 players by kills are displayed in chat and receive points.\n\nAt least 5 players must be online. If more than 20 ppl are online points are doubled. If more than 40 ppl are present points are tripled'],
@@ -1178,7 +1178,7 @@ const TABS = {
     ['finals','End bosses','End-game bosses (level 70 or higher) slain by player. Credit goes to the one who dealt the most damage'],
     ['chests','Leg Chests','Legendary chests opened'],
     ['silver','Wizard Buffs','Allies you buff while playing as a Necromancer or Silver Wizard'],
-    ['crowd','Crowd Kills','Kills made during events or bigger games (20 or more players)'],
+    ['crowd','Crowd Kills','Kills made during Events or bigger games (20 or more players)'],
     ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
   ]},
   weapons:{label:'Weapons',start:'kills',columns:[
@@ -1731,8 +1731,13 @@ function rankTipHtml(key,share,categoryLabel){
   const shareValue = Number(share);
   const shareNote = WEAPON_KEYS.includes(key) && share !== undefined && Number.isFinite(shareValue) ? '<div class="rk-note">Share of total kills: ' + shareValue.toFixed(1) + '%</div>' : '';
   const topRows = ranked.slice(0,10).map(row).join('');
-  const extraPlayer = position > 10 ? '<div class="rk-gap">…</div>' + row(ranked[positionIndex],positionIndex) : '';
-  return positionMarkup + shareNote + '<div class="rk-heading">' + esc(subtitle) + '</div>' + (topRows || '<div class="rk-empty">No player data available</div>') + extraPlayer;
+  let extraRows = '';
+  if(position > 10){
+    const firstExtraIndex = Math.max(positionIndex - 1,10);
+    const gapMarkup = firstExtraIndex > 10 ? '<div class="rk-gap">…</div>' : '';
+    extraRows = gapMarkup + ranked.slice(firstExtraIndex,positionIndex + 1).map((item,offset) => row(item,firstExtraIndex + offset)).join('');
+  }
+  return positionMarkup + shareNote + '<div class="rk-heading">' + esc(subtitle) + '</div>' + (topRows || '<div class="rk-empty">No player data available</div>') + extraRows;
 }
 function showRankTip(trigger){
   tip.innerHTML = rankTipHtml(trigger.dataset.rank,trigger.dataset.share,trigger.dataset.rankLabel);
