@@ -103,6 +103,7 @@ async function loadServer(prefix) {
         continue;
       }
       if (field >= QUEST_BASE) continue;
+      if (field >= 20000 && field < FACTION_AS_BASE) continue;
       const isName = NAME_FIELDS.includes(field) || Number.isNaN(Number(value));
       if (isName) {
         if (!nicknames[id]) nicknames[id] = String(value);
