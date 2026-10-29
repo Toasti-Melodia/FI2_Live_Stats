@@ -157,7 +157,16 @@ async function loadServer(prefix) {
     const row = {id, name: NAMES[id] || nicknames[id] || id};
     for (const [label, field] of Object.entries(FIELDS)) row[label] = Math.floor((numbers[id + '_' + field] || 0) / (SCALES[label] || 1));
     for (const [label, category] of Object.entries(WEAPONS)) row[label] = numbers[id + '_' + (WEAPON_KILLS_BASE + category)] || 0;
-    row.fav = {h: favorites((spawns[id] || {}).h, true), n: favorites((spawns[id] || {}).n, false)};
+    const playerSpawns = spawns[id] || {h: {}, n: {}};
+    const countTypes = group => Object.values(group).filter(amount => amount > 0).length;
+    const sumValues = group => Object.values(group).reduce((total, amount) => total + (amount > 0 ? amount : 0), 0);
+    row.heroTypes = countTypes(playerSpawns.h);
+    row.unitTypes = countTypes(playerSpawns.n);
+    row.mapTypes = countTypes(maps[id] || {});
+    row.heroSpawns = sumValues(playerSpawns.h);
+    row.unitSpawns = sumValues(playerSpawns.n);
+    row.mapPlays = sumValues(maps[id] || {});
+    row.fav = {h: favorites(playerSpawns.h, true), n: favorites(playerSpawns.n, false)};
     row.maps = topMaps(maps[id]);
     row.fac = factionStats[id] || {as: {}, vs: {}};
     return row;
@@ -165,6 +174,32 @@ async function loadServer(prefix) {
   if (rows.length === 0) {
     console.error('no players parsed, keeping previous stats.json');
     process.exit(1);
+  }
+  const boards = {h: {}, n: {}, m: {}};
+  const shownEntities = {h: new Set(), n: new Set(), m: new Set()};
+  const playerNames = new Map(rows.map(row => [row.id, row.name]));
+  const addToBoard = (kind, entity, playerId, amount) => {
+    if (amount <= 0) return;
+    if (!boards[kind][entity]) boards[kind][entity] = [];
+    boards[kind][entity].push([playerId, amount]);
+  };
+  for (const row of rows) {
+    const playerSpawns = spawns[row.id] || {h: {}, n: {}};
+    for (const [troop, amount] of Object.entries(playerSpawns.h)) addToBoard('h', troop, row.id, amount);
+    for (const [troop, amount] of Object.entries(playerSpawns.n)) addToBoard('n', troop, row.id, amount);
+    for (const [scene, amount] of Object.entries(maps[row.id] || {})) addToBoard('m', scene, row.id, amount);
+    row.fav.h.forEach(item => shownEntities.h.add(String(item.id)));
+    row.fav.n.forEach(item => shownEntities.n.add(String(item.id)));
+    row.maps.forEach(item => shownEntities.m.add(String(item.id)));
+  }
+  const tops = {h: {}, n: {}, m: {}};
+  for (const kind of Object.keys(boards)) {
+    for (const entity of shownEntities[kind]) {
+      const board = boards[kind][entity];
+      if (!board) continue;
+      board.sort((a, b) => b[1] - a[1] || String(playerNames.get(a[0])).localeCompare(String(playerNames.get(b[0])), undefined, {sensitivity: 'base'}) || a[0].localeCompare(b[0], undefined, {numeric: true}));
+      tops[kind][entity] = board;
+    }
   }
   let since = Date.now();
   const previous = readJson('docs/stats.json');
@@ -181,6 +216,7 @@ async function loadServer(prefix) {
     year: Date.UTC(today.getUTCFullYear(), 0, 1)
   };
   fs.writeFileSync('docs/stats.json', JSON.stringify({updated, since, players: rows}));
+  fs.writeFileSync('docs/tops.json', JSON.stringify(tops));
   for (const [name, start] of Object.entries(starts)) {
     const file = 'docs/' + name + '.json';
     const existing = readJson(file);
