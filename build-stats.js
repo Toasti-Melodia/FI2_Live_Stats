@@ -14,9 +14,11 @@ const MAP_PLAYED_BASE = 3000000;
 const MAP_NAME_BASE = 3500000;
 const MAP_RANGE = 500000;
 const QUEST_BASE = 6000000;
+const QUEST_COMPLETIONS_BASE = 9000000;
+const QUEST_NAMES = ['Kill bots', 'Kill bots as Recruit/Soldier', 'Hit headshots', 'Kill bots with bows / crossbows / firearms', 'Kill bots with one-handed / spears / throwing', 'Kill bots with two-handed / polearms / magic', 'Kill bots with every weapon type', 'Kills without dying', 'Kills with max 1 death', 'Beat waves', 'Win games', 'Top5 points', 'Slay bosses', 'Slay end-game bosses', 'Open leg boxes', 'Use refills / wardrobes', 'Buff allies as a wizard', 'Win as different factions', 'Beat a custom invasion', 'Beat different invasions', 'Play on different maps', 'Spawn as different heroes'];
 const HERO_NAME_SHIFT_FIRST = 1079;
 const HERO_NAME_SHIFT_LAST = 1790;
-const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023, crowd: 5024, headshots: 5025, shielding: 5026, streak: 5036, quests: 5037, silver: 5019, joined: 5013, commands: 5029, anvils: 5030, refills: 5031, wardrobes: 5032, boxes: 5033, slain: 5034, animations: 5035};
+const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023, crowd: 5024, headshots: 5025, shielding: 5026, streak: 5036, quests: 5037, silver: 5019, joined: 5013, commands: 5029, anvils: 5030, refills: 5031, wardrobes: 5032, boxes: 5033, slain: 5034, animations: 5035, runs250: 5038, runs500: 5039, runs1000: 5040};
 const WEAPONS = {w1h: 5004, w2h: 5005, pole: 5006, bow: 5007, xbow: 5008, throw: 5009, firearm: 5010, magic: 5011, other: 5012, spear: 5028};
 const SCALES = {score: 10};
 const MAX_FIELDS = new Set([FIELDS.streak]);
@@ -93,6 +95,7 @@ async function loadServer(prefix) {
   const spawns = {};
   const maps = {};
   const mapNames = {};
+  const questCompletions = QUEST_NAMES.map(() => 0);
   for (const dump of dumps) {
     for (const [rawKey, value] of Object.entries(dump)) {
       const [id, fieldText] = rawKey.trim().split(/[ _]/);
@@ -100,6 +103,10 @@ async function loadServer(prefix) {
       if (!id || Number.isNaN(field)) continue;
       if (field >= MAP_NAME_BASE && field < MAP_NAME_BASE + MAP_RANGE) {
         mapNames[field - MAP_NAME_BASE] = String(value);
+        continue;
+      }
+      if (id === '0' && field >= QUEST_COMPLETIONS_BASE && field < QUEST_COMPLETIONS_BASE + QUEST_NAMES.length) {
+        questCompletions[field - QUEST_COMPLETIONS_BASE] += Number(value) || 0;
         continue;
       }
       if (field >= QUEST_BASE) continue;
@@ -230,6 +237,8 @@ async function loadServer(prefix) {
   };
   fs.writeFileSync('docs/stats.json', JSON.stringify({updated, since, players: rows}));
   fs.writeFileSync('docs/tops.json', JSON.stringify(tops));
+  const questRanking = QUEST_NAMES.map((name, index) => ({id: index + 1, name, completions: questCompletions[index]})).sort((a, b) => b.completions - a.completions || a.id - b.id);
+  fs.writeFileSync('docs/quests.json', JSON.stringify({updated, quests: questRanking}, null, 1));
   fs.writeFileSync('docs/spawns.json', JSON.stringify({updated, names: spawnNames, players: spawnPlayers}));
   for (const [name, start] of Object.entries(starts)) {
     const file = 'docs/' + name + '.json';
