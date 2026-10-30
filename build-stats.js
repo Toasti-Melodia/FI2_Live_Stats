@@ -201,8 +201,21 @@ async function loadServer(prefix) {
       tops[kind][entity] = board;
     }
   }
+  const spawnPlayers = {};
+  const spawnNames = {h: {}, n: {}, m: {}};
+  const positiveOnly = group => Object.fromEntries(Object.entries(group).filter(([, amount]) => amount > 0));
+  for (const row of rows) {
+    const playerSpawns = spawns[row.id] || {h: {}, n: {}};
+    const entry = {h: positiveOnly(playerSpawns.h), n: positiveOnly(playerSpawns.n), m: positiveOnly(maps[row.id] || {})};
+    if (Object.keys(entry.h).length + Object.keys(entry.n).length + Object.keys(entry.m).length === 0) continue;
+    spawnPlayers[row.id] = entry;
+    for (const troop of Object.keys(entry.h)) spawnNames.h[troop] = troopName(Number(troop), true);
+    for (const troop of Object.keys(entry.n)) spawnNames.n[troop] = troopName(Number(troop), false);
+    for (const scene of Object.keys(entry.m)) spawnNames.m[scene] = MAPS[scene] || mapNames[scene] || 'Map #' + scene;
+  }
   let since = Date.now();
   const previous = readJson('docs/stats.json');
+  const previousSpawns = readJson('docs/spawns.json');
   if (previous && previous.since) since = previous.since;
   const updated = Date.now();
   const today = new Date(updated);
@@ -217,12 +230,23 @@ async function loadServer(prefix) {
   };
   fs.writeFileSync('docs/stats.json', JSON.stringify({updated, since, players: rows}));
   fs.writeFileSync('docs/tops.json', JSON.stringify(tops));
+  fs.writeFileSync('docs/spawns.json', JSON.stringify({updated, names: spawnNames, players: spawnPlayers}));
   for (const [name, start] of Object.entries(starts)) {
     const file = 'docs/' + name + '.json';
+    const spawnFile = 'docs/sp-' + name + '.json';
     const existing = readJson(file);
-    if (existing && existing.start === start) continue;
-    const baselineRows = previous && Array.isArray(previous.players) && previous.updated < start ? previous.players : rows;
-    const players = !existing && since >= start ? [] : baselineRows.map(({fav, maps: mostPlayed, ...numeric}) => numeric);
+    const existingSpawns = readJson(spawnFile);
+    if (existing && existing.start === start) {
+      const missingSpawns = !existingSpawns || existingSpawns.start !== start;
+      if (missingSpawns && Array.isArray(existing.players) && existing.players.length === 0) fs.writeFileSync(spawnFile, JSON.stringify({start, updated, players: {}}));
+      continue;
+    }
+    const useStored = previous && Array.isArray(previous.players) && previous.updated < start;
+    const baselineRows = useStored ? previous.players : rows;
+    const emptyBaseline = !existing && since >= start;
+    const players = emptyBaseline ? [] : baselineRows.map(({fav, maps: mostPlayed, ...numeric}) => numeric);
+    const baselineSpawns = useStored && previousSpawns && previousSpawns.players ? previousSpawns.players : spawnPlayers;
     fs.writeFileSync(file, JSON.stringify({start, updated, players}));
+    fs.writeFileSync(spawnFile, JSON.stringify({start, updated, players: emptyBaseline ? {} : baselineSpawns}));
   }
 })();
