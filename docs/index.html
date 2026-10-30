@@ -1125,7 +1125,8 @@ body::before{opacity:.08}
 .pm-range-btn{padding:2px 7px;font:inherit;font-size:11px;letter-spacing:.02em;color:var(--dim);background:transparent;border:0;border-radius:5px;cursor:pointer;opacity:.7;transition:color .15s,background .15s,opacity .15s}
 .pm-range-btn:hover,.pm-range-btn:focus-visible{opacity:1;color:var(--accent-bright)}
 .pm-range-btn.active{opacity:1;color:var(--accent-bright);background:rgba(216,185,111,.12)}
-.pm-range-note{flex-basis:100%;margin-top:-4px;color:var(--dim);font-size:11px;opacity:.7}
+.pm-range-note{flex-basis:100%;margin-top:-4px;min-height:14px;color:var(--dim);font-size:11px;line-height:14px;opacity:.8}
+.pm-name .pm-cat{margin-left:8px;font-size:.55em}
 #tip.rank .rk span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #tip.rank .rk-blank{visibility:hidden;pointer-events:none}
 #tip.rank .rk-pager{display:grid;grid-template-columns:28px 42px minmax(0,1fr) 48px 28px;gap:6px;align-items:center}
@@ -1134,9 +1135,9 @@ body::before{opacity:.08}
 #tip.rank .rk-heading-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #tip.rank .rk-heading-row>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #tip.rank .rk-modes{display:inline-flex;flex:none;gap:3px}
-#tip.rank .rk-mode{padding:1px 6px;font:inherit;font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--dim);background:transparent;border:1px solid rgba(216,185,111,.2);border-radius:5px;cursor:pointer}
+#tip.rank .rk-mode{padding:0 5px;opacity:.6;font:inherit;font-size:9px;font-weight:700;letter-spacing:.04em;color:var(--dim);background:transparent;border:1px solid rgba(216,185,111,.2);border-radius:5px;cursor:pointer}
 #tip.rank .rk-mode:hover{color:var(--accent-bright)}
-#tip.rank .rk-mode.on{color:var(--accent-bright);background:rgba(216,185,111,.16);border-color:rgba(216,185,111,.4)}
+#tip.rank .rk-mode.on{opacity:.95;color:var(--accent-bright);background:rgba(216,185,111,.16);border-color:rgba(216,185,111,.4)}
 #tip.rank .rk-dist{display:grid;grid-template-columns:70px minmax(0,1fr) 84px;align-items:center;gap:8px;padding:2px 4px;border-radius:3px;font-size:12.5px;font-variant-numeric:tabular-nums;color:rgba(240,240,231,.82)}
 #tip.rank .rk-dist b{font-weight:600;color:#fff5d7}
 #tip.rank .rk-bar{display:block;height:5px;overflow:hidden;border-radius:3px;background:rgba(216,185,111,.1)}
@@ -1151,7 +1152,7 @@ body::before{opacity:.08}
 <header>
   <div class="brand">
     <h1>Full Invasion <span>2</span></h1>
-    <p class="sub">Lifetime stats (starting from 27.10.2026) - Gondolin Osiris servers</p>
+    <p class="sub">Lifetime stats (starting from 01.11.2026) - Gondolin Osiris servers</p>
     <div class="brand-meta"><span class="credit">By Melodia-Patty</span><span id="meta">Last update: -</span></div>
   </div>
   <nav class="links" aria-label="Links">
@@ -1222,7 +1223,7 @@ const TABS = {
     ['chests','Leg Chests','Legendary chests opened'],
     ['silver','Wizard Buffs','Allies you buff while playing as a Necromancer or Silver Wizard'],
     ['crowd','Crowd Kills','Kills made during Events or bigger games (20 or more players)'],
-    ['recruits','Low Tier','Kills made while playing a recruit- or soldier-tier troop, including custom units']
+    ['recruits','Low Tier','Kills made by playing a recruit or soldier tier troop (including custom units)']
   ]},
   weapons:{label:'Weapons',start:'kills',columns:[
     ['kills','Kills','All enemy bots killed, whatever the weapon'],
@@ -1626,10 +1627,10 @@ $('sticky-head').addEventListener('keydown',event => {
     sortBy(header.dataset.key);
   }
 });
-modeSelect.addEventListener('change',() => fadeTo(() => {fillFactions();page=0;render();}));
-factionSelect.addEventListener('change',() => fadeTo(() => {page=0;render();}));
+modeSelect.addEventListener('change',() => fadeTo(() => {playUiSound('table');fillFactions();page=0;render();}));
+factionSelect.addEventListener('change',() => fadeTo(() => {playUiSound('table');page=0;render();}));
 $('search').addEventListener('input',event => {query=event.target.value;page=0;render();});
-$('page-size').addEventListener('change',event => fadeTo(() => {pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();}));
+$('page-size').addEventListener('change',event => fadeTo(() => {playUiSound('table');pageSize=event.target.value === 'all' ? 'all' : Number(event.target.value);page=0;render();}));
 $('prev').addEventListener('click',() => fadeTo(() => {page--;render();}));
 $('next').addEventListener('click',() => fadeTo(() => {page++;render();}));
 window.addEventListener('resize',() => {render();updateTabSelection(tab);syncStickyOverlays();});
@@ -1649,7 +1650,7 @@ document.addEventListener('focusin',event => {
 document.addEventListener('scroll',hideTip,true);
 document.documentElement.addEventListener('mouseleave',hideTip);
 const WEAPON_KEYS = ['w1h','w2h','pole','spear','bow','xbow','throw','firearm','magic','other'];
-const LABELS = {silver:'Wizard buffs',streak:'Max Kill Streak',scorePerKill:'Score per kill'};
+const LABELS = {silver:'Wizard buffs',streak:'Max Kill Streak'};
 Object.values(TABS).forEach(definition => definition.columns.forEach(column => {LABELS[column[0]] = column[1];}));
 const modal = $('player-modal');
 let modalReturnFocus = null;
@@ -1736,15 +1737,10 @@ function favoriteRows(list,emptyText,kind,total,verb,totalLabel,ready){
     const name = String(item.name ?? 'Unknown');
     const count = Number(item.count) || 0;
     const share = shareText(count,total);
-    const note = (kind === 'm' ? 'Played ' : 'Spawned ') + fmt(count) + ' ' + plural(count,'time','times') + (share ? ' - ' + share + ' of ' + totalLabel : '');
+    const note = 'Played ' + fmt(count) + ' ' + plural(count,'time','times') + (share ? ' - ' + share + ' of ' + totalLabel : '');
     const label = ready && item.id != null ? rankTrigger('ent:' + kind + ':' + item.id,name,name + ' ' + verb,note) : esc(name);
     return '<div class="pm-bar"><span>' + label + '</span><div class="pm-track"><i style="width:' + (count / top * 100).toFixed(1) + '%"></i></div>' + compactHtml('b',count) + '</div>';
   }).join('');
-}
-function rankRequirement(key){
-  if(key === 'deaths') return deathGoal;
-  if(key === 'scorePerKill') return MIN_SCORE_KILLS;
-  return 0;
 }
 function rankedPlayersFor(key){
   const panel = buildPanel(panelRange);
@@ -1761,22 +1757,18 @@ function rankedPlayersFor(key){
         if(count > 0) list.push({id:playerId,name:names.get(playerId) || 'Unknown',value:count});
       });
     }
-  }else if(key === 'deaths' || key === 'scorePerKill'){
-    const minimum = rankRequirement(key);
-    list = panel.players.filter(player => (Number(player.kills) || 0) >= minimum).map(player => {
-      const kills = Number(player.kills) || 0;
-      const ratio = key === 'deaths' ? (Number(player.deaths) || 0) / kills * deathGoal : (Number(player.score) || 0) / kills;
-      return {id:player.id,name:player.name,value:ratio,kills,display:ratio.toFixed(key === 'deaths' ? 2 : 1)};
-    });
+  }else if(key === 'deaths'){
+    list = panel.players.map(player => ({id:player.id,name:player.name,value:Number(player['runs' + deathGoal]) || 0})).filter(item => item.value > 0);
+  }else if(key === 'kills' && killsGroup){
+    const groupKeys = killsGroup === 'melee' ? MELEE_KEYS : RANGED_KEYS;
+    list = panel.players.map(player => ({id:player.id,name:player.name,value:groupKeys.reduce((total,weaponKey) => total + (Number(player[weaponKey]) || 0),0)}));
   }else{
     list = panel.players.map(player => ({id:player.id,name:player.name,value:rankValue(player,key)}));
     if(key.includes(':') || COUNT_KEYS.includes(key)) list = list.filter(item => item.value > 0);
   }
   return list.sort((a,b) => {
-    const difference = key === 'deaths' ? a.value - b.value : b.value - a.value;
+    const difference = b.value - a.value;
     if(difference) return difference;
-    const killDifference = (b.kills || 0) - (a.kills || 0);
-    if(killDifference) return killDifference;
     const nameDifference = String(a.name || 'Unknown').localeCompare(String(b.name || 'Unknown'),undefined,{sensitivity:'base'});
     return nameDifference || String(a.id).localeCompare(String(b.id),undefined,{numeric:true});
   });
@@ -1853,9 +1845,8 @@ function renderPlayer(keepFocus){
   const cards = ['score','kills','deaths','points','waves','wins'].map(key =>
     '<div class="pm-card">' + rankTriggerHtml(key,LABELS[key]) + compactHtml('strong',value(key)) + '</div>'
   ).join('');
-  const scorePerKill = value('kills') > 0 ? value('score') / value('kills') : 0;
-  const scorePerKillLine = '<div class="pm-line' + (scorePerKill === 0 ? ' zero' : '') + '">' + rankTriggerHtml('scorePerKill',LABELS.scorePerKill) + '<b>' + scorePerKill.toFixed(1) + '</b></div>';
-  const details = scorePerKillLine + ['bosses','finals','chests','streak','crowd','recruits','silver','headshots','shielding'].map(key => line(key === 'bosses' ? 'Bosses Slain' : LABELS[key],value(key),key)).join('');
+  const scorePerKillNote = 'Score per kill: ' + (value('kills') > 0 ? value('score') / value('kills') : 0).toFixed(1);
+  const details = ['bosses','finals','chests','streak','crowd','recruits','silver','headshots','shielding'].map(key => line(key === 'bosses' ? 'Bosses Slain' : LABELS[key],value(key),key)).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
   const sortedWeapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a));
   const weapons = sortedWeapons.map(key => {
@@ -1864,7 +1855,7 @@ function renderPlayer(keepFocus){
     return '<div class="pm-bar">' + rankTriggerHtml(key,LABELS[key],shareLabel,share.toFixed(1)) + '<div class="pm-track" role="img" aria-label="' + esc(shareLabel) + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + esc(shareLabel) + '">' + fmtCompact(value(key)) + '</b></div>';
   }).join('');
   const topWeapon = sortedWeapons[0];
-  const topWeaponNote = weaponTotal && value(topWeapon) > 0 ? 'Favourite weapon: ' + LABELS[topWeapon] + ' - ' + Math.min(100,value(topWeapon) / weaponTotal * 100).toFixed(1) + "% of player's total kills" : '';
+  const topWeaponNote = weaponTotal && value(topWeapon) > 0 ? 'Favourite: ' + LABELS[topWeapon] + ' - ' + Math.min(100,value(topWeapon) / weaponTotal * 100).toFixed(1) + "% of player's total kills" : '';
   const activityTotal = rankValue(player,'activityTotal');
   const sectionTitle = (title,key,rankLabel,note,amount) => '<h3>' + (amount > 0 ? rankTrigger(key,title,rankLabel,note) : esc(title)) + '</h3>';
   const countLine = (key,label,rankKey=key) => line(label,value(key),rankKey);
@@ -1873,10 +1864,10 @@ function renderPlayer(keepFocus){
   const isMelodiaPatty = String(player.name || '').trim().toLowerCase() === 'melodia-patty';
   const rangeButtons = PANEL_RANGES.map(([key,label]) => '<button type="button" class="pm-range-btn' + (key === panelRange ? ' active' : '') + '" data-range="' + key + '" aria-pressed="' + (key === panelRange) + '">' + label + '</button>').join('');
   const cat = isMelodiaPatty ? '<span class="pm-cat" aria-label="cat">🐈</span>' : '';
-  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta"><span class="pm-range" role="group" aria-label="Stats period">' + rangeButtons + '</span>' + cat + '</span>' + (panel.note ? '<span class="pm-range-note">' + esc(panel.note) + '</span>' : '') + '</div>' +
+  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + cat + '</h2><span class="pm-meta"><span class="pm-range" role="group" aria-label="Stats period">' + rangeButtons + '</span></span><span class="pm-range-note">' + (panel.note ? esc(panel.note) : '&nbsp;') + '</span></div>' +
     '<div class="pm-cards">' + cards + '</div>' +
-    '<div class="pm-grid pm-primary"><section class="pm-section">' + sectionTitle('Overview','score','Score','Main leaderboard ranking',value('score')) + details + '</section><section class="pm-section">' + sectionTitle('Kills by weapon','kills','Total kills',topWeaponNote,value('kills')) + weapons + '</section><section class="pm-section">' + sectionTitle('Activity','activityTotal','Total activity',fmt(activityTotal) + ' actions in total',activityTotal) + activity + '</section></div>' +
-    '<div class="pm-grid pm-fav"><section class="pm-section">' + typesHeading(player,'Favourite heroes','heroTypes','Different heroes played','hero','heroes') + favoriteRows(fav.h,'No spawns recorded yet','h',value('heroSpawns'),'spawns',"player's hero spawns",spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Favourite units','unitTypes','Different units played','unit','units') + favoriteRows(fav.n,'No spawns recorded yet','n',value('unitSpawns'),'spawns',"player's unit spawns",spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Most played maps','mapTypes','Different maps played','map','maps') + favoriteRows(player.maps,'No maps recorded yet','m',value('mapPlays'),'times played',"player's map plays",spawnsReady) + '</section></div>' +
+    '<div class="pm-grid pm-primary"><section class="pm-section">' + sectionTitle('Overview','score','Score',scorePerKillNote,value('score')) + details + '</section><section class="pm-section">' + sectionTitle('Kills by weapon','kills','Total kills',topWeaponNote,value('kills')) + weapons + '</section><section class="pm-section">' + sectionTitle('Activity','activityTotal','Total activity',fmt(activityTotal) + ' actions in total',activityTotal) + activity + '</section></div>' +
+    '<div class="pm-grid pm-fav"><section class="pm-section">' + typesHeading(player,'Favourite heroes','heroTypes','Different heroes played','hero','heroes') + favoriteRows(fav.h,'No spawns recorded yet','h',value('heroSpawns'),'spawns','all heroes played',spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Favourite units','unitTypes','Different units played','unit','units') + favoriteRows(fav.n,'No spawns recorded yet','n',value('unitSpawns'),'spawns','all units played',spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Most played maps','mapTypes','Different maps played','map','maps') + favoriteRows(player.maps,'No maps recorded yet','m',value('mapPlays'),'times played','all maps played',spawnsReady) + '</section></div>' +
     '<div class="pm-grid"><section class="pm-section">' + typesHeading(player,'As defenders','facTypes:as','Different defender factions played','defender faction played','defender factions played') + factionRows(player,'as',DEFENDER_FACTIONS) + '</section><section class="pm-section">' + typesHeading(player,'Against invaders','facTypes:vs','Different invader factions faced','invader faction faced','invader factions faced') + factionRows(player,'vs',INVADER_FACTIONS) + '</section></div>';
   hideTip();
   if(keepFocus){
@@ -1915,9 +1906,11 @@ $('body').addEventListener('click',event => {
 $('pm-close').addEventListener('click',closePlayer);
 modal.addEventListener('click',event => {if(event.target === modal) closePlayer();});
 let rankTipState = null;
-const DEATH_GOALS = [1000,500];
-const MIN_SCORE_KILLS = 100;
-let deathGoal = 1000;
+const DEATH_GOALS = [250,500,1000];
+const MELEE_KEYS = ['w1h','w2h','pole','spear'];
+const RANGED_KEYS = ['throw','bow','xbow','firearm','magic','other'];
+let deathGoal = 250;
+let killsGroup = '';
 function factionSpreadHtml(key){
   const mode = key.split(':')[1];
   const panel = buildPanel(panelRange);
@@ -1930,14 +1923,17 @@ function factionSpreadHtml(key){
     const percentText = (percent >= 0.95 ? Math.round(percent) : percent.toFixed(1)) + '%';
     return '<div class="rk-dist' + (count === own ? ' mine' : '') + '"><b>' + count + ' ' + plural(count,'faction','factions') + '</b><i class="rk-bar"><u style="width:' + Math.max(2,percent).toFixed(1) + '%"></u></i><span class="rk-pct">' + percentText + ' of players</span></div>';
   }).join('');
-  const title = mode === 'as' ? 'Defender factions played' : 'Invader factions faced';
-  const note = 'Share of ' + fmt(counts.length) + ' ' + plural(counts.length,'player','players') + ' by number of different factions';
-  return '<div class="rk-heading">' + title + '</div><div class="rk-note">' + note + '</div>' + (rows || '<div class="rk-empty">No player data available</div>');
+  const title = mode === 'as' ? 'Different defender factions played' : 'Different invader factions faced';
+  return '<div class="rk-heading">' + title + '</div>' + (rows || '<div class="rk-empty">No player data available</div>');
 }
 function rankNote(key){
-  if(key === 'deaths') return 'Deaths per ' + fmt(deathGoal) + ' kills - lower is better. A ' + fmt(deathGoal) + '-0 run means ' + fmt(deathGoal) + ' kills without dying. Needs at least ' + fmt(deathGoal) + ' kills';
-  if(key === 'scorePerKill') return 'Total score divided by total kills (includes quest, boss and win bonuses). Needs at least ' + fmt(MIN_SCORE_KILLS) + ' kills';
+  if(key === 'deaths') return 'No death run challenge - ' + fmt(deathGoal) + ' kills in a row without dying';
   return '';
+}
+function rankModeConfig(key){
+  if(key === 'deaths') return {options:DEATH_GOALS.map(goal => [goal,String(goal)]),active:deathGoal};
+  if(key === 'kills') return {options:[['melee','Melee'],['ranged','Ranged']],active:killsGroup};
+  return null;
 }
 function rankTipHtml(state){
   const key = state.key;
@@ -1950,19 +1946,21 @@ function rankTipHtml(state){
   state.page = Math.min(Math.max(0,state.page),pageCount - 1);
   const start = state.page * PANEL_PAGE;
   const end = Math.min(start + PANEL_PAGE,totalPlayers);
-  const category = state.label || (WEAPON_KEYS.includes(key) ? (LABELS[key] || key) + ' kills' : (LABELS[key] || key));
+  let category = state.label || (WEAPON_KEYS.includes(key) ? (LABELS[key] || key) + ' kills' : (LABELS[key] || key));
+  if(key === 'kills' && killsGroup) category = killsGroup === 'melee' ? 'Melee kills' : 'Ranged kills';
+  if(key === 'deaths') category = 'Deaths';
   const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '" data-player-id="' + esc(item.id) + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + (item.display ?? fmt(item.value)) + '</b></div>';
   const blankRow = '<div class="rk rk-blank"><i>&nbsp;</i><span>&nbsp;</span><b>&nbsp;</b></div>';
-  const required = rankRequirement(key);
-  const unavailable = required ? 'Needs ' + fmt(required) + ' kills' : 'Unavailable';
+  const unavailable = key === 'deaths' ? 'No runs yet' : 'Unavailable';
   const positionMarkup = position
     ? '<div class="rk-position"><span class="rk-position-label">Position</span><strong class="rk-position-number">#' + fmt(position) + '</strong><span class="rk-position-total">of ' + fmt(totalPlayers) + ' ' + plural(totalPlayers,'player','players') + '</span></div>'
     : '<div class="rk-position"><span class="rk-position-label">Position</span><strong class="rk-position-number">—</strong><span class="rk-position-total">' + unavailable + '</span></div>';
   const shareValue = Number(state.share);
-  const noteText = rankNote(key) || state.note;
+  const noteText = rankNote(key) || (key === 'kills' && killsGroup ? '' : state.note);
   const shareNote = noteText ? '<div class="rk-note">' + esc(noteText) + '</div>' : WEAPON_KEYS.includes(key) && state.share !== undefined && Number.isFinite(shareValue) ? '<div class="rk-note">' + shareValue.toFixed(1) + "% of player's total kills</div>" : '';
   const subtitle = (state.page === 0 ? 'TOP ' + PANEL_PAGE + ' PLAYERS' : 'PLAYERS ' + (start + 1) + '–' + end) + ' - ' + category;
-  const modeButtons = key === 'deaths' ? '<span class="rk-modes">' + DEATH_GOALS.map(goal => '<button type="button" class="rk-mode' + (goal === deathGoal ? ' on' : '') + '" data-goal="' + goal + '" aria-pressed="' + (goal === deathGoal) + '">' + goal + '-0</button>').join('') + '</span>' : '';
+  const modeConfig = rankModeConfig(key);
+  const modeButtons = modeConfig ? '<span class="rk-modes">' + modeConfig.options.map(([value,label]) => '<button type="button" class="rk-mode' + (value === modeConfig.active ? ' on' : '') + '" data-mode="' + value + '" aria-pressed="' + (value === modeConfig.active) + '">' + label + '</button>').join('') + '</span>' : '';
   const heading = '<div class="rk-heading rk-heading-row"><span>' + esc(subtitle) + '</span>' + modeButtons + '</div>';
   const visibleRows = ranked.slice(start,end).map((item,offset) => row(item,start + offset));
   while(pageCount > 1 && visibleRows.length < PANEL_PAGE) visibleRows.push(blankRow);
@@ -2003,6 +2001,7 @@ function applyRankTipWidth(){
   tip.style.maxWidth = width + 'px';
 }
 function showRankTip(trigger){
+  if(trigger.dataset.rank === 'kills') killsGroup = '';
   rankTipState = {key:trigger.dataset.rank,share:trigger.dataset.share,label:trigger.dataset.rankLabel,note:trigger.dataset.note,trigger,page:0};
   if(!rankTipState.key.startsWith('facTypes')) rankTipState.page = rankMyPage(rankTipState.key);
   tip.innerHTML = rankTipHtml(rankTipState);
@@ -2052,7 +2051,8 @@ tip.addEventListener('click',event => {
   }
   const modeButton = event.target.closest('.rk-mode');
   if(modeButton && rankTipState && tip.classList.contains('rank')){
-    deathGoal = Number(modeButton.dataset.goal) || 1000;
+    if(rankTipState.key === 'deaths') deathGoal = Number(modeButton.dataset.mode) || 250;
+    else if(rankTipState.key === 'kills') killsGroup = killsGroup === modeButton.dataset.mode ? '' : modeButton.dataset.mode;
     rankTipState.page = rankMyPage(rankTipState.key);
     tip.innerHTML = rankTipHtml(rankTipState);
     applyRankTipWidth();
@@ -2109,7 +2109,7 @@ function diffNumbers(now,before){
   }
   return result;
 }
-const PANEL_KEYS = [...new Set([...ALL_KEYS,'streak','joined','commands','anvils','refills','wardrobes','boxes','slain','animations'])];
+const PANEL_KEYS = [...new Set([...ALL_KEYS,'runs250','runs500','runs1000','streak','joined','commands','anvils','refills','wardrobes','boxes','slain','animations'])];
 function diffPlayer(player,before){
   const row = {id:player.id,name:player.name,fac:{as:{},vs:{}}};
   PANEL_KEYS.forEach(key => {
@@ -2207,7 +2207,7 @@ function applyRange(){
   data = {players:result.players};
   $('range-note').textContent = result.note;
 }
-rangeSelect.addEventListener('change',() => fadeTo(() => {range = rangeSelect.value;applyRange();page=0;render();}));
+rangeSelect.addEventListener('change',() => fadeTo(() => {playUiSound('table');range = rangeSelect.value;applyRange();page=0;render();}));
 const loadBaseline = name => fetch(name + '.json?' + Date.now(),{cache:'no-store'}).then(response => response.ok ? response.json() : null).catch(() => null);
 fillFactions();
 renderTabs();
