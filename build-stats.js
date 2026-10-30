@@ -1,6 +1,6 @@
 const SftpClient = require('ssh2-sftp-client');
 const fs = require('fs');
-const NAMES = {'1354331': 'Melodia-Patty', '2829101': 'Maykelus'};
+const NAMES = {'1354331': 'Melodia-Patty', '2829101': 'Maykelus', '2863951': 'Aboba', '5357808': 'saycre'};
 const NAME_FIELDS = [5003];
 const WEAPON_KILLS_BASE = 7000;
 const FIELD_OFFSET = 5000;
