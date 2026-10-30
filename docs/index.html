@@ -1126,6 +1126,25 @@ body::before{opacity:.08}
 .pm-range-btn:hover,.pm-range-btn:focus-visible{opacity:1;color:var(--accent-bright)}
 .pm-range-btn.active{opacity:1;color:var(--accent-bright);background:rgba(216,185,111,.12)}
 .pm-range-note{flex-basis:100%;margin-top:-4px;color:var(--dim);font-size:11px;opacity:.7}
+#tip.rank .rk span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tip.rank .rk-blank{visibility:hidden;pointer-events:none}
+#tip.rank .rk-pager{display:grid;grid-template-columns:28px 42px minmax(0,1fr) 48px 28px;gap:6px;align-items:center}
+#tip.rank .rk-jump{padding:0 4px;font-size:10px;font-weight:700;letter-spacing:.04em}
+#tip.rank .rk-jump.away{visibility:hidden}
+#tip.rank .rk-heading-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#tip.rank .rk-heading-row>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tip.rank .rk-modes{display:inline-flex;flex:none;gap:3px}
+#tip.rank .rk-mode{padding:1px 6px;font:inherit;font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--dim);background:transparent;border:1px solid rgba(216,185,111,.2);border-radius:5px;cursor:pointer}
+#tip.rank .rk-mode:hover{color:var(--accent-bright)}
+#tip.rank .rk-mode.on{color:var(--accent-bright);background:rgba(216,185,111,.16);border-color:rgba(216,185,111,.4)}
+#tip.rank .rk-dist{display:grid;grid-template-columns:70px minmax(0,1fr) 84px;align-items:center;gap:8px;padding:2px 4px;border-radius:3px;font-size:12.5px;font-variant-numeric:tabular-nums;color:rgba(240,240,231,.82)}
+#tip.rank .rk-dist b{font-weight:600;color:#fff5d7}
+#tip.rank .rk-bar{display:block;height:5px;overflow:hidden;border-radius:3px;background:rgba(216,185,111,.1)}
+#tip.rank .rk-bar u{display:block;height:100%;border-radius:3px;background:rgba(216,185,111,.5);text-decoration:none}
+#tip.rank .rk-pct{text-align:right;white-space:nowrap}
+#tip.rank .rk-dist.mine{color:#fff0b8;background:linear-gradient(90deg,rgba(216,185,111,.17),rgba(216,185,111,.055))}
+#tip.rank .rk-dist.mine .rk-bar u{background:#d8b96f}
+#tip.rank .rk-dist.mine .rk-pct{text-decoration:none}
 </style>
 </head>
 <body>
@@ -1522,6 +1541,9 @@ function hideTip(playCloseSound=true){
   if(rankWasVisible && playCloseSound) playUiSound('rankClose');
   tip.style.opacity='0';
   tip.classList.remove('rank');
+  tip.style.width='';
+  tip.style.minWidth='';
+  tip.style.maxWidth='';
   tip.style.zIndex='';
   delete tip.dataset.rankKey;
 }
@@ -1627,7 +1649,7 @@ document.addEventListener('focusin',event => {
 document.addEventListener('scroll',hideTip,true);
 document.documentElement.addEventListener('mouseleave',hideTip);
 const WEAPON_KEYS = ['w1h','w2h','pole','spear','bow','xbow','throw','firearm','magic','other'];
-const LABELS = {silver:'Wizard buffs',streak:'Max Kill Streak'};
+const LABELS = {silver:'Wizard buffs',streak:'Max Kill Streak',scorePerKill:'Score per kill'};
 Object.values(TABS).forEach(definition => definition.columns.forEach(column => {LABELS[column[0]] = column[1];}));
 const modal = $('player-modal');
 let modalReturnFocus = null;
@@ -1659,7 +1681,7 @@ function playUiSound(kind){
 const numberTitle = number => Math.abs(number) >= 1000 ? ' title="' + esc(fmt(number)) + '"' : '';
 const compactHtml = (tag,number) => '<' + tag + numberTitle(number) + '>' + fmtCompact(number) + '</' + tag + '>';
 const COUNT_KEYS = ['heroTypes','unitTypes','mapTypes'];
-const FACTION_STAT_WORDS = {score:'score',kills:'kills',deaths:'deaths',waves:'waves cleared',wins:'wins'};
+const FACTION_STAT_WORDS = {score:'score earned',kills:'kills',deaths:'deaths',waves:'waves cleared',wins:'wins'};
 function rankTrigger(key,label,rankLabel,note){
   return '<span class="pm-rank-trigger" role="button" tabindex="0" data-rank="' + esc(key) + '" data-rank-label="' + esc(rankLabel) + '" data-note="' + esc(note || '') + '" aria-label="' + esc('Open top 10 players for ' + rankLabel) + '">' + esc(label) + '</span>';
 }
@@ -1694,14 +1716,14 @@ function factionRows(player,mode,names){
   const nameCell = ({id,name,fullName,stat}) => {
     const value = Number(stat.score) || 0;
     const share = shareText(value,Number(player.score) || 0);
-    const note = share ? share + ' of all score earned ' + relation + ' ' + fullName : '';
+    const note = share ? share + " of player's total score earned " + relation + ' ' + fullName : '';
     return value > 0 ? rankTrigger('fac:' + mode + ':' + id + ':score',name,'Score ' + relation + ' ' + fullName,note) : esc(name);
   };
   const valueCell = (item,key) => {
     const value = Number(item.stat[key]) || 0;
     if(value <= 0) return compactHtml('span',value);
     const share = shareText(value,Number(player[key]) || 0);
-    const note = share ? share + ' of all ' + FACTION_STAT_WORDS[key] + ' ' + relation + ' ' + item.fullName : '';
+    const note = share ? share + " of player's total " + FACTION_STAT_WORDS[key] + ' ' + relation + ' ' + item.fullName : '';
     return '<span' + numberTitle(value) + '>' + rankTrigger('fac:' + mode + ':' + item.id + ':' + key,fmtCompact(value),LABELS[key] + ' ' + relation + ' ' + item.fullName,note) + '</span>';
   };
   return '<div class="pm-faction-table"><div class="pm-frow pm-fhead"><span>Faction</span><span>Score</span><span>Kills</span><span>Deaths</span><span>Waves</span><span>Wins</span></div>' +
@@ -1714,10 +1736,15 @@ function favoriteRows(list,emptyText,kind,total,verb,totalLabel,ready){
     const name = String(item.name ?? 'Unknown');
     const count = Number(item.count) || 0;
     const share = shareText(count,total);
-    const note = (kind === 'm' ? 'Played ' : 'Spawned ') + fmt(count) + ' ' + plural(count,'time','times') + (share ? ' · ' + share + ' of ' + totalLabel : '');
+    const note = (kind === 'm' ? 'Played ' : 'Spawned ') + fmt(count) + ' ' + plural(count,'time','times') + (share ? ' - ' + share + ' of ' + totalLabel : '');
     const label = ready && item.id != null ? rankTrigger('ent:' + kind + ':' + item.id,name,name + ' ' + verb,note) : esc(name);
     return '<div class="pm-bar"><span>' + label + '</span><div class="pm-track"><i style="width:' + (count / top * 100).toFixed(1) + '%"></i></div>' + compactHtml('b',count) + '</div>';
   }).join('');
+}
+function rankRequirement(key){
+  if(key === 'deaths') return deathGoal;
+  if(key === 'scorePerKill') return MIN_SCORE_KILLS;
+  return 0;
 }
 function rankedPlayersFor(key){
   const panel = buildPanel(panelRange);
@@ -1734,6 +1761,13 @@ function rankedPlayersFor(key){
         if(count > 0) list.push({id:playerId,name:names.get(playerId) || 'Unknown',value:count});
       });
     }
+  }else if(key === 'deaths' || key === 'scorePerKill'){
+    const minimum = rankRequirement(key);
+    list = panel.players.filter(player => (Number(player.kills) || 0) >= minimum).map(player => {
+      const kills = Number(player.kills) || 0;
+      const ratio = key === 'deaths' ? (Number(player.deaths) || 0) / kills * deathGoal : (Number(player.score) || 0) / kills;
+      return {id:player.id,name:player.name,value:ratio,kills,display:ratio.toFixed(key === 'deaths' ? 2 : 1)};
+    });
   }else{
     list = panel.players.map(player => ({id:player.id,name:player.name,value:rankValue(player,key)}));
     if(key.includes(':') || COUNT_KEYS.includes(key)) list = list.filter(item => item.value > 0);
@@ -1741,6 +1775,8 @@ function rankedPlayersFor(key){
   return list.sort((a,b) => {
     const difference = key === 'deaths' ? a.value - b.value : b.value - a.value;
     if(difference) return difference;
+    const killDifference = (b.kills || 0) - (a.kills || 0);
+    if(killDifference) return killDifference;
     const nameDifference = String(a.name || 'Unknown').localeCompare(String(b.name || 'Unknown'),undefined,{sensitivity:'base'});
     return nameDifference || String(a.id).localeCompare(String(b.id),undefined,{numeric:true});
   });
@@ -1817,16 +1853,18 @@ function renderPlayer(keepFocus){
   const cards = ['score','kills','deaths','points','waves','wins'].map(key =>
     '<div class="pm-card">' + rankTriggerHtml(key,LABELS[key]) + compactHtml('strong',value(key)) + '</div>'
   ).join('');
-  const details = line(LABELS.streak,value('streak'),'streak') + ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(key === 'bosses' ? 'Bosses Slain' : LABELS[key],value(key),key)).join('');
+  const scorePerKill = value('kills') > 0 ? value('score') / value('kills') : 0;
+  const scorePerKillLine = '<div class="pm-line' + (scorePerKill === 0 ? ' zero' : '') + '">' + rankTriggerHtml('scorePerKill',LABELS.scorePerKill) + '<b>' + scorePerKill.toFixed(1) + '</b></div>';
+  const details = scorePerKillLine + ['bosses','finals','chests','streak','crowd','recruits','silver','headshots','shielding'].map(key => line(key === 'bosses' ? 'Bosses Slain' : LABELS[key],value(key),key)).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
   const sortedWeapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a));
   const weapons = sortedWeapons.map(key => {
     const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
-    const shareLabel = share.toFixed(1) + "% of player's kills" + (value(key) >= 1000 ? ' (' + fmt(value(key)) + ')' : '');
+    const shareLabel = share.toFixed(1) + "% of player's total kills" + (value(key) >= 1000 ? ' (' + fmt(value(key)) + ')' : '');
     return '<div class="pm-bar">' + rankTriggerHtml(key,LABELS[key],shareLabel,share.toFixed(1)) + '<div class="pm-track" role="img" aria-label="' + esc(shareLabel) + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + esc(shareLabel) + '">' + fmtCompact(value(key)) + '</b></div>';
   }).join('');
   const topWeapon = sortedWeapons[0];
-  const topWeaponNote = weaponTotal && value(topWeapon) > 0 ? 'Favourite weapon: ' + LABELS[topWeapon] + ' · ' + Math.min(100,value(topWeapon) / weaponTotal * 100).toFixed(1) + "% of player's kills" : '';
+  const topWeaponNote = weaponTotal && value(topWeapon) > 0 ? 'Favourite weapon: ' + LABELS[topWeapon] + ' - ' + Math.min(100,value(topWeapon) / weaponTotal * 100).toFixed(1) + "% of player's total kills" : '';
   const activityTotal = rankValue(player,'activityTotal');
   const sectionTitle = (title,key,rankLabel,note,amount) => '<h3>' + (amount > 0 ? rankTrigger(key,title,rankLabel,note) : esc(title)) + '</h3>';
   const countLine = (key,label,rankKey=key) => line(label,value(key),rankKey);
@@ -1838,7 +1876,7 @@ function renderPlayer(keepFocus){
   $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta"><span class="pm-range" role="group" aria-label="Stats period">' + rangeButtons + '</span>' + cat + '</span>' + (panel.note ? '<span class="pm-range-note">' + esc(panel.note) + '</span>' : '') + '</div>' +
     '<div class="pm-cards">' + cards + '</div>' +
     '<div class="pm-grid pm-primary"><section class="pm-section">' + sectionTitle('Overview','score','Score','Main leaderboard ranking',value('score')) + details + '</section><section class="pm-section">' + sectionTitle('Kills by weapon','kills','Total kills',topWeaponNote,value('kills')) + weapons + '</section><section class="pm-section">' + sectionTitle('Activity','activityTotal','Total activity',fmt(activityTotal) + ' actions in total',activityTotal) + activity + '</section></div>' +
-    '<div class="pm-grid pm-fav"><section class="pm-section">' + typesHeading(player,'Favourite heroes','heroTypes','Different heroes played','hero','heroes') + favoriteRows(fav.h,'No spawns recorded yet','h',value('heroSpawns'),'spawns','all hero spawns',spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Favourite units','unitTypes','Different units played','unit','units') + favoriteRows(fav.n,'No spawns recorded yet','n',value('unitSpawns'),'spawns','all unit spawns',spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Most played maps','mapTypes','Different maps played','map','maps') + favoriteRows(player.maps,'No maps recorded yet','m',value('mapPlays'),'times played','all maps played',spawnsReady) + '</section></div>' +
+    '<div class="pm-grid pm-fav"><section class="pm-section">' + typesHeading(player,'Favourite heroes','heroTypes','Different heroes played','hero','heroes') + favoriteRows(fav.h,'No spawns recorded yet','h',value('heroSpawns'),'spawns',"player's hero spawns",spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Favourite units','unitTypes','Different units played','unit','units') + favoriteRows(fav.n,'No spawns recorded yet','n',value('unitSpawns'),'spawns',"player's unit spawns",spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Most played maps','mapTypes','Different maps played','map','maps') + favoriteRows(player.maps,'No maps recorded yet','m',value('mapPlays'),'times played',"player's map plays",spawnsReady) + '</section></div>' +
     '<div class="pm-grid"><section class="pm-section">' + typesHeading(player,'As defenders','facTypes:as','Different defender factions played','defender faction played','defender factions played') + factionRows(player,'as',DEFENDER_FACTIONS) + '</section><section class="pm-section">' + typesHeading(player,'Against invaders','facTypes:vs','Different invader factions faced','invader faction faced','invader factions faced') + factionRows(player,'vs',INVADER_FACTIONS) + '</section></div>';
   hideTip();
   if(keepFocus){
@@ -1877,6 +1915,9 @@ $('body').addEventListener('click',event => {
 $('pm-close').addEventListener('click',closePlayer);
 modal.addEventListener('click',event => {if(event.target === modal) closePlayer();});
 let rankTipState = null;
+const DEATH_GOALS = [1000,500];
+const MIN_SCORE_KILLS = 100;
+let deathGoal = 1000;
 function factionSpreadHtml(key){
   const mode = key.split(':')[1];
   const panel = buildPanel(panelRange);
@@ -1887,10 +1928,16 @@ function factionSpreadHtml(key){
   const rows = [...groups.entries()].sort((a,b) => b[0] - a[0]).map(([count,players]) => {
     const percent = players / counts.length * 100;
     const percentText = (percent >= 0.95 ? Math.round(percent) : percent.toFixed(1)) + '%';
-    return '<div class="rk-dist"><span class="rk-pct' + (count === own ? ' mine' : '') + '">' + percentText + '</span> - <b>' + count + '</b></div>';
+    return '<div class="rk-dist' + (count === own ? ' mine' : '') + '"><b>' + count + ' ' + plural(count,'faction','factions') + '</b><i class="rk-bar"><u style="width:' + Math.max(2,percent).toFixed(1) + '%"></u></i><span class="rk-pct">' + percentText + ' of players</span></div>';
   }).join('');
-  const title = mode === 'as' ? 'Different Defenders Played' : 'Different Invaders Faced';
-  return '<div class="rk-heading">' + title + '</div>' + (rows || '<div class="rk-empty">No player data available</div>');
+  const title = mode === 'as' ? 'Defender factions played' : 'Invader factions faced';
+  const note = 'Share of ' + fmt(counts.length) + ' ' + plural(counts.length,'player','players') + ' by number of different factions';
+  return '<div class="rk-heading">' + title + '</div><div class="rk-note">' + note + '</div>' + (rows || '<div class="rk-empty">No player data available</div>');
+}
+function rankNote(key){
+  if(key === 'deaths') return 'Deaths per ' + fmt(deathGoal) + ' kills - lower is better. A ' + fmt(deathGoal) + '-0 run means ' + fmt(deathGoal) + ' kills without dying. Needs at least ' + fmt(deathGoal) + ' kills';
+  if(key === 'scorePerKill') return 'Total score divided by total kills (includes quest, boss and win bonuses). Needs at least ' + fmt(MIN_SCORE_KILLS) + ' kills';
+  return '';
 }
 function rankTipHtml(state){
   const key = state.key;
@@ -1904,25 +1951,29 @@ function rankTipHtml(state){
   const start = state.page * PANEL_PAGE;
   const end = Math.min(start + PANEL_PAGE,totalPlayers);
   const category = state.label || (WEAPON_KEYS.includes(key) ? (LABELS[key] || key) + ' kills' : (LABELS[key] || key));
-  const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '" data-player-id="' + esc(item.id) + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + fmt(item.value) + '</b></div>';
+  const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '" data-player-id="' + esc(item.id) + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + (item.display ?? fmt(item.value)) + '</b></div>';
+  const blankRow = '<div class="rk rk-blank"><i>&nbsp;</i><span>&nbsp;</span><b>&nbsp;</b></div>';
+  const required = rankRequirement(key);
+  const unavailable = required ? 'Needs ' + fmt(required) + ' kills' : 'Unavailable';
   const positionMarkup = position
     ? '<div class="rk-position"><span class="rk-position-label">Position</span><strong class="rk-position-number">#' + fmt(position) + '</strong><span class="rk-position-total">of ' + fmt(totalPlayers) + ' ' + plural(totalPlayers,'player','players') + '</span></div>'
-    : '<div class="rk-position"><span class="rk-position-label">Position</span><strong class="rk-position-number">—</strong><span class="rk-position-total">Unavailable</span></div>';
+    : '<div class="rk-position"><span class="rk-position-label">Position</span><strong class="rk-position-number">—</strong><span class="rk-position-total">' + unavailable + '</span></div>';
   const shareValue = Number(state.share);
-  const shareNote = state.note ? '<div class="rk-note">' + esc(state.note) + '</div>' : WEAPON_KEYS.includes(key) && state.share !== undefined && Number.isFinite(shareValue) ? '<div class="rk-note">' + "Share of player's total kills: " + shareValue.toFixed(1) + '%</div>' : '';
-  const subtitle = (state.page === 0 ? 'TOP ' + PANEL_PAGE + ' PLAYERS' : 'PLAYERS ' + (start + 1) + '–' + end) + ' · ' + category;
-  const pageRows = ranked.slice(start,end).map((item,offset) => row(item,start + offset)).join('');
-  let extraRows = '';
-  if(state.page === 0 && position > PANEL_PAGE){
-    const firstExtraIndex = Math.max(positionIndex - 1,PANEL_PAGE);
-    const gapMarkup = firstExtraIndex > PANEL_PAGE ? '<div class="rk-gap">…</div>' : '';
-    extraRows = gapMarkup + ranked.slice(firstExtraIndex,positionIndex + 1).map((item,offset) => row(item,firstExtraIndex + offset)).join('');
-  }
+  const noteText = rankNote(key) || state.note;
+  const shareNote = noteText ? '<div class="rk-note">' + esc(noteText) + '</div>' : WEAPON_KEYS.includes(key) && state.share !== undefined && Number.isFinite(shareValue) ? '<div class="rk-note">' + shareValue.toFixed(1) + "% of player's total kills</div>" : '';
+  const subtitle = (state.page === 0 ? 'TOP ' + PANEL_PAGE + ' PLAYERS' : 'PLAYERS ' + (start + 1) + '–' + end) + ' - ' + category;
+  const modeButtons = key === 'deaths' ? '<span class="rk-modes">' + DEATH_GOALS.map(goal => '<button type="button" class="rk-mode' + (goal === deathGoal ? ' on' : '') + '" data-goal="' + goal + '" aria-pressed="' + (goal === deathGoal) + '">' + goal + '-0</button>').join('') + '</span>' : '';
+  const heading = '<div class="rk-heading rk-heading-row"><span>' + esc(subtitle) + '</span>' + modeButtons + '</div>';
+  const visibleRows = ranked.slice(start,end).map((item,offset) => row(item,start + offset));
+  while(pageCount > 1 && visibleRows.length < PANEL_PAGE) visibleRows.push(blankRow);
+  const pageRows = visibleRows.join('');
   const myPage = positionIndex < 0 ? -1 : Math.floor(positionIndex / PANEL_PAGE);
+  const topAway = state.page === 0;
+  const meAway = myPage < 0 || myPage === state.page;
   const pager = pageCount > 1
-    ? '<div class="rk-pager"><button type="button" class="rk-pg" data-dir="-1" aria-label="Previous page"' + (state.page === 0 ? ' disabled' : '') + '>‹</button><span>' + (start + 1) + '–' + end + ' of ' + fmt(totalPlayers) + '</span>' + (myPage >= 0 && myPage !== state.page ? '<button type="button" class="rk-pg rk-me" data-dir="me" aria-label="Go to my position">Me</button>' : '') + '<button type="button" class="rk-pg" data-dir="1" aria-label="Next page"' + (state.page >= pageCount - 1 ? ' disabled' : '') + '>›</button></div>'
+    ? '<div class="rk-pager"><button type="button" class="rk-pg" data-dir="-1" aria-label="Previous page"' + (state.page === 0 ? ' disabled' : '') + '>‹</button><button type="button" class="rk-pg rk-jump' + (topAway ? ' away' : '') + '" data-dir="top" aria-label="Go to top 10" title="Go to top 10"' + (topAway ? ' disabled tabindex="-1"' : '') + '>Top</button><span>' + (start + 1) + '–' + end + ' of ' + fmt(totalPlayers) + '</span><button type="button" class="rk-pg rk-jump' + (meAway ? ' away' : '') + '" data-dir="me" aria-label="Go to my position" title="Go to this player\'s position"' + (meAway ? ' disabled tabindex="-1"' : '') + '>#' + fmt(position) + '</button><button type="button" class="rk-pg" data-dir="1" aria-label="Next page"' + (state.page >= pageCount - 1 ? ' disabled' : '') + '>›</button></div>'
     : '';
-  return '<div class="rk-top">' + positionMarkup + shareNote + '</div><div class="rk-heading">' + esc(subtitle) + '</div>' + (pageRows || '<div class="rk-empty">No player data available</div>') + extraRows + pager;
+  return '<div class="rk-top">' + positionMarkup + shareNote + '</div>' + heading + (pageRows || '<div class="rk-empty">No player data available</div>') + pager;
 }
 function placeRankTip(){
   const box = rankTipState.trigger.getBoundingClientRect();
@@ -1931,14 +1982,46 @@ function placeRankTip(){
   tip.style.left = left + 'px';
   tip.style.top = (below + tip.offsetHeight > innerHeight - 8 ? Math.max(8,box.top - tip.offsetHeight - 8) : below) + 'px';
 }
+function rankMyPage(key){
+  const index = rankedPlayersFor(key).findIndex(item => String(item.id) === String(openedPlayerId));
+  return index < 0 ? 0 : Math.floor(index / PANEL_PAGE);
+}
+function applyRankTipWidth(){
+  ['width','minWidth','maxWidth'].forEach(property => {tip.style[property] = '';});
+  if(rankTipState.key.startsWith('facTypes')) return;
+  const ranked = rankedPlayersFor(rankTipState.key);
+  let nameWidth = 0;
+  let valueWidth = 0;
+  for(const item of ranked){
+    nameWidth = Math.max(nameWidth,textWidth(String(item.name || 'Unknown'),'12.5px ' + FONT_FAMILY,0));
+    valueWidth = Math.max(valueWidth,textWidth(String(item.display ?? fmt(item.value)),'600 12.5px ' + FONT_FAMILY,0));
+  }
+  const wanted = Math.ceil(24 + 34 + 16 + nameWidth + valueWidth + 6);
+  const width = Math.min(Math.min(innerWidth - 16,480),Math.max(290,wanted));
+  tip.style.width = width + 'px';
+  tip.style.minWidth = width + 'px';
+  tip.style.maxWidth = width + 'px';
+}
 function showRankTip(trigger){
   rankTipState = {key:trigger.dataset.rank,share:trigger.dataset.share,label:trigger.dataset.rankLabel,note:trigger.dataset.note,trigger,page:0};
+  if(!rankTipState.key.startsWith('facTypes')) rankTipState.page = rankMyPage(rankTipState.key);
   tip.innerHTML = rankTipHtml(rankTipState);
   tip.classList.add('rank');
   tip.dataset.rankKey = trigger.dataset.rank;
   tip.style.zIndex = '100';
+  applyRankTipWidth();
   placeRankTip();
   tip.style.opacity = '1';
+}
+function setRankPage(page){
+  if(!rankTipState || !tip.classList.contains('rank') || rankTipState.key.startsWith('facTypes')) return;
+  const pageCount = Math.max(1,Math.ceil(rankedPlayersFor(rankTipState.key).length / PANEL_PAGE));
+  const target = Math.min(Math.max(0,page),pageCount - 1);
+  if(target === rankTipState.page) return;
+  rankTipState.page = target;
+  tip.innerHTML = rankTipHtml(rankTipState);
+  placeRankTip();
+  playUiSound('rank');
 }
 function activateRankTrigger(trigger){
   const rankIsVisible = tip.classList.contains('rank') && tip.style.opacity === '1';
@@ -1967,17 +2050,22 @@ tip.addEventListener('click',event => {
     switchPlayer(playerRow.dataset.playerId);
     return;
   }
+  const modeButton = event.target.closest('.rk-mode');
+  if(modeButton && rankTipState && tip.classList.contains('rank')){
+    deathGoal = Number(modeButton.dataset.goal) || 1000;
+    rankTipState.page = rankMyPage(rankTipState.key);
+    tip.innerHTML = rankTipHtml(rankTipState);
+    applyRankTipWidth();
+    placeRankTip();
+    playUiSound('rank');
+    return;
+  }
   const button = event.target.closest('.rk-pg');
   if(!button || button.disabled || !rankTipState || !tip.classList.contains('rank')) return;
-  if(button.dataset.dir === 'me'){
-    const index = rankedPlayersFor(rankTipState.key).findIndex(item => String(item.id) === String(openedPlayerId));
-    if(index >= 0) rankTipState.page = Math.floor(index / PANEL_PAGE);
-  }else{
-    rankTipState.page += Number(button.dataset.dir);
-  }
-  tip.innerHTML = rankTipHtml(rankTipState);
-  placeRankTip();
-  playUiSound('rank');
+  const direction = button.dataset.dir;
+  if(direction === 'me') setRankPage(rankMyPage(rankTipState.key));
+  else if(direction === 'top') setRankPage(0);
+  else setRankPage(rankTipState.page + Number(direction));
 });
 modal.addEventListener('click',event => {
   const button = event.target.closest('.pm-range-btn[data-range]');
@@ -2004,6 +2092,12 @@ modal.addEventListener('keydown',event => {
   activateRankTrigger(trigger);
 });
 document.addEventListener('keydown',event => {if(event.key === 'Escape') closePlayer();});
+document.addEventListener('keydown',event => {
+  if(event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+  if(!rankTipState || !tip.classList.contains('rank') || tip.style.opacity !== '1' || !modal.classList.contains('open')) return;
+  event.preventDefault();
+  setRankPage(rankTipState.page + (event.key === 'ArrowRight' ? 1 : -1));
+});
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => render());
 const stamp = milliseconds => new Date(milliseconds).toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
 const dayStamp = milliseconds => new Date(milliseconds).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
