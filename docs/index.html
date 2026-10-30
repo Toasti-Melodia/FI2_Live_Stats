@@ -1104,6 +1104,28 @@ body::before{opacity:.08}
 #tip.rank .rk-gap{padding:1px 0 1px 42px;color:#9aa08c}
 #tip.rank .rk-empty{color:var(--dim);font-size:12px}
 
+#tip.rank{pointer-events:auto}
+#tip.rank .rk-top{margin:0 0 8px;padding:0 0 8px;border-bottom:1px solid rgba(216,185,111,.2)}
+#tip.rank .rk-top .rk-position{margin:0;padding:0;border-bottom:0}
+#tip.rank .rk-top .rk-note{margin:6px 0 0}
+#tip.rank .rk-heading{font-size:9px}
+#tip.rank .rk[data-player-id]{cursor:pointer}
+#tip.rank .rk[data-player-id]:hover span{color:#fff5d7;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+#tip.rank .rk-dist{padding:1px 0;font-variant-numeric:tabular-nums}
+#tip.rank .rk-dist b{font-weight:700}
+#tip.rank .rk-pct.mine{color:var(--accent-bright);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+#tip.rank .rk-pager{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:7px;border-top:1px solid rgba(216,185,111,.14);color:var(--dim);font-size:11px;font-variant-numeric:tabular-nums}
+#tip.rank .rk-pager span{flex:1;text-align:center}
+#tip.rank .rk-pg{min-width:26px;height:22px;padding:0 7px;font:inherit;font-size:13px;line-height:1;color:var(--accent-bright);background:rgba(216,185,111,.08);border:1px solid rgba(216,185,111,.2);border-radius:5px;cursor:pointer}
+#tip.rank .rk-pg:hover:not(:disabled){background:rgba(216,185,111,.18)}
+#tip.rank .rk-pg:disabled{opacity:.3;cursor:default}
+#tip.rank .rk-pg.rk-me{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.pm-meta{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px 8px}
+.pm-range{display:inline-flex;flex-wrap:wrap;gap:1px}
+.pm-range-btn{padding:2px 7px;font:inherit;font-size:11px;letter-spacing:.02em;color:var(--dim);background:transparent;border:0;border-radius:5px;cursor:pointer;opacity:.7;transition:color .15s,background .15s,opacity .15s}
+.pm-range-btn:hover,.pm-range-btn:focus-visible{opacity:1;color:var(--accent-bright)}
+.pm-range-btn.active{opacity:1;color:var(--accent-bright);background:rgba(216,185,111,.12)}
+.pm-range-note{flex-basis:100%;margin-top:-4px;color:var(--dim);font-size:11px;opacity:.7}
 </style>
 </head>
 <body>
@@ -1593,12 +1615,12 @@ window.addEventListener('scroll',syncStickyOverlays,{passive:true});
 $('sticky-head').addEventListener('scroll',hideTip);
 $('stats-table').closest('.box').addEventListener('scroll',syncStickyOverlays,{passive:true});
 document.addEventListener('mouseover',event => {
-  if(event.target.closest && event.target.closest('#player-modal')) return;
+  if(event.target.closest && event.target.closest('#player-modal, #tip')) return;
   const header=event.target.closest('th[data-tip]');
   if(header) showTip(header);else hideTip();
 });
 document.addEventListener('focusin',event => {
-  if(event.target.closest && event.target.closest('#player-modal')) return;
+  if(event.target.closest && event.target.closest('#player-modal, #tip')) return;
   const header=event.target.closest && event.target.closest('th[data-tip]');
   if(header) showTip(header);else hideTip();
 });
@@ -1643,19 +1665,22 @@ function rankTrigger(key,label,rankLabel,note){
 }
 function factionTypes(player,mode){
   const source = (player.fac && player.fac[mode]) || {};
-  return Object.entries(source).filter(([id,stat]) => Number(id) !== 99 && (Number(stat.kills) > 0 || Number(stat.waves) > 0)).length;
+  return Object.entries(source).filter(([id,stat]) => Number(stat.kills) > 0 || Number(stat.waves) > 0).length;
 }
+const ACTIVITY_KEYS = ['quests','commands','animations','boxes','slain','anvils','refills','wardrobes'];
 function rankValue(player,key){
   const parts = key.split(':');
   if(parts[0] === 'fac') return Number((((player.fac && player.fac[parts[1]]) || {})[parts[2]] || {})[parts[3]]) || 0;
   if(parts[0] === 'facTypes') return factionTypes(player,parts[1]);
+  if(key === 'activityTotal') return ACTIVITY_KEYS.reduce((total,name) => total + (Number(player[name]) || 0),0);
   return Number(player[key]) || 0;
 }
 const shareText = (value,total) => total > 0 && value > 0 ? Math.min(100,value / total * 100).toFixed(1) + '%' : '';
 function typesHeading(player,title,key,rankLabel,singular,pluralName){
-  const count = key.startsWith('facTypes') ? factionTypes(player,key.split(':')[1]) : Number(player[key]);
+  const isFaction = key.startsWith('facTypes');
+  const count = isFaction ? factionTypes(player,key.split(':')[1]) : Number(player[key]);
   if(!Number.isFinite(count) || count <= 0) return '<h3>' + esc(title) + '</h3>';
-  return '<h3>' + rankTrigger(key,title,rankLabel,fmt(count) + ' different ' + plural(count,singular,pluralName) + (key.startsWith('facTypes') ? '' : ' in total')) + '</h3>';
+  return '<h3>' + rankTrigger(key,title,rankLabel,fmt(count) + ' different ' + plural(count,singular,pluralName) + (isFaction ? '' : ' in total')) + '</h3>';
 }
 function factionRows(player,mode,names){
   const keys = ['score','kills','deaths','waves','wins'];
@@ -1682,7 +1707,7 @@ function factionRows(player,mode,names){
   return '<div class="pm-faction-table"><div class="pm-frow pm-fhead"><span>Faction</span><span>Score</span><span>Kills</span><span>Deaths</span><span>Waves</span><span>Wins</span></div>' +
     list.map(item => '<div class="pm-frow"><span>' + nameCell(item) + '</span>' + keys.map(key => valueCell(item,key)).join('') + '</div>').join('') + '</div>';
 }
-function favoriteRows(list,emptyText,kind,total,verb,totalLabel){
+function favoriteRows(list,emptyText,kind,total,verb,totalLabel,ready){
   if(!list || !list.length) return '<p class="pm-empty">' + esc(emptyText) + '</p>';
   const top = Math.max(1,...list.map(item => Number(item.count) || 0));
   return list.map(item => {
@@ -1690,18 +1715,27 @@ function favoriteRows(list,emptyText,kind,total,verb,totalLabel){
     const count = Number(item.count) || 0;
     const share = shareText(count,total);
     const note = (kind === 'm' ? 'Played ' : 'Spawned ') + fmt(count) + ' ' + plural(count,'time','times') + (share ? ' · ' + share + ' of ' + totalLabel : '');
-    const label = topsReady && item.id != null ? rankTrigger('ent:' + kind + ':' + item.id,name,name + ' ' + verb,note) : esc(name);
+    const label = ready && item.id != null ? rankTrigger('ent:' + kind + ':' + item.id,name,name + ' ' + verb,note) : esc(name);
     return '<div class="pm-bar"><span>' + label + '</span><div class="pm-track"><i style="width:' + (count / top * 100).toFixed(1) + '%"></i></div>' + compactHtml('b',count) + '</div>';
   }).join('');
 }
 function rankedPlayersFor(key){
+  const panel = buildPanel(panelRange);
+  const names = new Map(panel.players.map(player => [String(player.id),player.name]));
   let list;
   if(key.startsWith('ent:')){
     const parts = key.split(':');
-    const names = new Map(current.players.map(player => [String(player.id),player.name]));
-    list = (((tops[parts[1]] || {})[parts[2]]) || []).map(([playerId,count]) => ({id:String(playerId),name:names.get(String(playerId)) || 'Unknown',value:Number(count) || 0}));
+    if(panelRange === 'all'){
+      list = (((tops[parts[1]] || {})[parts[2]]) || []).map(([playerId,count]) => ({id:String(playerId),name:names.get(String(playerId)) || 'Unknown',value:Number(count) || 0}));
+    }else{
+      list = [];
+      if(panel.spawns) panel.spawns.forEach((groups,playerId) => {
+        const count = Number((groups[parts[1]] || {})[parts[2]]) || 0;
+        if(count > 0) list.push({id:playerId,name:names.get(playerId) || 'Unknown',value:count});
+      });
+    }
   }else{
-    list = current.players.map(player => ({id:player.id,name:player.name,value:rankValue(player,key)}));
+    list = panel.players.map(player => ({id:player.id,name:player.name,value:rankValue(player,key)}));
     if(key.includes(':') || COUNT_KEYS.includes(key)) list = list.filter(item => item.value > 0);
   }
   return list.sort((a,b) => {
@@ -1717,10 +1751,67 @@ function rankTriggerHtml(key,label,hoverTitle,share){
   const shareAttribute = share === undefined ? '' : ' data-share="' + esc(share) + '"';
   return '<span class="pm-rank-trigger" role="button" tabindex="0" data-rank="' + esc(key) + '" data-rank-label="' + esc(category) + '"' + shareAttribute + ' aria-label="' + esc(accessibleLabel) + '">' + esc(label) + '</span>';
 }
-function openPlayer(id){
-  const player = current.players.find(item => String(item.id) === String(id));
+const PANEL_RANGES = [['all','All time'],['today','Today'],['week','Week'],['month','Month'],['quarter','3 months'],['half','6 months'],['year','Year']];
+const PANEL_PAGE = 10;
+let panelRange = 'all';
+let spawnsNow = null;
+const spawnBases = {};
+const panelCache = {};
+function ensurePanelData(name){
+  if(name === 'all') return Promise.resolve();
+  const jobs = [];
+  if(!spawnsNow) jobs.push(loadBaseline('spawns').then(loaded => {if(loaded && loaded.players) spawnsNow = loaded;}));
+  if(!(name in spawnBases)) jobs.push(loadBaseline('sp-' + name).then(loaded => {spawnBases[name] = loaded && loaded.players ? loaded : null;}));
+  return Promise.all(jobs);
+}
+function spawnBaseline(name,result){
+  if(!result.diff) return {};
+  const stored = spawnBases[name];
+  const baseline = baselines[name];
+  if(stored && baseline && timestampMs(stored.start) === timestampMs(baseline.start)) return stored.players;
+  return baseline && baseline.players.length === 0 ? {} : null;
+}
+function topSpawns(group,kind){
+  const names = (spawnsNow && spawnsNow.names && spawnsNow.names[kind]) || {};
+  return Object.entries(group).sort((a,b) => b[1] - a[1]).slice(0,5).map(([id,count]) => ({id:Number(id),name:names[id] || (kind === 'm' ? 'Map #' : 'Troop #') + id,count}));
+}
+const sumCounts = group => Object.values(group).reduce((total,amount) => total + amount,0);
+function withSpawns(player,groups){
+  return Object.assign({},player,{heroTypes:Object.keys(groups.h).length,unitTypes:Object.keys(groups.n).length,mapTypes:Object.keys(groups.m).length,heroSpawns:sumCounts(groups.h),unitSpawns:sumCounts(groups.n),mapPlays:sumCounts(groups.m),fav:{h:topSpawns(groups.h,'h'),n:topSpawns(groups.n,'n')},maps:topSpawns(groups.m,'m')});
+}
+function buildPanel(name){
+  if(panelCache[name]) return panelCache[name];
+  const result = computePeriod(name);
+  const panel = {players:result.players,before:result.before,note:result.note,spawns:null,baseSpawns:null};
+  if(name !== 'all'){
+    panel.baseSpawns = spawnsNow ? spawnBaseline(name,result) : null;
+    panel.spawns = panel.baseSpawns ? new Map() : null;
+    panel.players = result.players.map(player => {
+      let groups = {h:{},n:{},m:{}};
+      if(panel.baseSpawns){
+        const now = spawnsNow.players[player.id] || {};
+        const before = panel.baseSpawns[player.id] || {};
+        groups = {h:diffNumbers(now.h,before.h),n:diffNumbers(now.n,before.n),m:diffNumbers(now.m,before.m)};
+        panel.spawns.set(String(player.id),groups);
+      }
+      return withSpawns(player,groups);
+    });
+  }
+  panelCache[name] = panel;
+  return panel;
+}
+function panelPlayer(panel){
+  const found = panel.players.find(item => String(item.id) === String(openedPlayerId));
+  if(found) return found;
+  const base = current.players.find(item => String(item.id) === String(openedPlayerId));
+  if(!base) return null;
+  return withSpawns(diffPlayer(base,panel.before && panel.before.get(String(base.id))),{h:{},n:{},m:{}});
+}
+function renderPlayer(keepFocus){
+  const panel = buildPanel(panelRange);
+  const player = panelPlayer(panel);
   if(!player) return;
-  playUiSound('open');
+  const spawnsReady = panelRange === 'all' ? topsReady : panel.spawns !== null;
   const value = key => Number(player[key]) || 0;
   const line = (label,number,rankKey) => '<div class="pm-line' + (number === 0 ? ' zero' : '') + '">' + (rankKey ? rankTriggerHtml(rankKey,label) : '<span>' + esc(label) + '</span>') + compactHtml('b',number) + '</div>';
   const cards = ['score','kills','deaths','points','waves','wins'].map(key =>
@@ -1728,21 +1819,40 @@ function openPlayer(id){
   ).join('');
   const details = line(LABELS.streak,value('streak'),'streak') + ['bosses','finals','chests','crowd','recruits','silver','headshots','shielding'].map(key => line(key === 'bosses' ? 'Bosses Slain' : LABELS[key],value(key),key)).join('');
   const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
-  const weapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a)).map(key => {
+  const sortedWeapons = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a));
+  const weapons = sortedWeapons.map(key => {
     const share = weaponTotal ? Math.min(100,value(key) / weaponTotal * 100) : 0;
-    const shareText = share.toFixed(1) + '% of players kills' + (value(key) >= 1000 ? ' (' + fmt(value(key)) + ')' : '');
-    return '<div class="pm-bar">' + rankTriggerHtml(key,LABELS[key],shareText,share.toFixed(1)) + '<div class="pm-track" role="img" aria-label="' + esc(shareText) + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + esc(shareText) + '">' + fmtCompact(value(key)) + '</b></div>';
+    const shareLabel = share.toFixed(1) + "% of player's kills" + (value(key) >= 1000 ? ' (' + fmt(value(key)) + ')' : '');
+    return '<div class="pm-bar">' + rankTriggerHtml(key,LABELS[key],shareLabel,share.toFixed(1)) + '<div class="pm-track" role="img" aria-label="' + esc(shareLabel) + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + esc(shareLabel) + '">' + fmtCompact(value(key)) + '</b></div>';
   }).join('');
+  const topWeapon = sortedWeapons[0];
+  const topWeaponNote = weaponTotal && value(topWeapon) > 0 ? 'Favourite weapon: ' + LABELS[topWeapon] + ' · ' + Math.min(100,value(topWeapon) / weaponTotal * 100).toFixed(1) + "% of player's kills" : '';
+  const activityTotal = rankValue(player,'activityTotal');
+  const sectionTitle = (title,key,rankLabel,note,amount) => '<h3>' + (amount > 0 ? rankTrigger(key,title,rankLabel,note) : esc(title)) + '</h3>';
   const countLine = (key,label,rankKey=key) => line(label,value(key),rankKey);
   const activity = countLine('quests','Quests completed') + countLine('joined','Joined the server','joined') + countLine('commands','Commands used') + countLine('animations','Animations used') + countLine('boxes','Lootboxes opened') + countLine('slain','Players slain') + ['anvils','refills','wardrobes'].map(key => countLine(key,{anvils:'Anvils used',refills:'Refills used',wardrobes:'Wardrobes used'}[key])).join('');
-  openedPlayerId = player.id;
   const fav = player.fav || {};
   const isMelodiaPatty = String(player.name || '').trim().toLowerCase() === 'melodia-patty';
-  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta">All-time stats' + (isMelodiaPatty ? '<span class="pm-cat" aria-label="cat">🐈</span>' : '') + '</span></div>' +
+  const rangeButtons = PANEL_RANGES.map(([key,label]) => '<button type="button" class="pm-range-btn' + (key === panelRange ? ' active' : '') + '" data-range="' + key + '" aria-pressed="' + (key === panelRange) + '">' + label + '</button>').join('');
+  const cat = isMelodiaPatty ? '<span class="pm-cat" aria-label="cat">🐈</span>' : '';
+  $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + '</h2><span class="pm-meta"><span class="pm-range" role="group" aria-label="Stats period">' + rangeButtons + '</span>' + cat + '</span>' + (panel.note ? '<span class="pm-range-note">' + esc(panel.note) + '</span>' : '') + '</div>' +
     '<div class="pm-cards">' + cards + '</div>' +
-    '<div class="pm-grid pm-primary"><section class="pm-section"><h3>Overview</h3>' + details + '</section><section class="pm-section"><h3>Kills by weapon</h3>' + weapons + '</section><section class="pm-section"><h3>Activity</h3>' + activity + '</section></div>' +
-    '<div class="pm-grid pm-fav"><section class="pm-section">' + typesHeading(player,'Favourite heroes','heroTypes','Different heroes played','hero','heroes') + favoriteRows(fav.h,'No spawns recorded yet','h',value('heroSpawns'),'spawns','all hero spawns') + '</section><section class="pm-section">' + typesHeading(player,'Favourite units','unitTypes','Different units played','unit','units') + favoriteRows(fav.n,'No spawns recorded yet','n',value('unitSpawns'),'spawns','all unit spawns') + '</section><section class="pm-section">' + typesHeading(player,'Most played maps','mapTypes','Different maps played','map','maps') + favoriteRows(player.maps,'No maps recorded yet','m',value('mapPlays'),'times played','all maps played') + '</section></div>' +
+    '<div class="pm-grid pm-primary"><section class="pm-section">' + sectionTitle('Overview','score','Score','Main leaderboard ranking',value('score')) + details + '</section><section class="pm-section">' + sectionTitle('Kills by weapon','kills','Total kills',topWeaponNote,value('kills')) + weapons + '</section><section class="pm-section">' + sectionTitle('Activity','activityTotal','Total activity',fmt(activityTotal) + ' actions in total',activityTotal) + activity + '</section></div>' +
+    '<div class="pm-grid pm-fav"><section class="pm-section">' + typesHeading(player,'Favourite heroes','heroTypes','Different heroes played','hero','heroes') + favoriteRows(fav.h,'No spawns recorded yet','h',value('heroSpawns'),'spawns','all hero spawns',spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Favourite units','unitTypes','Different units played','unit','units') + favoriteRows(fav.n,'No spawns recorded yet','n',value('unitSpawns'),'spawns','all unit spawns',spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Most played maps','mapTypes','Different maps played','map','maps') + favoriteRows(player.maps,'No maps recorded yet','m',value('mapPlays'),'times played','all maps played',spawnsReady) + '</section></div>' +
     '<div class="pm-grid"><section class="pm-section">' + typesHeading(player,'As defenders','facTypes:as','Different defender factions played','defender faction played','defender factions played') + factionRows(player,'as',DEFENDER_FACTIONS) + '</section><section class="pm-section">' + typesHeading(player,'Against invaders','facTypes:vs','Different invader factions faced','invader faction faced','invader factions faced') + factionRows(player,'vs',INVADER_FACTIONS) + '</section></div>';
+  hideTip();
+  if(keepFocus){
+    const active = $('player-body').querySelector('.pm-range-btn.active');
+    if(active) active.focus();
+  }
+}
+function openPlayer(id){
+  const player = current.players.find(item => String(item.id) === String(id));
+  if(!player) return;
+  playUiSound('open');
+  openedPlayerId = player.id;
+  panelRange = 'all';
+  renderPlayer();
   modalReturnFocus = document.activeElement;
   modal.classList.add('open');
   modal.setAttribute('aria-hidden','false');
@@ -1766,38 +1876,68 @@ $('body').addEventListener('click',event => {
 });
 $('pm-close').addEventListener('click',closePlayer);
 modal.addEventListener('click',event => {if(event.target === modal) closePlayer();});
-function rankTipHtml(key,share,categoryLabel,note){
+let rankTipState = null;
+function factionSpreadHtml(key){
+  const mode = key.split(':')[1];
+  const panel = buildPanel(panelRange);
+  const counts = panel.players.map(player => factionTypes(player,mode)).filter(count => count > 0);
+  const own = factionTypes(panelPlayer(panel) || {},mode);
+  const groups = new Map();
+  counts.forEach(count => groups.set(count,(groups.get(count) || 0) + 1));
+  const rows = [...groups.entries()].sort((a,b) => b[0] - a[0]).map(([count,players]) => {
+    const percent = players / counts.length * 100;
+    const percentText = (percent >= 0.95 ? Math.round(percent) : percent.toFixed(1)) + '%';
+    return '<div class="rk-dist"><span class="rk-pct' + (count === own ? ' mine' : '') + '">' + percentText + '</span> - <b>' + count + '</b></div>';
+  }).join('');
+  const title = mode === 'as' ? 'Different Defenders Played' : 'Different Invaders Faced';
+  return '<div class="rk-heading">' + title + '</div>' + (rows || '<div class="rk-empty">No player data available</div>');
+}
+function rankTipHtml(state){
+  const key = state.key;
+  if(key.startsWith('facTypes')) return factionSpreadHtml(key);
   const ranked = rankedPlayersFor(key);
   const positionIndex = ranked.findIndex(item => String(item.id) === String(openedPlayerId));
   const position = positionIndex < 0 ? 0 : positionIndex + 1;
   const totalPlayers = ranked.length;
-  const category = categoryLabel || (WEAPON_KEYS.includes(key) ? (LABELS[key] || key) + ' kills' : (LABELS[key] || key));
-  const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + fmt(item.value) + '</b></div>';
+  const pageCount = Math.max(1,Math.ceil(totalPlayers / PANEL_PAGE));
+  state.page = Math.min(Math.max(0,state.page),pageCount - 1);
+  const start = state.page * PANEL_PAGE;
+  const end = Math.min(start + PANEL_PAGE,totalPlayers);
+  const category = state.label || (WEAPON_KEYS.includes(key) ? (LABELS[key] || key) + ' kills' : (LABELS[key] || key));
+  const row = (item,index) => '<div class="rk' + (String(item.id) === String(openedPlayerId) ? ' me' : '') + '" data-player-id="' + esc(item.id) + '"><i>#' + (index + 1) + '</i><span>' + esc(item.name || 'Unknown') + '</span><b>' + fmt(item.value) + '</b></div>';
   const positionMarkup = position
     ? '<div class="rk-position"><span class="rk-position-label">Position</span><strong class="rk-position-number">#' + fmt(position) + '</strong><span class="rk-position-total">of ' + fmt(totalPlayers) + ' ' + plural(totalPlayers,'player','players') + '</span></div>'
     : '<div class="rk-position"><span class="rk-position-label">Position</span><strong class="rk-position-number">—</strong><span class="rk-position-total">Unavailable</span></div>';
-  const subtitle = 'TOP 10 PLAYERS · ' + category;
-  const shareValue = Number(share);
-  const shareNote = note ? '<div class="rk-note">' + esc(note) + '</div>' : WEAPON_KEYS.includes(key) && share !== undefined && Number.isFinite(shareValue) ? '<div class="rk-note">Share of total kills: ' + shareValue.toFixed(1) + '%</div>' : '';
-  const topRows = ranked.slice(0,10).map(row).join('');
+  const shareValue = Number(state.share);
+  const shareNote = state.note ? '<div class="rk-note">' + esc(state.note) + '</div>' : WEAPON_KEYS.includes(key) && state.share !== undefined && Number.isFinite(shareValue) ? '<div class="rk-note">' + "Share of player's total kills: " + shareValue.toFixed(1) + '%</div>' : '';
+  const subtitle = (state.page === 0 ? 'TOP ' + PANEL_PAGE + ' PLAYERS' : 'PLAYERS ' + (start + 1) + '–' + end) + ' · ' + category;
+  const pageRows = ranked.slice(start,end).map((item,offset) => row(item,start + offset)).join('');
   let extraRows = '';
-  if(position > 10){
-    const firstExtraIndex = Math.max(positionIndex - 1,10);
-    const gapMarkup = firstExtraIndex > 10 ? '<div class="rk-gap">…</div>' : '';
+  if(state.page === 0 && position > PANEL_PAGE){
+    const firstExtraIndex = Math.max(positionIndex - 1,PANEL_PAGE);
+    const gapMarkup = firstExtraIndex > PANEL_PAGE ? '<div class="rk-gap">…</div>' : '';
     extraRows = gapMarkup + ranked.slice(firstExtraIndex,positionIndex + 1).map((item,offset) => row(item,firstExtraIndex + offset)).join('');
   }
-  return positionMarkup + shareNote + '<div class="rk-heading">' + esc(subtitle) + '</div>' + (topRows || '<div class="rk-empty">No player data available</div>') + extraRows;
+  const myPage = positionIndex < 0 ? -1 : Math.floor(positionIndex / PANEL_PAGE);
+  const pager = pageCount > 1
+    ? '<div class="rk-pager"><button type="button" class="rk-pg" data-dir="-1" aria-label="Previous page"' + (state.page === 0 ? ' disabled' : '') + '>‹</button><span>' + (start + 1) + '–' + end + ' of ' + fmt(totalPlayers) + '</span>' + (myPage >= 0 && myPage !== state.page ? '<button type="button" class="rk-pg rk-me" data-dir="me" aria-label="Go to my position">Me</button>' : '') + '<button type="button" class="rk-pg" data-dir="1" aria-label="Next page"' + (state.page >= pageCount - 1 ? ' disabled' : '') + '>›</button></div>'
+    : '';
+  return '<div class="rk-top">' + positionMarkup + shareNote + '</div><div class="rk-heading">' + esc(subtitle) + '</div>' + (pageRows || '<div class="rk-empty">No player data available</div>') + extraRows + pager;
 }
-function showRankTip(trigger){
-  tip.innerHTML = rankTipHtml(trigger.dataset.rank,trigger.dataset.share,trigger.dataset.rankLabel,trigger.dataset.note);
-  tip.classList.add('rank');
-  tip.dataset.rankKey = trigger.dataset.rank;
-  tip.style.zIndex = '100';
-  const box = trigger.getBoundingClientRect();
+function placeRankTip(){
+  const box = rankTipState.trigger.getBoundingClientRect();
   const left = Math.min(Math.max(8,box.left + box.width / 2 - tip.offsetWidth / 2),innerWidth - tip.offsetWidth - 8);
   const below = box.bottom + 8;
   tip.style.left = left + 'px';
   tip.style.top = (below + tip.offsetHeight > innerHeight - 8 ? Math.max(8,box.top - tip.offsetHeight - 8) : below) + 'px';
+}
+function showRankTip(trigger){
+  rankTipState = {key:trigger.dataset.rank,share:trigger.dataset.share,label:trigger.dataset.rankLabel,note:trigger.dataset.note,trigger,page:0};
+  tip.innerHTML = rankTipHtml(rankTipState);
+  tip.classList.add('rank');
+  tip.dataset.rankKey = trigger.dataset.rank;
+  tip.style.zIndex = '100';
+  placeRankTip();
   tip.style.opacity = '1';
 }
 function activateRankTrigger(trigger){
@@ -1809,6 +1949,48 @@ function activateRankTrigger(trigger){
   showRankTip(trigger);
   playUiSound('rank');
 }
+function switchPlayer(id){
+  const player = current.players.find(item => String(item.id) === String(id));
+  if(!player) return;
+  hideTip(false);
+  if(String(player.id) === String(openedPlayerId)) return;
+  playUiSound('open');
+  openedPlayerId = player.id;
+  renderPlayer();
+  modal.scrollTop = 0;
+  const dialog = modal.querySelector('.pm-dialog');
+  if(dialog) dialog.scrollTop = 0;
+}
+tip.addEventListener('click',event => {
+  const playerRow = event.target.closest('.rk[data-player-id]');
+  if(playerRow && tip.classList.contains('rank')){
+    switchPlayer(playerRow.dataset.playerId);
+    return;
+  }
+  const button = event.target.closest('.rk-pg');
+  if(!button || button.disabled || !rankTipState || !tip.classList.contains('rank')) return;
+  if(button.dataset.dir === 'me'){
+    const index = rankedPlayersFor(rankTipState.key).findIndex(item => String(item.id) === String(openedPlayerId));
+    if(index >= 0) rankTipState.page = Math.floor(index / PANEL_PAGE);
+  }else{
+    rankTipState.page += Number(button.dataset.dir);
+  }
+  tip.innerHTML = rankTipHtml(rankTipState);
+  placeRankTip();
+  playUiSound('rank');
+});
+modal.addEventListener('click',event => {
+  const button = event.target.closest('.pm-range-btn[data-range]');
+  if(!button || !modal.contains(button)) return;
+  const next = button.dataset.range;
+  if(next === panelRange) return;
+  playUiSound('rank');
+  panelRange = next;
+  modal.querySelectorAll('.pm-range-btn').forEach(item => item.classList.toggle('active',item === button));
+  ensurePanelData(next).then(() => {
+    if(panelRange === next && modal.classList.contains('open')) renderPlayer(true);
+  });
+});
 modal.addEventListener('click',event => {
   const trigger = event.target.closest('.pm-rank-trigger[data-rank]');
   if(trigger && modal.contains(trigger)) activateRankTrigger(trigger);
@@ -1833,9 +2015,14 @@ function diffNumbers(now,before){
   }
   return result;
 }
+const PANEL_KEYS = [...new Set([...ALL_KEYS,'streak','joined','commands','anvils','refills','wardrobes','boxes','slain','animations'])];
 function diffPlayer(player,before){
   const row = {id:player.id,name:player.name,fac:{as:{},vs:{}}};
-  ALL_KEYS.forEach(key => row[key] = Math.max(0,(Number(player[key]) || 0) - (Number(before && before[key]) || 0)));
+  PANEL_KEYS.forEach(key => {
+    const now = Number(player[key]) || 0;
+    const earlier = Number(before && before[key]) || 0;
+    row[key] = key === 'streak' ? (now > earlier ? now : 0) : Math.max(0,now - earlier);
+  });
   for(const mode of ['as','vs']){
     const nowFactions = (player.fac && player.fac[mode]) || {};
     const beforeFactions = (before && before.fac && before.fac[mode]) || {};
@@ -1883,63 +2070,48 @@ function getTrackingStart(){
   const date = new Date(Number(match[3]),Number(match[2])-1,Number(match[1]));
   return Number.isNaN(date.getTime()) ? 0 : date.getTime();
 }
-function applyRange(){
-  const baseline = baselines[range];
+function computePeriod(name){
+  const baseline = baselines[name];
   const trackingStart = getTrackingStart();
-
-  if(range === 'all'){
-    data = {players:current.players};
-    $('range-note').textContent = '';
-    return;
-  }
-
-   
-   
-   
-   
-  if(range === 'quarter' || range === 'half'){
-    const windowStart = periodStart(range);
+  const result = {players:current.players,before:null,diff:false,note:''};
+  if(name === 'all') return result;
+  const useBaseline = () => {
+    const before = new Map(baseline.players.map(player => [String(player.id),player]));
+    result.before = before;
+    result.diff = true;
+    result.players = current.players
+      .map(player => diffPlayer(player,before.get(String(player.id))))
+      .filter(player => ALL_KEYS.some(key => player[key] > 0));
+  };
+  if(name === 'quarter' || name === 'half'){
+    const windowStart = periodStart(name);
     if(trackingStart && trackingStart >= windowStart){
-      data = {players:current.players};
-      $('range-note').textContent = 'Available stats since ' + dayStamp(trackingStart);
-      return;
+      result.note = 'Available stats since ' + dayStamp(trackingStart);
+      return result;
     }
     if(baseline && Array.isArray(baseline.players)){
       const baselineStart = timestampMs(baseline.start);
       if(baselineStart && baselineStart >= windowStart){
-        const before = new Map(baseline.players.map(player => [String(player.id),player]));
-        data = {
-          players:current.players
-            .map(player => diffPlayer(player,before.get(String(player.id))))
-            .filter(player => ALL_KEYS.some(key => player[key] > 0))
-        };
-        const since = Math.max(baselineStart,trackingStart || baselineStart);
-        $('range-note').textContent = 'Available stats since ' + dayStamp(since);
-        return;
+        useBaseline();
+        result.note = 'Available stats since ' + dayStamp(Math.max(baselineStart,trackingStart || baselineStart));
+        return result;
       }
     }
-    data = {players:current.players};
-    $('range-note').textContent = 'Exact rolling period unavailable; showing available data' +
+    result.note = 'Exact rolling period unavailable; showing available data' +
       (trackingStart ? ' since ' + dayStamp(trackingStart) : ' from the available stats file');
-    return;
+    return result;
   }
-
   if(baseline && Array.isArray(baseline.players)){
-    const before = new Map(baseline.players.map(player => [String(player.id),player]));
-    data = {
-      players:current.players
-        .map(player => diffPlayer(player,before.get(String(player.id))))
-        .filter(player => ALL_KEYS.some(key => player[key] > 0))
-    };
-    const baselineStart = timestampMs(baseline.start);
-    const since = Math.max(baselineStart,trackingStart);
-    $('range-note').textContent = since ? 'Since ' + dayStamp(since) : 'Period to date';
-    return;
+    useBaseline();
+    const since = Math.max(timestampMs(baseline.start),trackingStart);
+    result.note = since ? 'Since ' + dayStamp(since) : 'Period to date';
   }
-
-   
-  data = {players:current.players};
-  $('range-note').textContent = '';
+  return result;
+}
+function applyRange(){
+  const result = computePeriod(range);
+  data = {players:result.players};
+  $('range-note').textContent = result.note;
 }
 rangeSelect.addEventListener('change',() => fadeTo(() => {range = rangeSelect.value;applyRange();page=0;render();}));
 const loadBaseline = name => fetch(name + '.json?' + Date.now(),{cache:'no-store'}).then(response => response.ok ? response.json() : null).catch(() => null);
