@@ -1,5 +1,5 @@
 {
- "updated": 1793826122413,
+ "updated": 1793829702579,
  "quests": [
   {
    "id": 3,
@@ -10,6 +10,11 @@
    "id": 10,
    "name": "Beat waves",
    "completions": 2
+  },
+  {
+   "id": 1,
+   "name": "Kill bots",
+   "completions": 1
   },
   {
    "id": 6,
@@ -25,11 +30,6 @@
    "id": 16,
    "name": "Use refills / wardrobes",
    "completions": 1
-  },
-  {
-   "id": 1,
-   "name": "Kill bots",
-   "completions": 0
   },
   {
    "id": 2,
