@@ -1,9 +1,14 @@
 {
- "updated": 1793818893129,
+ "updated": 1793822482331,
  "quests": [
   {
    "id": 3,
    "name": "Hit headshots",
+   "completions": 2
+  },
+  {
+   "id": 10,
+   "name": "Beat waves",
    "completions": 2
   },
   {
@@ -14,11 +19,6 @@
   {
    "id": 8,
    "name": "Kills without dying",
-   "completions": 1
-  },
-  {
-   "id": 10,
-   "name": "Beat waves",
    "completions": 1
   },
   {
