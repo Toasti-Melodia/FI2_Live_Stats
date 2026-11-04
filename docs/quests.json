@@ -1,5 +1,5 @@
 {
- "updated": 1793811690871,
+ "updated": 1793815295581,
  "quests": [
   {
    "id": 3,
@@ -9,6 +9,11 @@
   {
    "id": 8,
    "name": "Kills without dying",
+   "completions": 1
+  },
+  {
+   "id": 16,
+   "name": "Use refills / wardrobes",
    "completions": 1
   },
   {
@@ -74,11 +79,6 @@
   {
    "id": 15,
    "name": "Open leg boxes",
-   "completions": 0
-  },
-  {
-   "id": 16,
-   "name": "Use refills / wardrobes",
    "completions": 0
   },
   {
