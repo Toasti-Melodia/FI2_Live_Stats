@@ -1934,8 +1934,8 @@ function factionSpreadHtml(key){
 }
 function rankNote(key){
   if(key === 'deaths') return 'No death run - ' + fmt(deathGoal) + ' kills in a row without dying';
-  if(key === 'score' && scoreMode === 'difficulty') return 'Score earned from kills on harder settings';
-  if(key === 'score') return 'Score from kills, quests, bosses and wins';
+  if(key === 'score' && scoreMode === 'difficulty') return 'Extra score earned from kills on harder settings';
+  if(key === 'score') return 'Total score';
   return '';
 }
 function rankModeConfig(key){
