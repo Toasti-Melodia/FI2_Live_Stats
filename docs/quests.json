@@ -1,10 +1,15 @@
 {
- "updated": 1793988091972,
+ "updated": 1793991698804,
  "quests": [
   {
    "id": 13,
    "name": "Slay bosses",
    "completions": 3
+  },
+  {
+   "id": 3,
+   "name": "Hit headshots",
+   "completions": 1
   },
   {
    "id": 1,
@@ -14,11 +19,6 @@
   {
    "id": 2,
    "name": "Kill bots as Recruit/Soldier",
-   "completions": 0
-  },
-  {
-   "id": 3,
-   "name": "Hit headshots",
    "completions": 0
   },
   {
