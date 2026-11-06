@@ -1,6 +1,11 @@
 {
- "updated": 1793973684912,
+ "updated": 1793977292826,
  "quests": [
+  {
+   "id": 13,
+   "name": "Slay bosses",
+   "completions": 1
+  },
   {
    "id": 1,
    "name": "Kill bots",
@@ -59,11 +64,6 @@
   {
    "id": 12,
    "name": "Top5 points",
-   "completions": 0
-  },
-  {
-   "id": 13,
-   "name": "Slay bosses",
    "completions": 0
   },
   {
