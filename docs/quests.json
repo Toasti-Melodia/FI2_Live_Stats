@@ -1,14 +1,19 @@
 {
- "updated": 1793991698804,
+ "updated": 1793995286162,
  "quests": [
   {
    "id": 13,
    "name": "Slay bosses",
-   "completions": 3
+   "completions": 5
   },
   {
    "id": 3,
    "name": "Hit headshots",
+   "completions": 2
+  },
+  {
+   "id": 11,
+   "name": "Win games",
    "completions": 1
   },
   {
@@ -54,11 +59,6 @@
   {
    "id": 10,
    "name": "Beat waves",
-   "completions": 0
-  },
-  {
-   "id": 11,
-   "name": "Win games",
    "completions": 0
   },
   {
