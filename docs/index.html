@@ -1153,7 +1153,7 @@ body::before{opacity:.08}
 <header>
   <div class="brand">
     <h1>Full Invasion <span>2</span></h1>
-    <p class="sub">Lifetime stats (starting from 05.11.2026) - Gondolin Osiris servers</p>
+    <p class="sub">Lifetime stats (starting from 03.11.2026) - Gondolin Osiris servers</p>
     <div class="brand-meta"><span class="credit">By Melodia-Patty</span><span id="meta">Last update: -</span></div>
   </div>
   <nav class="links" aria-label="Links">
@@ -1693,7 +1693,7 @@ function factionTypes(player,mode){
   const source = (player.fac && player.fac[mode]) || {};
   return Object.entries(source).filter(([id,stat]) => Number(stat.kills) > 0 || Number(stat.waves) > 0).length;
 }
-const ACTIVITY_KEYS = ['quests','commands','animations','boxes','slain','anvils','refills','wardrobes'];
+const ACTIVITY_KEYS = ['quests','commands','animations','boxes','slain'];
 function rankValue(player,key){
   const parts = key.split(':');
   if(parts[0] === 'fac') return Number((((player.fac && player.fac[parts[1]]) || {})[parts[2]] || {})[parts[3]]) || 0;
@@ -1860,7 +1860,7 @@ function renderPlayer(keepFocus){
     return '<div class="pm-bar">' + rankTriggerHtml(key,LABELS[key],shareLabel,share.toFixed(1)) + '<div class="pm-track" role="img" aria-label="' + esc(shareLabel) + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + esc(shareLabel) + '">' + fmtCompact(value(key)) + '</b></div>';
   }).join('');
   const topWeapon = sortedWeapons[0];
-  const topWeaponNote = weaponTotal && value(topWeapon) > 0 ? 'Favourite: ' + LABELS[topWeapon] + ' - ' + Math.min(100,value(topWeapon) / weaponTotal * 100).toFixed(1) + "% of player's total kills" : '';
+  const topWeaponNote = weaponTotal && value(topWeapon) > 0 ? 'Top: ' + LABELS[topWeapon] + ' - ' + Math.min(100,value(topWeapon) / weaponTotal * 100).toFixed(1) + "% of player's total kills" : '';
   const activityTotal = rankValue(player,'activityTotal');
   const sectionTitle = (title,key,rankLabel,note,amount) => '<h3>' + (amount > 0 ? rankTrigger(key,title,rankLabel,note) : esc(title)) + '</h3>';
   const countLine = (key,label,rankKey=key) => line(label,value(key),rankKey);
@@ -1934,8 +1934,8 @@ function factionSpreadHtml(key){
 }
 function rankNote(key){
   if(key === 'deaths') return 'No death run - ' + fmt(deathGoal) + ' kills in a row without dying';
-  if(key === 'score' && scoreMode === 'difficulty') return 'Extra score earned from kills on harder settings';
-  if(key === 'score') return 'Total score';
+  if(key === 'score' && scoreMode === 'difficulty') return 'Extra points earned from kills on harder settings';
+  if(key === 'score') return 'Score from kills, quests, bosses and wins';
   return '';
 }
 function rankModeConfig(key){
