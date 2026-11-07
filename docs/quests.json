@@ -1,6 +1,11 @@
 {
- "updated": 1794074487530,
+ "updated": 1794078084792,
  "quests": [
+  {
+   "id": 25,
+   "name": "Kill bots with 1 life per wave",
+   "completions": 6
+  },
   {
    "id": 13,
    "name": "Slay bosses",
@@ -119,11 +124,6 @@
   {
    "id": 24,
    "name": "Kill bots in nonstop mode",
-   "completions": 0
-  },
-  {
-   "id": 25,
-   "name": "Kill bots with 1 life per wave",
    "completions": 0
   }
  ]
