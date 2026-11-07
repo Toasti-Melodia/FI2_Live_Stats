@@ -1,5 +1,5 @@
 {
- "updated": 1794081682892,
+ "updated": 1794085284518,
  "quests": [
   {
    "id": 25,
@@ -7,14 +7,14 @@
    "completions": 16
   },
   {
-   "id": 13,
-   "name": "Slay bosses",
+   "id": 3,
+   "name": "Hit headshots",
    "completions": 6
   },
   {
-   "id": 3,
-   "name": "Hit headshots",
-   "completions": 3
+   "id": 13,
+   "name": "Slay bosses",
+   "completions": 6
   },
   {
    "id": 8,
