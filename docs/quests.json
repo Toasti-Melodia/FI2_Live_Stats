@@ -1,5 +1,5 @@
 {
- "updated": 1794160894928,
+ "updated": 1794164487477,
  "quests": [
   {
    "id": 25,
@@ -17,6 +17,11 @@
    "completions": 6
   },
   {
+   "id": 18,
+   "name": "Win as different factions",
+   "completions": 3
+  },
+  {
    "id": 1,
    "name": "Kill bots",
    "completions": 2
@@ -27,14 +32,9 @@
    "completions": 2
   },
   {
-   "id": 18,
-   "name": "Win as different factions",
-   "completions": 2
-  },
-  {
    "id": 10,
    "name": "Beat waves",
-   "completions": 1
+   "completions": 2
   },
   {
    "id": 11,
