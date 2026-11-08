@@ -1,5 +1,5 @@
 {
- "updated": 1794168089756,
+ "updated": 1794171691775,
  "quests": [
   {
    "id": 25,
@@ -9,21 +9,21 @@
   {
    "id": 3,
    "name": "Hit headshots",
-   "completions": 11
+   "completions": 12
   },
   {
    "id": 13,
    "name": "Slay bosses",
-   "completions": 6
-  },
-  {
-   "id": 1,
-   "name": "Kill bots",
-   "completions": 3
+   "completions": 9
   },
   {
    "id": 18,
    "name": "Win as different factions",
+   "completions": 5
+  },
+  {
+   "id": 1,
+   "name": "Kill bots",
    "completions": 3
   },
   {
@@ -37,6 +37,16 @@
    "completions": 2
   },
   {
+   "id": 16,
+   "name": "Use refills / wardrobes",
+   "completions": 2
+  },
+  {
+   "id": 4,
+   "name": "Kill bots with bows / crossbows / firearms",
+   "completions": 1
+  },
+  {
    "id": 11,
    "name": "Win games",
    "completions": 1
@@ -47,18 +57,8 @@
    "completions": 1
   },
   {
-   "id": 16,
-   "name": "Use refills / wardrobes",
-   "completions": 1
-  },
-  {
    "id": 2,
    "name": "Kill bots as Recruit/Soldier",
-   "completions": 0
-  },
-  {
-   "id": 4,
-   "name": "Kill bots with bows / crossbows / firearms",
    "completions": 0
   },
   {
