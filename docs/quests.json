@@ -1,5 +1,5 @@
 {
- "updated": 1794153693188,
+ "updated": 1794157298201,
  "quests": [
   {
    "id": 25,
@@ -9,7 +9,7 @@
   {
    "id": 3,
    "name": "Hit headshots",
-   "completions": 8
+   "completions": 9
   },
   {
    "id": 13,
@@ -17,14 +17,14 @@
    "completions": 6
   },
   {
-   "id": 8,
-   "name": "Kills without dying",
+   "id": 1,
+   "name": "Kill bots",
    "completions": 2
   },
   {
-   "id": 1,
-   "name": "Kill bots",
-   "completions": 1
+   "id": 8,
+   "name": "Kills without dying",
+   "completions": 2
   },
   {
    "id": 11,
