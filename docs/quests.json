@@ -1,5 +1,5 @@
 {
- "updated": 1794157298201,
+ "updated": 1794160894928,
  "quests": [
   {
    "id": 25,
@@ -9,7 +9,7 @@
   {
    "id": 3,
    "name": "Hit headshots",
-   "completions": 9
+   "completions": 10
   },
   {
    "id": 13,
@@ -25,6 +25,16 @@
    "id": 8,
    "name": "Kills without dying",
    "completions": 2
+  },
+  {
+   "id": 18,
+   "name": "Win as different factions",
+   "completions": 2
+  },
+  {
+   "id": 10,
+   "name": "Beat waves",
+   "completions": 1
   },
   {
    "id": 11,
@@ -67,11 +77,6 @@
    "completions": 0
   },
   {
-   "id": 10,
-   "name": "Beat waves",
-   "completions": 0
-  },
-  {
    "id": 12,
    "name": "Top5 points",
    "completions": 0
@@ -89,11 +94,6 @@
   {
    "id": 17,
    "name": "Buff allies as a wizard",
-   "completions": 0
-  },
-  {
-   "id": 18,
-   "name": "Win as different factions",
    "completions": 0
   },
   {
