@@ -1,5 +1,5 @@
 {
- "updated": 1794150093695,
+ "updated": 1794153693188,
  "quests": [
   {
    "id": 25,
@@ -9,7 +9,7 @@
   {
    "id": 3,
    "name": "Hit headshots",
-   "completions": 7
+   "completions": 8
   },
   {
    "id": 13,
@@ -29,6 +29,11 @@
   {
    "id": 11,
    "name": "Win games",
+   "completions": 1
+  },
+  {
+   "id": 16,
+   "name": "Use refills / wardrobes",
    "completions": 1
   },
   {
@@ -79,11 +84,6 @@
   {
    "id": 15,
    "name": "Open leg boxes",
-   "completions": 0
-  },
-  {
-   "id": 16,
-   "name": "Use refills / wardrobes",
    "completions": 0
   },
   {
