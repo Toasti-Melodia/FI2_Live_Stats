@@ -1,5 +1,5 @@
 {
- "updated": 1794164487477,
+ "updated": 1794168089756,
  "quests": [
   {
    "id": 25,
@@ -9,7 +9,7 @@
   {
    "id": 3,
    "name": "Hit headshots",
-   "completions": 10
+   "completions": 11
   },
   {
    "id": 13,
@@ -17,14 +17,14 @@
    "completions": 6
   },
   {
-   "id": 18,
-   "name": "Win as different factions",
+   "id": 1,
+   "name": "Kill bots",
    "completions": 3
   },
   {
-   "id": 1,
-   "name": "Kill bots",
-   "completions": 2
+   "id": 18,
+   "name": "Win as different factions",
+   "completions": 3
   },
   {
    "id": 8,
@@ -39,6 +39,11 @@
   {
    "id": 11,
    "name": "Win games",
+   "completions": 1
+  },
+  {
+   "id": 15,
+   "name": "Open leg boxes",
    "completions": 1
   },
   {
@@ -84,11 +89,6 @@
   {
    "id": 14,
    "name": "Slay end-game bosses",
-   "completions": 0
-  },
-  {
-   "id": 15,
-   "name": "Open leg boxes",
    "completions": 0
   },
   {
