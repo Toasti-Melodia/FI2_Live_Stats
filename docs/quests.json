@@ -1,5 +1,5 @@
 {
- "updated": 1794142890516,
+ "updated": 1794146499136,
  "quests": [
   {
    "id": 25,
@@ -22,14 +22,14 @@
    "completions": 2
   },
   {
-   "id": 11,
-   "name": "Win games",
+   "id": 1,
+   "name": "Kill bots",
    "completions": 1
   },
   {
-   "id": 1,
-   "name": "Kill bots",
-   "completions": 0
+   "id": 11,
+   "name": "Win games",
+   "completions": 1
   },
   {
    "id": 2,
