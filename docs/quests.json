@@ -1,5 +1,5 @@
 {
- "updated": 1794337291081,
+ "updated": 1794340897097,
  "quests": [
   {
    "id": 25,
@@ -20,6 +20,11 @@
    "id": 18,
    "name": "Win as different factions",
    "completions": 5
+  },
+  {
+   "id": 24,
+   "name": "Kill bots in nonstop mode",
+   "completions": 4
   },
   {
    "id": 1,
@@ -119,11 +124,6 @@
   {
    "id": 23,
    "name": "Kill bots on Hard or Risky",
-   "completions": 0
-  },
-  {
-   "id": 24,
-   "name": "Kill bots in nonstop mode",
    "completions": 0
   }
  ]
