@@ -1,5 +1,5 @@
 {
- "updated": 1794351690623,
+ "updated": 1794355298529,
  "quests": [
   {
    "id": 25,
@@ -57,6 +57,11 @@
    "completions": 1
   },
   {
+   "id": 12,
+   "name": "Top5 points",
+   "completions": 1
+  },
+  {
    "id": 15,
    "name": "Open leg boxes",
    "completions": 1
@@ -84,11 +89,6 @@
   {
    "id": 9,
    "name": "Kills with max 1 death",
-   "completions": 0
-  },
-  {
-   "id": 12,
-   "name": "Top5 points",
    "completions": 0
   },
   {
