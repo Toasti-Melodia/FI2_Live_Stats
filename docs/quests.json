@@ -1,5 +1,5 @@
 {
- "updated": 1794355298529,
+ "updated": 1794358890420,
  "quests": [
   {
    "id": 25,
@@ -14,7 +14,7 @@
   {
    "id": 13,
    "name": "Slay bosses",
-   "completions": 10
+   "completions": 11
   },
   {
    "id": 18,
@@ -42,6 +42,11 @@
    "completions": 2
   },
   {
+   "id": 12,
+   "name": "Top5 points",
+   "completions": 2
+  },
+  {
    "id": 16,
    "name": "Use refills / wardrobes",
    "completions": 2
@@ -54,11 +59,6 @@
   {
    "id": 11,
    "name": "Win games",
-   "completions": 1
-  },
-  {
-   "id": 12,
-   "name": "Top5 points",
    "completions": 1
   },
   {
