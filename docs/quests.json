@@ -1,5 +1,5 @@
 {
- "updated": 1794412906586,
+ "updated": 1794416536420,
  "quests": [
   {
    "id": 25,
@@ -37,6 +37,11 @@
    "completions": 3
   },
   {
+   "id": 16,
+   "name": "Use refills / wardrobes",
+   "completions": 3
+  },
+  {
    "id": 10,
    "name": "Beat waves",
    "completions": 2
@@ -44,11 +49,6 @@
   {
    "id": 12,
    "name": "Top5 points",
-   "completions": 2
-  },
-  {
-   "id": 16,
-   "name": "Use refills / wardrobes",
    "completions": 2
   },
   {
