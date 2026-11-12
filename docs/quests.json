@@ -1,5 +1,5 @@
 {
- "updated": 1794448894260,
+ "updated": 1794452495270,
  "quests": [
   {
    "id": 25,
@@ -29,7 +29,7 @@
   {
    "id": 1,
    "name": "Kill bots",
-   "completions": 3
+   "completions": 4
   },
   {
    "id": 8,
