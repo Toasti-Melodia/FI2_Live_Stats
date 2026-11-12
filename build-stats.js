@@ -1,6 +1,6 @@
 const SftpClient = require('ssh2-sftp-client');
 const fs = require('fs');
-const NAMES = {'1354331': 'Melodia-Patty', '2829101': 'Maykelus', '2863951': 'Aboba', '5357808': 'saycre'};
+const NAMES = {'1354331': 'Melodia-Patty', '2829101': 'Maykelus', '2863951': 'Aboba', '5357808': 'saycre', '1400203': 'HorrorVII'};
 const NAME_FIELDS = [5003];
 const WEAPON_KILLS_BASE = 7000;
 const FIELD_OFFSET = 5000;
@@ -18,7 +18,7 @@ const QUEST_COMPLETIONS_BASE = 9000000;
 const QUEST_NAMES = ['Kill bots', 'Kill bots as Recruit/Soldier', 'Hit headshots', 'Kill bots with bows / crossbows / firearms', 'Kill bots with one-handed / spears / throwing', 'Kill bots with two-handed / polearms / magic', 'Kill bots with every weapon type', 'Kills without dying', 'Kills with max 1 death', 'Beat waves', 'Win games', 'Top5 points', 'Slay bosses', 'Slay end-game bosses', 'Open leg boxes', 'Use refills / wardrobes', 'Buff allies as a wizard', 'Win as different factions', 'Beat a custom invasion', 'Beat different invasions', 'Play on different maps', 'Spawn as different heroes', 'Kill bots on Hard or Risky', 'Kill bots in nonstop mode', 'Kill bots with 1 life per wave'];
 const HERO_NAME_SHIFT_FIRST = 1079;
 const HERO_NAME_SHIFT_LAST = 1790;
-const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023, crowd: 5024, headshots: 5025, shielding: 5026, streak: 5036, quests: 5037, silver: 5019, joined: 5013, commands: 5029, anvils: 5030, refills: 5031, wardrobes: 5032, boxes: 5033, slain: 5034, animations: 5035, runs250: 5038, runs500: 5039, runs1000: 5040, diffscore: 5041};
+const FIELDS = {kills: 5001, deaths: 5002, score: 5020, points: 5018, waves: 5014, wins: 5015, bosses: 5016, finals: 5017, chests: 5022, recruits: 5023, crowd: 5024, headshots: 5025, shielding: 5026, streak: 5036, quests: 5037, silver: 5019, joined: 5013, commands: 5029, anvils: 5030, refills: 5031, wardrobes: 5032, boxes: 5033, slain: 5034, animations: 5035, runs250: 5038, runs500: 5039, runs1000: 5040, diffscore: 5041, cavmelee: 5045, cavranged: 5046};
 const WEAPONS = {w1h: 5004, w2h: 5005, pole: 5006, bow: 5007, xbow: 5008, throw: 5009, firearm: 5010, magic: 5011, other: 5012, spear: 5028};
 const SCALES = {score: 10, diffscore: 10};
 const MAX_FIELDS = new Set([FIELDS.streak]);
@@ -86,6 +86,87 @@ async function loadServer(prefix) {
   }
   console.error(prefix + ' unreachable, aborting so incomplete data is not published');
   process.exit(1);
+}
+const DAY_MS = 86400000;
+const PERIODS = {today: {days: 0}, week: {days: 7}, month: {months: 1}, quarter: {months: 3}, half: {months: 6}, year: {months: 12}};
+const SNAPSHOT_DAILY_DAYS = 40;
+const SNAPSHOT_MAX_DAYS = 400;
+function utcDay(timestamp) {
+  const date = new Date(timestamp);
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+}
+function dayKey(timestamp) {
+  return new Date(timestamp).toISOString().slice(0, 10);
+}
+function periodTarget(dayStart, spec) {
+  if ('days' in spec) return dayStart - spec.days * DAY_MS;
+  const date = new Date(dayStart);
+  const monthIndex = date.getUTCFullYear() * 12 + date.getUTCMonth() - spec.months;
+  const year = Math.floor(monthIndex / 12);
+  const month = monthIndex % 12;
+  const lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+  return Date.UTC(year, month, Math.min(date.getUTCDate(), lastDay));
+}
+function writeJson(file, value) {
+  fs.writeFileSync(file, JSON.stringify(value));
+}
+function numericRows(rows) {
+  return rows.map(({fav, maps: mostPlayed, ...numeric}) => numeric);
+}
+function listSnapshotDays(directory) {
+  if (!fs.existsSync(directory)) return [];
+  return fs.readdirSync(directory).filter(name => /^\d{4}-\d{2}-\d{2}\.json$/.test(name)).map(name => Date.parse(name.slice(0, 10))).sort((a, b) => a - b);
+}
+function updatePeriods({root, rows, spawnPlayers, since, updated, previous, previousSpawns}) {
+  const docsDirectory = root + '/docs';
+  const snapshotDirectory = root + '/snapshots';
+  fs.mkdirSync(snapshotDirectory, {recursive: true});
+  const snapshotFile = day => snapshotDirectory + '/' + dayKey(day) + '.json';
+  const dayStart = utcDay(updated);
+  const sinceDay = utcDay(since);
+  for (const name of Object.keys(PERIODS)) {
+    const legacy = readJson(docsDirectory + '/' + name + '.json');
+    const legacySpawns = readJson(docsDirectory + '/sp-' + name + '.json');
+    if (!legacy || !legacySpawns || !Array.isArray(legacy.players) || !legacySpawns.players) continue;
+    const legacyDay = utcDay(legacy.start);
+    if (legacy.start !== legacyDay || legacySpawns.start !== legacy.start || legacyDay <= sinceDay || legacyDay > dayStart || fs.existsSync(snapshotFile(legacyDay))) continue;
+    writeJson(snapshotFile(legacyDay), {time: legacy.updated || legacy.start, players: legacy.players, spawns: legacySpawns.players});
+  }
+  if (dayStart > sinceDay && !fs.existsSync(snapshotFile(dayStart))) {
+    const usePrevious = previous && Array.isArray(previous.players) && previous.updated < dayStart;
+    writeJson(snapshotFile(dayStart), {
+      time: usePrevious ? previous.updated : updated,
+      players: numericRows(usePrevious ? previous.players : rows),
+      spawns: usePrevious && previousSpawns && previousSpawns.players ? previousSpawns.players : spawnPlayers
+    });
+  }
+  for (const day of listSnapshotDays(snapshotDirectory)) {
+    const ageDays = Math.round((dayStart - day) / DAY_MS);
+    const isMonday = new Date(day).getUTCDay() === 1;
+    if (day <= sinceDay || ageDays > SNAPSHOT_MAX_DAYS || (ageDays > SNAPSHOT_DAILY_DAYS && !isMonday)) fs.unlinkSync(snapshotFile(day));
+  }
+  const candidateDays = listSnapshotDays(snapshotDirectory);
+  const loadedSnapshots = new Map();
+  const loadSnapshot = day => {
+    if (!loadedSnapshots.has(day)) loadedSnapshots.set(day, readJson(snapshotFile(day)));
+    return loadedSnapshots.get(day);
+  };
+  for (const [name, spec] of Object.entries(PERIODS)) {
+    const target = periodTarget(dayStart, spec);
+    let chosenDay = null;
+    for (const day of candidateDays) if (day <= target) chosenDay = day;
+    const snapshot = chosenDay === null ? null : loadSnapshot(chosenDay);
+    const usable = Boolean(snapshot && Array.isArray(snapshot.players) && snapshot.spawns);
+    const base = usable ? dayKey(chosenDay) : 'empty';
+    const start = usable ? chosenDay : since;
+    const file = docsDirectory + '/' + name + '.json';
+    const spawnFile = docsDirectory + '/sp-' + name + '.json';
+    const existing = readJson(file);
+    if (existing && existing.base === base && existing.since === since && existing.start === start && fs.existsSync(spawnFile)) continue;
+    const baseUpdated = usable ? snapshot.time : updated;
+    writeJson(file, {start, since, base, updated: baseUpdated, players: usable ? snapshot.players : []});
+    writeJson(spawnFile, {start, since, base, updated: baseUpdated, players: usable ? snapshot.spawns : {}});
+  }
 }
 (async () => {
   const dumps = [await loadServer('S1'), await loadServer('S2')].filter(Boolean);
@@ -225,37 +306,10 @@ async function loadServer(prefix) {
   const previousSpawns = readJson('docs/spawns.json');
   if (previous && previous.since) since = previous.since;
   const updated = Date.now();
-  const today = new Date(updated);
-  const dayStart = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
-  const starts = {
-    today: dayStart,
-    week: dayStart - ((today.getUTCDay() + 6) % 7) * 86400000,
-    month: Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1),
-    quarter: Date.UTC(today.getUTCFullYear(), Math.floor(today.getUTCMonth() / 3) * 3, 1),
-    half: Date.UTC(today.getUTCFullYear(), today.getUTCMonth() < 6 ? 0 : 6, 1),
-    year: Date.UTC(today.getUTCFullYear(), 0, 1)
-  };
   fs.writeFileSync('docs/stats.json', JSON.stringify({updated, since, players: rows}));
   fs.writeFileSync('docs/tops.json', JSON.stringify(tops));
   const questRanking = QUEST_NAMES.map((name, index) => ({id: index + 1, name, completions: questCompletions[index]})).sort((a, b) => b.completions - a.completions || a.id - b.id);
   fs.writeFileSync('docs/quests.json', JSON.stringify({updated, quests: questRanking}, null, 1));
   fs.writeFileSync('docs/spawns.json', JSON.stringify({updated, names: spawnNames, players: spawnPlayers}));
-  for (const [name, start] of Object.entries(starts)) {
-    const file = 'docs/' + name + '.json';
-    const spawnFile = 'docs/sp-' + name + '.json';
-    const existing = readJson(file);
-    const existingSpawns = readJson(spawnFile);
-    if (existing && existing.start === start) {
-      const missingSpawns = !existingSpawns || existingSpawns.start !== start;
-      if (missingSpawns && Array.isArray(existing.players) && existing.players.length === 0) fs.writeFileSync(spawnFile, JSON.stringify({start, updated, players: {}}));
-      continue;
-    }
-    const useStored = previous && Array.isArray(previous.players) && previous.updated < start;
-    const baselineRows = useStored ? previous.players : rows;
-    const emptyBaseline = !existing && since >= start;
-    const players = emptyBaseline ? [] : baselineRows.map(({fav, maps: mostPlayed, ...numeric}) => numeric);
-    const baselineSpawns = useStored && previousSpawns && previousSpawns.players ? previousSpawns.players : spawnPlayers;
-    fs.writeFileSync(file, JSON.stringify({start, updated, players}));
-    fs.writeFileSync(spawnFile, JSON.stringify({start, updated, players: emptyBaseline ? {} : baselineSpawns}));
-  }
+  updatePeriods({root: '.', rows, spawnPlayers, since, updated, previous, previousSpawns});
 })();
