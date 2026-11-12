@@ -1,6 +1,11 @@
 {
- "updated": 1794510085622,
+ "updated": 1794513682413,
  "quests": [
+  {
+   "id": 24,
+   "name": "Kill bots in nonstop mode",
+   "completions": 4
+  },
   {
    "id": 1,
    "name": "Kill bots",
@@ -114,11 +119,6 @@
   {
    "id": 23,
    "name": "Kill bots on Hard or Risky",
-   "completions": 0
-  },
-  {
-   "id": 24,
-   "name": "Kill bots in nonstop mode",
    "completions": 0
   },
   {
