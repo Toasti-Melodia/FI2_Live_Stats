@@ -1000,7 +1000,7 @@ body::before{opacity:.08}
 }
 
 
-#tip.rank{max-width:340px;min-width:230px;padding:10px 12px;pointer-events:none}
+#tip.rank{max-width:372px;min-width:230px;padding:10px 12px;pointer-events:none}
 #tip.rank strong{display:block;margin-bottom:6px;color:#f0d58e;font-size:14px}
 #tip.rank .rk{display:grid;grid-template-columns:34px 1fr auto;gap:8px;padding:2px 0;font-size:12.5px;color:rgba(240,240,231,.82)}
 #tip.rank .rk i{font-style:normal;color:#9aa08c}
@@ -1087,7 +1087,7 @@ body::before{opacity:.08}
   text-decoration-style:dotted;
   text-underline-offset:3px;
 }
-#tip.rank{max-width:340px;min-width:230px;padding:10px 12px;pointer-events:none}
+#tip.rank{max-width:372px;min-width:230px;padding:10px 12px;pointer-events:none}
 #tip.rank strong{display:block;margin-bottom:7px;color:#f0d58e;font-size:14px;line-height:1.35}
 #tip.rank .rk-position{display:flex;align-items:baseline;gap:7px;margin:0 0 8px;padding:0 0 8px;border-bottom:1px solid rgba(216,185,111,.2)}
 #tip.rank .rk-position-label{color:var(--dim);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
@@ -1178,7 +1178,7 @@ body::before{opacity:.08}
       </div>
     </div>
     <div class="filters">
-      <div class="faction-control range-control"><label>Period<select id="range"><option value="all">All time</option><option value="today">Today</option><option value="week">This week</option><option value="month">This month</option><option value="quarter">Last 3 months</option><option value="half">Last 6 months</option><option value="year">This year</option></select></label><span class="custom" id="range-note"></span></div>
+      <div class="faction-control range-control"><label>Period<select id="range"><option value="all">All time</option><option value="today">Today</option><option value="week">Last week</option><option value="month" selected>Last month</option><option value="quarter">Last 3 months</option><option value="half">Last 6 months</option><option value="year">Last year</option></select></label><span class="custom" id="range-note"></span></div>
       <label>View stats<select id="mode"><option value="all">All</option><option value="as">As Defenders</option><option value="vs">Against Invaders</option></select></label>
       <div class="faction-control"><label>Faction<select id="faction"></select></label><span class="custom" id="custom"></span></div>
       <div class="page-size-control"><label for="page-size">Players per page</label><select id="page-size" aria-label="Players per page"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option><option value="200">200</option><option value="all">Unlimited</option></select></div>
@@ -1237,7 +1237,7 @@ const TABS = {
     ['throw','Throwing','Kills with throwing weapons'],
     ['firearm','Firearms','Kills with pistols and muskets'],
     ['magic','Magic','Wands, special custom ammo, or other magical stuff'],
-    ['other','Other','Kills from all other sources, such as explosions, punches, or kicks'],
+    ['other','Other','Kills from all other sources, such as explosions, punches, kicks, or poison'],
     ['headshots','Headshots','Headshots with ranged weapons'],
     ['shielding','Shielding','Points for shielding']
   ]},
@@ -1254,7 +1254,7 @@ const modeSelect = $('mode');
 const factionSelect = $('faction');
 const tip = $('tip');
 const rangeSelect = $('range');
-let range = 'all';
+let range = 'month';
 let current = {players:[]};
 const baselines = {};
 let tops = {h:{},n:{},m:{}};
@@ -1765,8 +1765,8 @@ function rankedPlayersFor(key){
   }else if(key === 'score' && scoreMode === 'difficulty'){
     list = panel.players.map(player => ({id:player.id,name:player.name,value:Number(player.diffscore) || 0})).filter(item => item.value > 0);
   }else if(key === 'kills' && killsGroup){
-    const groupKeys = killsGroup === 'melee' ? MELEE_KEYS : RANGED_KEYS;
-    list = panel.players.map(player => ({id:player.id,name:player.name,value:groupKeys.reduce((total,weaponKey) => total + (Number(player[weaponKey]) || 0),0)}));
+    list = panel.players.map(player => ({id:player.id,name:player.name,value:groupKills(player,killsGroup)}));
+    if(killsGroup === 'cav') list = list.filter(item => item.value > 0);
   }else{
     list = panel.players.map(player => ({id:player.id,name:player.name,value:rankValue(player,key)}));
     if(key.includes(':') || COUNT_KEYS.includes(key)) list = list.filter(item => item.value > 0);
@@ -1871,7 +1871,7 @@ function renderPlayer(keepFocus){
   const cat = isMelodiaPatty ? '<span class="pm-cat" aria-label="cat">🐈</span>' : '';
   $('player-body').innerHTML = '<div class="pm-head"><h2 class="pm-name" id="pm-name">' + esc(player.name || 'Unknown player') + cat + '</h2><span class="pm-meta"><span class="pm-range" role="group" aria-label="Stats period">' + rangeButtons + '</span></span><span class="pm-range-note">' + (panel.note ? esc(panel.note) : '&nbsp;') + '</span></div>' +
     '<div class="pm-cards">' + cards + '</div>' +
-    '<div class="pm-grid pm-primary"><section class="pm-section">' + sectionTitle('Overview','score','Score',scorePerKillNote,value('score')) + details + '</section><section class="pm-section">' + sectionTitle('Kills by weapon','kills','Total kills',topWeaponNote,value('kills')) + weapons + '</section><section class="pm-section">' + sectionTitle('Activity','activityTotal','Total activity','Sum of the activities below, excluding joins, anvils, refills and wardrobes',activityTotal) + activity + '</section></div>' +
+    '<div class="pm-grid pm-primary"><section class="pm-section">' + sectionTitle('Overview','score','Score',scorePerKillNote,value('score')) + details + '</section><section class="pm-section">' + sectionTitle('Kills by weapon','kills','Kills',topWeaponNote,value('kills')) + weapons + '</section><section class="pm-section">' + sectionTitle('Activity','activityTotal','Total activity','Sum of the activities below, excluding joins, anvils, refills and wardrobes',activityTotal) + activity + '</section></div>' +
     '<div class="pm-grid pm-fav"><section class="pm-section">' + typesHeading(player,'Favourite heroes','heroTypes','Different heroes played','hero','heroes') + favoriteRows(fav.h,'No spawns recorded yet','h',value('heroSpawns'),'spawns','all heroes played',spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Favourite units','unitTypes','Different units played','unit','units') + favoriteRows(fav.n,'No spawns recorded yet','n',value('unitSpawns'),'spawns','all units played',spawnsReady) + '</section><section class="pm-section">' + typesHeading(player,'Most played maps','mapTypes','Different maps played','map','maps') + favoriteRows(player.maps,'No maps recorded yet','m',value('mapPlays'),'times played','all maps played',spawnsReady) + '</section></div>' +
     '<div class="pm-grid"><section class="pm-section">' + typesHeading(player,'As defenders','facTypes:as','Different defender factions played','defender faction played','defender factions played') + factionRows(player,'as',DEFENDER_FACTIONS) + '</section><section class="pm-section">' + typesHeading(player,'Against invaders','facTypes:vs','Different invader factions faced','invader faction faced','invader factions faced') + factionRows(player,'vs',INVADER_FACTIONS) + '</section></div>';
   hideTip();
@@ -1912,8 +1912,25 @@ $('pm-close').addEventListener('click',closePlayer);
 modal.addEventListener('click',event => {if(event.target === modal) closePlayer();});
 let rankTipState = null;
 const DEATH_GOALS = [250,500,1000];
-const MELEE_KEYS = ['w1h','w2h','pole','spear'];
-const RANGED_KEYS = ['throw','bow','xbow','firearm','magic','other'];
+const MELEE_KEYS = ['w1h','w2h','pole','spear','other'];
+const RANGED_KEYS = ['throw','bow','xbow','firearm','magic'];
+const KILLS_GROUPS = {melee:'Melee',ranged:'Ranged',cav:'Cav'};
+function groupKills(player,group){
+  const sumKeys = keys => keys.reduce((total,key) => total + (Number(player[key]) || 0),0);
+  const cavalryMelee = Number(player.cavmelee) || 0;
+  const cavalryRanged = Number(player.cavranged) || 0;
+  if(group === 'cav') return cavalryMelee + cavalryRanged;
+  if(group === 'melee') return Math.max(0,sumKeys(MELEE_KEYS) - cavalryMelee);
+  return Math.max(0,sumKeys(RANGED_KEYS) - cavalryRanged);
+}
+function killsGroupNote(){
+  const player = panelPlayer(buildPanel(panelRange));
+  if(!player || !killsGroup) return '';
+  const total = Number(player.kills) || WEAPON_KEYS.reduce((sum,key) => sum + (Number(player[key]) || 0),0);
+  if(!total) return '';
+  const label = killsGroup === 'cav' ? 'Cavalry (mounted)' : KILLS_GROUPS[killsGroup];
+  return label + ' - ' + Math.min(100,groupKills(player,killsGroup) / total * 100).toFixed(1) + "% of player's total kills";
+}
 let deathGoal = 250;
 let killsGroup = '';
 let scoreMode = '';
@@ -1936,11 +1953,12 @@ function rankNote(key){
   if(key === 'deaths') return 'No death run - ' + fmt(deathGoal) + ' kills in a row without dying';
   if(key === 'score' && scoreMode === 'difficulty') return 'Extra points earned from kills on harder settings';
   if(key === 'score') return 'Score from kills, quests, bosses and wins';
+  if(key === 'kills' && killsGroup) return killsGroupNote();
   return '';
 }
 function rankModeConfig(key){
   if(key === 'deaths') return {options:DEATH_GOALS.map(goal => [goal,String(goal)]),active:deathGoal};
-  if(key === 'kills') return {options:[['all','All'],['melee','Melee'],['ranged','Ranged']],active:killsGroup || 'all'};
+  if(key === 'kills') return {options:[['all','All'],['melee','Melee'],['ranged','Ranged'],['cav','Cav']],active:killsGroup || 'all'};
   if(key === 'score') return {options:[['all','Score'],['difficulty','Difficulty']],active:scoreMode || 'all'};
   return null;
 }
@@ -1956,7 +1974,7 @@ function rankTipHtml(state){
   const start = state.page * PANEL_PAGE;
   const end = Math.min(start + PANEL_PAGE,totalPlayers);
   let category = state.label || (WEAPON_KEYS.includes(key) ? (LABELS[key] || key) + ' kills' : (LABELS[key] || key));
-  if(key === 'kills' && killsGroup) category = killsGroup === 'melee' ? 'Melee kills' : 'Ranged kills';
+  if(key === 'kills' && killsGroup) category = KILLS_GROUPS[killsGroup] + ' kills';
   if(key === 'score' && scoreMode === 'difficulty') category = 'Difficulty Bonus';
   if(key === 'deaths') category = 'Deaths';
   if(key === 'crowd') category = 'Crowd Kills (20+ players)';
@@ -2129,7 +2147,7 @@ function diffNumbers(now,before){
   }
   return result;
 }
-const PANEL_KEYS = [...new Set([...ALL_KEYS,'diffscore','runs250','runs500','runs1000','streak','joined','commands','anvils','refills','wardrobes','boxes','slain','animations'])];
+const PANEL_KEYS = [...new Set([...ALL_KEYS,'diffscore','runs250','runs500','runs1000','streak','joined','commands','anvils','refills','wardrobes','boxes','slain','animations','cavmelee','cavranged'])];
 function diffPlayer(player,before){
   const row = {id:player.id,name:player.name,fac:{as:{},vs:{}}};
   PANEL_KEYS.forEach(key => {
@@ -2157,23 +2175,6 @@ function timestampMs(value){
   const parsed = Date.parse(value);
   return Number.isFinite(parsed) ? parsed : 0;
 }
-function periodStart(name, now = new Date()){
-  const start = new Date(now);
-  start.setHours(0,0,0,0);
-  if(name === 'week'){
-    const daysSinceMonday = (start.getDay() + 6) % 7;
-    start.setDate(start.getDate() - daysSinceMonday);
-  }else if(name === 'month'){
-    start.setDate(1);
-  }else if(name === 'quarter'){
-    start.setMonth(start.getMonth() - 3);
-  }else if(name === 'half'){
-    start.setMonth(start.getMonth() - 6);
-  }else if(name === 'year'){
-    start.setMonth(0,1);
-  }
-  return start.getTime();
-}
 function getTrackingStart(){
   const reported = timestampMs(current.since);
   if(reported) return reported;
@@ -2197,22 +2198,6 @@ function computePeriod(name){
       .map(player => diffPlayer(player,before.get(String(player.id))))
       .filter(player => ALL_KEYS.some(key => player[key] > 0));
   };
-  if(name === 'quarter' || name === 'half'){
-    const windowStart = periodStart(name);
-    if(trackingStart && trackingStart >= windowStart){
-      result.note = 'Since ' + dayStamp(trackingStart);
-      return result;
-    }
-    if(baseline && Array.isArray(baseline.players)){
-      const baselineStart = timestampMs(baseline.start);
-      if(baselineStart && baselineStart >= windowStart){
-        useBaseline();
-        result.note = 'Since ' + dayStamp(Math.max(baselineStart,trackingStart || baselineStart));
-        return result;
-      }
-    }
-    return result;
-  }
   if(baseline && Array.isArray(baseline.players)){
     useBaseline();
     const since = Math.max(timestampMs(baseline.start),trackingStart);
