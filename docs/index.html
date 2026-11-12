@@ -1153,7 +1153,7 @@ body::before{opacity:.08}
 <header>
   <div class="brand">
     <h1>Full Invasion <span>2</span></h1>
-    <p class="sub">Lifetime stats (starting from 12 November 2026) - Gondolin Osiris servers</p>
+    <p class="sub">Lifetime stats (starting from 12 November 2026) - Gondolin Osiris</p>
     <div class="brand-meta"><span class="credit">By Melodia-Patty</span><span id="meta">Last update: -</span></div>
   </div>
   <nav class="links" aria-label="Links">
@@ -1859,8 +1859,7 @@ function renderPlayer(keepFocus){
     const shareLabel = share.toFixed(1) + "% of player's total kills" + (value(key) >= 1000 ? ' (' + fmt(value(key)) + ')' : '');
     return '<div class="pm-bar">' + rankTriggerHtml(key,LABELS[key],shareLabel,share.toFixed(1)) + '<div class="pm-track" role="img" aria-label="' + esc(shareLabel) + '"><i style="width:' + share.toFixed(1) + '%"></i></div><b title="' + esc(shareLabel) + '">' + fmtCompact(value(key)) + '</b></div>';
   }).join('');
-  const topWeapon = sortedWeapons[0];
-  const topWeaponNote = weaponTotal && value(topWeapon) > 0 ? 'Top: ' + LABELS[topWeapon] + ' - ' + Math.min(100,value(topWeapon) / weaponTotal * 100).toFixed(1) + "% of player's total kills" : '';
+  const topWeaponNote = topWeaponNoteFor(player);
   const activityTotal = rankValue(player,'activityTotal');
   const sectionTitle = (title,key,rankLabel,note,amount) => '<h3>' + (amount > 0 ? rankTrigger(key,title,rankLabel,note) : esc(title)) + '</h3>';
   const countLine = (key,label,rankKey=key) => line(label,value(key),rankKey);
@@ -1923,12 +1922,18 @@ function groupKills(player,group){
   if(group === 'melee') return Math.max(0,sumKeys(MELEE_KEYS) - cavalryMelee);
   return Math.max(0,sumKeys(RANGED_KEYS) - cavalryRanged);
 }
+function topWeaponNoteFor(player){
+  const value = key => Number(player[key]) || 0;
+  const weaponTotal = value('kills') || WEAPON_KEYS.reduce((total,key) => total + value(key),0);
+  const topWeapon = WEAPON_KEYS.slice().sort((a,b) => value(b) - value(a))[0];
+  return weaponTotal && value(topWeapon) > 0 ? 'Top: ' + LABELS[topWeapon] + ' - ' + Math.min(100,value(topWeapon) / weaponTotal * 100).toFixed(1) + "% of player's total kills" : '';
+}
 function killsGroupNote(){
   const player = panelPlayer(buildPanel(panelRange));
   if(!player || !killsGroup) return '';
   const total = Number(player.kills) || WEAPON_KEYS.reduce((sum,key) => sum + (Number(player[key]) || 0),0);
   if(!total) return '';
-  const label = killsGroup === 'cav' ? 'Cavalry (mounted)' : KILLS_GROUPS[killsGroup];
+  const label = killsGroup === 'cav' ? 'Cavalry' : KILLS_GROUPS[killsGroup];
   return label + ' - ' + Math.min(100,groupKills(player,killsGroup) / total * 100).toFixed(1) + "% of player's total kills";
 }
 let deathGoal = 250;
@@ -1954,6 +1959,10 @@ function rankNote(key){
   if(key === 'score' && scoreMode === 'difficulty') return 'Extra points earned from kills on harder settings';
   if(key === 'score') return 'Score from kills, quests, bosses and wins';
   if(key === 'kills' && killsGroup) return killsGroupNote();
+  if(key === 'kills'){
+    const player = panelPlayer(buildPanel(panelRange));
+    return player ? topWeaponNoteFor(player) : '';
+  }
   return '';
 }
 function rankModeConfig(key){
@@ -2135,6 +2144,7 @@ document.addEventListener('keydown',event => {
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => render());
 const stamp = milliseconds => new Date(milliseconds).toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
 const dayStamp = milliseconds => new Date(milliseconds).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+const longDayStamp = milliseconds => new Date(milliseconds).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
 const numericDayStamp = milliseconds => {
   const date = new Date(milliseconds);
   return String(date.getUTCDate()).padStart(2,'0') + '.' + String(date.getUTCMonth() + 1).padStart(2,'0') + '.' + date.getUTCFullYear();
@@ -2224,7 +2234,7 @@ Promise.all([
   if(!loaded || !Array.isArray(loaded.players)) throw new Error('Invalid stats.json format');
   current = loaded;
   const reportedSince = timestampMs(loaded.since);
-  if(reportedSince) document.querySelector('.sub').textContent = 'Lifetime stats (starting from ' + numericDayStamp(reportedSince) + ') - Gondolin Osiris servers';
+  if(reportedSince) document.querySelector('.sub').textContent = 'Lifetime stats (starting from ' + longDayStamp(reportedSince) + ') - Gondolin Osiris';
   Object.entries({today,week,month,quarter,half,year}).forEach(([name,baseline]) => {
     if(baseline && Array.isArray(baseline.players)) baselines[name] = baseline;
   });
