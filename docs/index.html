@@ -1147,13 +1147,49 @@ body::before{opacity:.08}
 #tip.rank .rk-dist.mine{color:#fff0b8;background:linear-gradient(90deg,rgba(216,185,111,.17),rgba(216,185,111,.055))}
 #tip.rank .rk-dist.mine .rk-bar u{background:#d8b96f}
 #tip.rank .rk-dist.mine .rk-pct{text-decoration:none}
+.sub-row{display:flex;flex-wrap:nowrap;align-items:center;align-items:last baseline;margin-top:11px}
+.sub-row .sub{display:block;flex:0 1 auto;min-width:0;margin:0}
+.help-btn{display:inline-flex;flex:0 0 auto;margin-left:8px;align-items:center;justify-content:center;width:22px;height:22px;padding:0;font:700 11px/1 var(--display);color:rgba(255,248,226,.55);background:rgba(255,248,226,.05);border:1px solid rgba(255,248,226,.22);border-radius:8px;cursor:pointer;transition:background .16s,border-color .16s,color .16s,box-shadow .16s}
+.help-btn:hover{background:rgba(255,248,226,.12);border-color:rgba(255,248,226,.45);color:rgba(255,250,236,.95);box-shadow:0 0 0 3px rgba(255,248,226,.06)}
+.hm{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:3vh 16px;background:rgba(5,6,4,.8);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease}
+.hm.open{opacity:1;visibility:visible}
+.hm-dialog{position:relative;display:flex;flex-direction:column;width:min(100%,1000px);max-height:92vh;overflow:hidden;background:radial-gradient(ellipse at 0% 0%,rgba(100,130,80,.24) 0%,transparent 46%),radial-gradient(ellipse at 100% 0%,rgba(185,145,70,.2) 0%,transparent 48%),linear-gradient(160deg,#2a2d1d 0%,#1a1d13 52%,#12150d 100%);border:1px solid rgba(216,185,111,.34);border-radius:16px;box-shadow:0 28px 80px rgba(0,0,0,.6),inset 0 1px rgba(255,255,255,.04);transform:translateY(10px) scale(.985);transition:transform .24s cubic-bezier(.2,.75,.25,1)}
+.hm.open .hm-dialog{transform:none}
+.hm-note{margin:12px 0 0;padding:9px 14px;color:#c9d2b8;font-size:14px;font-weight:400;line-height:1.45;border:1px solid rgba(140,170,120,.18);border-radius:10px;background:linear-gradient(90deg,rgba(120,150,100,.12),rgba(120,150,100,.04))}
+.hm-close{position:absolute;top:12px;right:14px;z-index:2;width:34px;height:34px;padding:0;font-size:24px;line-height:1;color:var(--dim);background:transparent;border:1px solid transparent;border-radius:8px;cursor:pointer}
+.hm-close:hover{color:var(--accent-bright);border-color:var(--accent-line)}
+.hm-head{padding:22px 62px 0 26px}
+.hm-title{margin:0;font:700 clamp(28px,4vw,38px)/1.05 var(--display);letter-spacing:.015em;color:#fffdf5}
+.hm-title span{color:var(--accent-bright)}
+.hm-nav{display:flex;flex-wrap:wrap;gap:8px;padding:14px 26px 16px;border-bottom:1px solid rgba(155,163,145,.14)}
+.hm-nav button{font:600 15px var(--display);letter-spacing:.03em;color:var(--dim);background:rgba(0,0,0,.2);border:1px solid rgba(216,185,111,.2);border-radius:999px;padding:6px 18px;cursor:pointer;transition:color .16s,background .16s,border-color .16s}
+.hm-nav button:hover{color:var(--accent-bright);border-color:rgba(216,185,111,.5)}
+.hm-nav button.on{color:#fff5d8;background:linear-gradient(180deg,rgba(216,185,111,.2),rgba(216,185,111,.08));border-color:rgba(216,185,111,.5)}
+.hm-body{position:relative;flex:1;min-height:0;overflow-y:auto;padding:4px 26px 30px;scrollbar-color:#444a3a #101410;overscroll-behavior:contain}
+.hm-section{padding-top:22px}
+.hm-section h3{display:flex;align-items:center;gap:14px;margin:0 0 6px;font:700 clamp(24px,3.4vw,31px)/1.1 var(--display);letter-spacing:.02em;color:#fff1c4}
+.hm-section h3::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(216,185,111,.42),transparent)}
+.hm-sub{margin:20px 0 2px;color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.hm-list{margin:0}
+.hm-row{display:grid;grid-template-columns:180px minmax(0,1fr);gap:4px 22px;padding:11px 0;border-bottom:1px solid rgba(155,163,145,.1)}
+.hm-row:last-child{border-bottom:0}
+.hm-row dt{font:700 18px/1.25 var(--display);letter-spacing:.015em;color:var(--accent-bright)}
+.hm-row dd{margin:0;color:var(--cell);font-size:14px;line-height:1.55}
+.hm-row dd b{color:#fff5d7;font-weight:600}
+.hm-points{margin:8px 0 0;padding:0;list-style:none}
+.hm-points li{position:relative;margin-top:4px;padding-left:16px;color:#b9bfae;font-size:13px;line-height:1.5}
+.hm-points li::before{content:"";position:absolute;left:3px;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:.8}
+@media(max-width:760px){.hm{padding:0}.hm-dialog{height:100%;max-height:none;border-radius:0}.hm-note{font-size:13px}.hm-head{padding:18px 56px 0 16px}.hm-nav{padding:12px 16px 14px}.hm-body{padding:2px 16px 26px}.hm-row{grid-template-columns:1fr;gap:3px}}
 </style>
 </head>
 <body>
 <header>
   <div class="brand">
     <h1>Full Invasion <span>2</span></h1>
-    <p class="sub">Lifetime stats (starting from 12 November 2026) - Gondolin Osiris</p>
+    <div class="sub-row">
+      <p class="sub">Lifetime stats (starting from 15 November 2026) - Gondolin Osiris</p>
+      <button type="button" class="help-btn" id="help-btn" aria-label="About the Stats" aria-haspopup="dialog">?</button>
+    </div>
     <div class="brand-meta"><span class="credit">By Melodia-Patty</span><span id="meta">Last update: -</span></div>
   </div>
   <nav class="links" aria-label="Links">
@@ -1190,6 +1226,91 @@ body::before{opacity:.08}
 <div class="sticky-tabs-proxy" id="sticky-tabs-proxy" role="tablist" aria-label="Statistics category"></div>
 <div class="sticky-head" id="sticky-head" aria-hidden="true"><table id="sticky-head-table"><colgroup></colgroup><thead></thead></table></div>
 <div class="pm" id="player-modal" aria-hidden="true"><div class="pm-dialog" role="dialog" aria-modal="true" aria-labelledby="pm-name"><button type="button" class="pm-close" id="pm-close" aria-label="Close">&times;</button><div id="player-body"></div></div></div>
+<div class="hm" id="help-modal" aria-hidden="true">
+<div class="hm-dialog" role="dialog" aria-modal="true" aria-labelledby="hm-title">
+<button type="button" class="hm-close" id="hm-close" aria-label="Close">&times;</button>
+<div class="hm-head">
+<h2 class="hm-title" id="hm-title">About the <span>Stats</span></h2>
+<p class="hm-note">Stats are collected on the Full Invasion Gondolin servers - the main and a temporary one (e.g. enabled for an event).</p>
+</div>
+<div class="hm-nav" role="group" aria-label="Sections">
+<button type="button" class="on" data-target="hm-overview">Overview</button>
+<button type="button" data-target="hm-weapons">Weapons</button>
+<button type="button" data-target="hm-players">Player stats</button>
+</div>
+<div class="hm-body" id="hm-body">
+<section class="hm-section" id="hm-overview">
+<h3>Overview</h3>
+<dl class="hm-list">
+<div class="hm-row"><dt>Score</dt><dd>Every bot kill gives 1 point. Extra points can be gained on harder settings (especially difficulty, nonstop, one-life and hardbots, but also a bit for e.g. cavalry enabled). You also get extra points for winning a game and for completing weekly quests, as well as a few for killing bosses.</dd></div>
+<div class="hm-row"><dt>Kills</dt><dd>Enemies killed directly by you.</dd></div>
+<div class="hm-row"><dt>Deaths</dt><dd>Each death as long as the invasion is spawning. A death caused by disconnecting is not counted. Deaths from friendly fire, PvP and certain special events are not counted either.</dd></div>
+<div class="hm-row"><dt>Top Points</dt><dd>Points for the top 5 players in the ranking shown after every boss wave: 5 points for 1st place, 4 for 2nd and so on. Needs at least 5 players online. With 20+ players online the points are doubled, with 40+ they are tripled.</dd></div>
+<div class="hm-row"><dt>Quests</dt><dd>Weekly quests you completed. Check your progress in game with <b>/quests</b>. Each completed quest also gives some gold between waves until the weekly reset. 11-14 quests are active each week, drawn from 25 types. Targets are randomized every week and everything resets on Monday at 00:00 UTC.</dd></div>
+<div class="hm-row"><dt>Waves</dt><dd>Number of waves you took part in. It doesn’t matter whether you died or how many bots you killed - you left your mark and that counts.</dd></div>
+<div class="hm-row"><dt>Wins</dt><dd>Games won - the number of dev waves you survived to the end.</dd></div>
+<div class="hm-row"><dt>Bosses</dt><dd>Only the player who dealt the most damage gets the credit, not the one who lands the last hit.</dd></div>
+<div class="hm-row"><dt>End bosses</dt><dd>Same rule, for end-game bosses (level 70+).</dd></div>
+<div class="hm-row"><dt>Leg Chests</dt><dd>Legendary chests (40k) you opened. Lucky legs from random chests or other sources are not counted.</dd></div>
+<div class="hm-row"><dt>Wizard Buffs</dt><dd>Each time you buff an ally as a Silver Wizard or Necromancer.</dd></div>
+<div class="hm-row"><dt>Crowd Kills</dt><dd>Kills made while 20+ players are online - basically your event kills.</dd></div>
+<div class="hm-row"><dt>Low Tier</dt><dd>Kills made as a soldier-tier troop (not hero or elite, custom classes with a cost up to 17,500).</dd></div>
+</dl>
+</section>
+<section class="hm-section" id="hm-weapons">
+<h3>Weapons</h3>
+<dl class="hm-list">
+<div class="hm-row"><dt>Kills</dt><dd>All enemies killed, whatever the weapon. Every kill is added to exactly one weapon column - the kill icon shows which one.</dd></div>
+<div class="hm-row"><dt>One-handed</dt><dd>Kills with one-handed weapons.</dd></div>
+<div class="hm-row"><dt>Two-handed</dt><dd>Kills with two-handed weapons.</dd></div>
+<div class="hm-row"><dt>Polearms</dt><dd>Kills with polearms such as halberds, glaives or bardiches.</dd></div>
+<div class="hm-row"><dt>Spears</dt><dd>Kills with spears, lances and pikes - thrusting polearms.</dd></div>
+<div class="hm-row"><dt>Bows</dt><dd>Kills with bows.</dd></div>
+<div class="hm-row"><dt>Crossbows</dt><dd>Kills with crossbows.</dd></div>
+<div class="hm-row"><dt>Throwing</dt><dd>Kills with throwing weapons.</dd></div>
+<div class="hm-row"><dt>Firearms</dt><dd>Kills with pistols and muskets.</dd></div>
+<div class="hm-row"><dt>Magic</dt><dd>Wands, special custom ammo (e.g. from some legendary weapons) and other magical stuff.</dd></div>
+<div class="hm-row"><dt>Other</dt><dd>Kills from all other sources, such as explosions, punches, kicks or poison.</dd></div>
+<div class="hm-row"><dt>Headshots</dt><dd>Headshots with ranged weapons.</dd></div>
+<div class="hm-row"><dt>Shielding</dt><dd>Counted at most once per bot, the first time that bot hits your shield.</dd></div>
+</dl>
+</section>
+<section class="hm-section" id="hm-players">
+<h3>Player stats</h3>
+<h4 class="hm-sub">Profile</h4>
+<dl class="hm-list">
+<div class="hm-row"><dt>Max Kill Streak</dt><dd>Bots killed in a row without dying during a single game. It resets only when you die.</dd></div>
+<div class="hm-row"><dt>Joined the server</dt><dd>Counted only when you kill your first bot on a map - connecting alone is not enough. Rejoining the same map doesn’t count twice (so people who happen to disconnect won’t end up with crazy numbers).</dd></div>
+<div class="hm-row"><dt>Commands used</dt><dd>In-game player commands you used.</dd></div>
+<div class="hm-row"><dt>Animations used</dt><dd>Animations you played.</dd></div>
+<div class="hm-row"><dt>Lootboxes opened</dt><dd>Lootboxes or Gambleboxes you opened.</dd></div>
+<div class="hm-row"><dt>Anvils used</dt><dd>Times you used an anvil.</dd></div>
+<div class="hm-row"><dt>Refills used</dt><dd>Times you used a refill.</dd></div>
+<div class="hm-row"><dt>Wardrobes used</dt><dd>Times you used a wardrobe.</dd></div>
+<div class="hm-row"><dt>Total activity</dt><dd>Sum of quests, commands, animations, lootboxes and players slain. Joins, anvils, refills and wardrobes are not included.</dd></div>
+</dl>
+<h4 class="hm-sub">Players slain</h4>
+<dl class="hm-list">
+<div class="hm-row"><dt>PVP</dt><dd>Default ranking. Kills during and after parties or in Hunger Games. Click Players slain in a profile to switch between PVP, Traitor and Anti.</dd></div>
+<div class="hm-row"><dt>Traitor</dt><dd>Defender players you killed while playing as a traitor.</dd></div>
+<div class="hm-row"><dt>Anti</dt><dd>Traitors you killed.</dd></div>
+</dl>
+<h4 class="hm-sub">Extra rankings</h4>
+<dl class="hm-list">
+<div class="hm-row"><dt>No-death runs</dt><dd>Every time you reach 250, 500 or 1000 kills in a row without dying, you get a run. For example, 500 kills in a row count as two 250-runs and one 500-run. Shown in the Deaths Top 10.</dd></div>
+<div class="hm-row"><dt>Cav kills</dt><dd>Kills made while mounted. Shown in the Kills Top 10.</dd></div>
+<div class="hm-row"><dt>Difficulty score</dt><dd>The extra Score earned only from harder-setting bonuses. Shown in the Score Top 10.</dd></div>
+</dl>
+<h4 class="hm-sub">Favourites and factions</h4>
+<dl class="hm-list">
+<div class="hm-row"><dt>Favourite heroes and units</dt><dd>Counted once per life, at spawn. Refreshing or changing class with the same troop (e.g. an engineer rebuying a turret) doesn’t add again.</dd></div>
+<div class="hm-row"><dt>Most played maps</dt><dd>A map counts only after you get 20 kills on it.</dd></div>
+<div class="hm-row"><dt>As defenders / Against invaders</dt><dd>Your kills, score, deaths, waves and wins split by the defender faction you played and the invader faction you faced. Custom scenarios and invasions are all grouped as “Custom Defenders” and “Custom Invasions”.</dd></div>
+</dl>
+</section>
+</div>
+</div>
+</div>
 <div id="tip" role="tooltip"></div>
 <script>
 'use strict';
@@ -1762,6 +1883,9 @@ function rankedPlayersFor(key){
     }
   }else if(key === 'deaths'){
     list = panel.players.map(player => ({id:player.id,name:player.name,value:Number(player['runs' + deathGoal]) || 0})).filter(item => item.value > 0);
+  }else if(key === 'slain' && slainMode){
+    const slainKey = slainMode === 'traitor' ? 'slainTraitor' : 'slainAnti';
+    list = panel.players.map(player => ({id:player.id,name:player.name,value:Number(player[slainKey]) || 0})).filter(item => item.value > 0);
   }else if(key === 'score' && scoreMode === 'difficulty'){
     list = panel.players.map(player => ({id:player.id,name:player.name,value:Number(player.diffscore) || 0})).filter(item => item.value > 0);
   }else if(key === 'kills' && killsGroup){
@@ -1939,6 +2063,7 @@ function killsGroupNote(){
 let deathGoal = 250;
 let killsGroup = '';
 let scoreMode = '';
+let slainMode = '';
 function factionSpreadHtml(key){
   const mode = key.split(':')[1];
   const panel = buildPanel(panelRange);
@@ -1956,6 +2081,7 @@ function factionSpreadHtml(key){
 }
 function rankNote(key){
   if(key === 'deaths') return 'No death run - ' + fmt(deathGoal) + ' kills in a row without dying';
+  if(key === 'slain') return slainMode === 'traitor' ? 'Defender players slain as a traitor' : slainMode === 'anti' ? 'Traitors slain by defenders' : 'Kills during and after parties or Hunger Games';
   if(key === 'score' && scoreMode === 'difficulty') return 'Extra points earned from kills on harder settings';
   if(key === 'score') return 'Score from kills, quests, bosses and wins';
   if(key === 'kills' && killsGroup) return killsGroupNote();
@@ -1969,6 +2095,7 @@ function rankModeConfig(key){
   if(key === 'deaths') return {options:DEATH_GOALS.map(goal => [goal,String(goal)]),active:deathGoal};
   if(key === 'kills') return {options:[['all','All'],['melee','Melee'],['ranged','Ranged'],['cav','Cav']],active:killsGroup || 'all'};
   if(key === 'score') return {options:[['all','Score'],['difficulty','Difficulty']],active:scoreMode || 'all'};
+  if(key === 'slain') return {options:[['all','PVP'],['traitor','Traitor'],['anti','Anti']],active:slainMode || 'all'};
   return null;
 }
 function rankTipHtml(state){
@@ -1986,6 +2113,7 @@ function rankTipHtml(state){
   if(key === 'kills' && killsGroup) category = KILLS_GROUPS[killsGroup] + ' kills';
   if(key === 'score' && scoreMode === 'difficulty') category = 'Difficulty Bonus';
   if(key === 'deaths') category = 'Deaths';
+  if(key === 'slain') category = slainMode === 'traitor' ? 'Players slain as Traitor' : slainMode === 'anti' ? 'Traitors slain (Anti)' : 'Players slain (PVP)';
   if(key === 'crowd') category = 'Crowd Kills (20+ players)';
   if(key === 'bosses') category = 'Bosses Slain (top dmg)';
   if(key === 'finals') category = 'End bosses (top dmg)';
@@ -2096,6 +2224,7 @@ tip.addEventListener('click',event => {
     if(rankTipState.key === 'deaths') deathGoal = Number(modeButton.dataset.mode) || 250;
     else if(rankTipState.key === 'kills') killsGroup = modeButton.dataset.mode === 'all' ? '' : modeButton.dataset.mode;
     else if(rankTipState.key === 'score') scoreMode = modeButton.dataset.mode === 'all' ? '' : modeButton.dataset.mode;
+    else if(rankTipState.key === 'slain') slainMode = modeButton.dataset.mode === 'all' ? '' : modeButton.dataset.mode;
     rankTipState.page = rankMyPage(rankTipState.key);
     tip.innerHTML = rankTipHtml(rankTipState);
     applyRankTipWidth();
@@ -2157,7 +2286,7 @@ function diffNumbers(now,before){
   }
   return result;
 }
-const PANEL_KEYS = [...new Set([...ALL_KEYS,'diffscore','runs250','runs500','runs1000','streak','joined','commands','anvils','refills','wardrobes','boxes','slain','animations','cavmelee','cavranged'])];
+const PANEL_KEYS = [...new Set([...ALL_KEYS,'diffscore','runs250','runs500','runs1000','streak','joined','commands','anvils','refills','wardrobes','boxes','slain','slainTraitor','slainAnti','animations','cavmelee','cavranged'])];
 function diffPlayer(player,before){
   const row = {id:player.id,name:player.name,fac:{as:{},vs:{}}};
   PANEL_KEYS.forEach(key => {
@@ -2251,6 +2380,66 @@ Promise.all([
   $('meta').textContent = 'Last update: -';
   $('body').innerHTML = '<tr><td class="empty" colspan="' + (TABS[tab].columns.length + 2) + '">Stats are not available right now. Please try again in a few minutes.</td></tr>';
   $('foot').innerHTML = '';
+});
+const helpModal = $('help-modal');
+const helpBody = $('hm-body');
+const helpNavButtons = Array.from(helpModal.querySelectorAll('.hm-nav button'));
+let helpReturnFocus = null;
+function openHelp(){
+  if(helpModal.classList.contains('open')) return;
+  playUiSound('open');
+  helpReturnFocus = document.activeElement;
+  helpModal.classList.add('open');
+  helpModal.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  helpBody.scrollTop = 0;
+  updateHelpNav();
+  $('hm-close').focus();
+}
+function closeHelp(){
+  if(!helpModal.classList.contains('open')) return;
+  playUiSound('close');
+  helpModal.classList.remove('open');
+  helpModal.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+  if(helpReturnFocus && helpReturnFocus.focus) helpReturnFocus.focus();
+}
+function updateHelpNav(){
+  let activeTarget = helpNavButtons[0].dataset.target;
+  helpNavButtons.forEach(button => {
+    const section = $(button.dataset.target);
+    if(section && section.offsetTop - 40 <= helpBody.scrollTop) activeTarget = button.dataset.target;
+  });
+  if(helpBody.scrollTop + helpBody.clientHeight >= helpBody.scrollHeight - 4) activeTarget = helpNavButtons[helpNavButtons.length - 1].dataset.target;
+  helpNavButtons.forEach(button => button.classList.toggle('on',button.dataset.target === activeTarget));
+}
+$('help-btn').addEventListener('click',openHelp);
+$('hm-close').addEventListener('click',closeHelp);
+helpModal.addEventListener('click',event => {if(event.target === helpModal) closeHelp();});
+helpBody.addEventListener('scroll',updateHelpNav,{passive:true});
+helpNavButtons.forEach(button => button.addEventListener('click',() => {
+  const section = $(button.dataset.target);
+  if(!section) return;
+  playUiSound('tab');
+  helpBody.scrollTo({top:section.offsetTop - 4,behavior:'smooth'});
+}));
+document.addEventListener('keydown',event => {
+  if(!helpModal.classList.contains('open')) return;
+  if(event.key === 'Escape'){
+    closeHelp();
+    return;
+  }
+  if(event.key !== 'Tab') return;
+  const focusable = Array.from(helpModal.querySelectorAll('button')).filter(button => button.offsetParent !== null);
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if(event.shiftKey && document.activeElement === first){
+    event.preventDefault();
+    last.focus();
+  }else if(!event.shiftKey && document.activeElement === last){
+    event.preventDefault();
+    first.focus();
+  }
 });
 </script>
 </body>
